@@ -21,6 +21,9 @@ public:
     void ajouterPiece(Piece* piece) { pieces.insert(pieces.end(), piece); }
 };
 
+class EtatDuJeu{
+
+};
 
 class IAJoueur : public Joueur {
     int difficulte;
@@ -28,9 +31,9 @@ class IAJoueur : public Joueur {
 public:
     IAJoueur(const std::string& nomJoueur, int niveauDifficulte):Joueur(nomJoueur), difficulte(niveauDifficulte) {}
 
-    //void prendreDecision(EtatDuJeu& etat);
+    void prendreDecision(EtatDuJeu& etat);
 
-    //int evaluerSituation(const EtatDuJeu& etat) const;
+    int evaluerSituation(const EtatDuJeu& etat) const;
 };
 
 #endif
