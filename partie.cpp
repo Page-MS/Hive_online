@@ -1,4 +1,4 @@
-#include "Partie.hpp"
+#include "partie.hpp"
 
 Joueur::Joueur(){
     partie = nullptr;
