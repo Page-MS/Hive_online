@@ -2,25 +2,12 @@
 #define PARTIE_HPP
 
 #include <iostream>
+#include "plateau.hpp"
+#include "joueur.hpp"
+
 using namespace std;
 
-class Joueur;
-class Partie;
-class Plateau;
-class MementoPartie;
-class GameManager;
 
-class Joueur{ //impératif de faire un constructeur de recopie par affectation (utilisation dans MementoPartie)
-    Partie* partie;
-public:
-    void setPartie(Partie* partie);
-    bool isIa(); //permet de savoir si le joueur est une ia
-    Joueur();
-};
-
-
-class Plateau{ //impératif de faire un constructeur de recopie par affectation (utilisation dans MementoPartie)
-};
 
 class MementoPartie{
     int numero_tour;
@@ -29,7 +16,7 @@ class MementoPartie{
     Joueur* joueur_courant;
 public:
     friend class Partie;//evite de faire des getters, a voir si c'est judicieux
-    MementoPartie(const Partie& partie);
+    MementoPartie(int num_tour, const Plateau& p, const Joueur& joueur1, const Joueur& joueur2, const Joueur& joueur_courant);
     MementoPartie();
     MementoPartie& operator=(const MementoPartie& memento);
 };
@@ -48,20 +35,19 @@ class Partie{
 public:
     Partie();
 
-    //getters
+    //getters 
     const Plateau& getPlateau() const { return plateau; }
-    Plateau& getPlateau() { return plateau; } // je sais pas s'il faut mettre ça mais on les avait mis en TD. a voir
     int getTourActuel()const{return tourActuel;}
     const Joueur& getJoueur(int i)const{return *joueurs[i];}
     const Joueur& getJoueurCourant()const{return *joueur_courant;}
 
     void setStartJoueurId();//méthode qui détermine qui commence la partie
-    void commencerPartie();
+    void commencerPartie(string pseudo1, string pseudo2);
     void lancerProchainTour();
     void sauvegarderEtat();
     void annulerCoup();
     void terminerPartie();
-    void restaurerEtat(const MementoPartie &etat);
+    void restaurerEtat(const MementoPartie &etat); 
     ~Partie();
 };
 
@@ -71,4 +57,4 @@ class GameManager{
     static GameManager* instance;
 };
 
-#endif // PARTIE_HPP
+#endif
