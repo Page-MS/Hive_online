@@ -15,9 +15,10 @@ class Joueur {
 protected:
     string nom;
     vector<Piece*> pieces; // pieces du joueur
+    bool isIA;
 
 public:
-    Joueur(const std::string& nomJoueur) : nom(nomJoueur) {}
+    Joueur(const std::string& nomJoueur, bool IA=false) : nom(nomJoueur), isIA(IA) {}
     ~Joueur() {
         for (Piece* piece : pieces) {
             delete piece; // libère chaque pièce
@@ -29,6 +30,8 @@ public:
     string getNom() const { return nom; }
 
     void ajouterPiece(Piece* piece) { pieces.push_back(piece); } // ajoute une piece
+
+    bool getIaIA() { return isIA; }
 };
 
 
@@ -68,6 +71,7 @@ public:
     void annulerDernierMouvement(); // annule le dernier coup
 
     Plateau& getPlateau() { return plateau; } // accès au plateau
+
 };
 
 
@@ -76,7 +80,7 @@ private:
     int difficulte; // niveau de l'ia
 
 public:
-    IAJoueur(const std::string& nomJoueur, int niveauDifficulte):Joueur(nomJoueur), difficulte(niveauDifficulte) {}
+    IAJoueur(const std::string& nomJoueur, int niveauDifficulte):Joueur(nomJoueur, true), difficulte(niveauDifficulte) {}
 
     void prendreDecision(EtatDuJeu& etat);  // décide quoi jouer
 
