@@ -79,6 +79,12 @@ build CMakeFiles/LO21.dir/cases.cpp.obj: CXX_COMPILER__LO21_Debug C$:/Users/page
   OBJECT_DIR = CMakeFiles\LO21.dir
   OBJECT_FILE_DIR = CMakeFiles\LO21.dir
 
+build CMakeFiles/LO21.dir/legalmoves.cpp.obj: CXX_COMPILER__LO21_Debug C$:/Users/page/Documents/UTC/A24/LO21/Projet/LO21/legalmoves.cpp || cmake_object_order_depends_target_LO21
+  DEP_FILE = CMakeFiles\LO21.dir\legalmoves.cpp.obj.d
+  FLAGS = -g -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\LO21.dir
+  OBJECT_FILE_DIR = CMakeFiles\LO21.dir
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target LO21
@@ -87,7 +93,7 @@ build CMakeFiles/LO21.dir/cases.cpp.obj: CXX_COMPILER__LO21_Debug C$:/Users/page
 #############################################
 # Link the executable LO21.exe
 
-build LO21.exe: CXX_EXECUTABLE_LINKER__LO21_Debug CMakeFiles/LO21.dir/main.cpp.obj CMakeFiles/LO21.dir/pieces.cpp.obj CMakeFiles/LO21.dir/Joueur.cpp.obj CMakeFiles/LO21.dir/plateau.cpp.obj CMakeFiles/LO21.dir/cases.cpp.obj
+build LO21.exe: CXX_EXECUTABLE_LINKER__LO21_Debug CMakeFiles/LO21.dir/main.cpp.obj CMakeFiles/LO21.dir/pieces.cpp.obj CMakeFiles/LO21.dir/Joueur.cpp.obj CMakeFiles/LO21.dir/plateau.cpp.obj CMakeFiles/LO21.dir/cases.cpp.obj CMakeFiles/LO21.dir/legalmoves.cpp.obj
   FLAGS = -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\LO21.dir
