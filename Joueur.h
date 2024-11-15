@@ -19,13 +19,20 @@ protected:
 
 public:
     Joueur(const std::string& nomJoueur, bool IA=false) : nom(nomJoueur), isIA(IA) {}
+    Joueur(){}
+    Joueur(const Joueur& autre) : nom(autre.nom) {
+        for (Piece* piece : autre.pieces) {
+            pieces.push_back(new Piece(*piece)); // copie chaque pièce
+        }
+    }
+    Joueur& operator=(const Joueur& autre);
     ~Joueur() {
         for (Piece* piece : pieces) {
             delete piece; // libère chaque pièce
         }
     }
 
-    virtual void jouerCoup(); // joueur joue un coup
+    void jouerCoup(Piece* pieceChoisie, const Coords& destination, Plateau& plateau); // joueur joue un coup
 
     string getNom() const { return nom; }
 
