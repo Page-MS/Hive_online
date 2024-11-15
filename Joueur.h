@@ -8,6 +8,9 @@
 #include "plateau.h"
 #include "coords.h"
 #include "cases.h"
+#include <initializer_list>
+#include <array>
+#include <cstdlib>
 
 using namespace std;
 
