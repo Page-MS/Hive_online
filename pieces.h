@@ -9,6 +9,7 @@
 #include <initializer_list>
 #include <array>
 #include <cstdlib>
+#include "coords.h"
 using namespace std;
 enum TYPE_PIECE
 {
@@ -25,7 +26,7 @@ public:
     //Si les pièces sont crées avant d'être mises sur le plateau, elles sont alors toutes placées à un emplacement abérant
     Piece(TYPE_PIECE type,int x=-100, int y=-100): x_position(x), y_position(y), type_piece(type){}
     ~Piece()=default;
-    int** coupsPossibles();
+    Coords** coupsPossibles();
     TYPE_PIECE get_type(){return type_piece;}
 
 };
