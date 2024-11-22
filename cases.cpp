@@ -1,11 +1,12 @@
 #include "cases.h"
 
 // METHODES CASE
-bool Case::hasPiece(const Piece* p) const {
+bool Case::hasPiece(const Piece* p) const { //renvoie True si pièce est sur la case, False sinon
     bool has_piece = false;
     auto ite = begin();
     auto end_ite = end();
 
+    // parcourt toutes les pièces dans la case, s'arrête quand la pièce a été trouvée ou que l'on a atteint la fin
     while (ite!=end_ite && !has_piece) {
         ite++;
         has_piece = ite.getCurrent()==p;
@@ -13,17 +14,19 @@ bool Case::hasPiece(const Piece* p) const {
     return has_piece;
 }
 
-void Case::addPiece(const Piece* p) {
+void Case::addPiece(const Piece* p) { //erreur si pièce est déjà sur la case
     if (hasPiece(p)) throw "Pièce déjà sur cette case.";
     pieces.push_back(p);
 }
 
 void Case::supprPiece() { //supprime la pièce la plus haut placée
+    // erreur si aucune pièce à supprimer sur la case
     if (empty()) throw "Case non occupée.";
     pieces.pop_back();
 }
 
-void Case::clear() {
+void Case::clear() { //supprime toutes les pièces
+    // erreur si aucune pièce à supprimer sur la case
     if (empty()) throw "Case déjà vide.";
 
     for (unsigned int i=getNbPieces() ; i>0 ; i--) supprPiece();
@@ -31,6 +34,7 @@ void Case::clear() {
 
 // METHODES GRAPHE
 Graphe::~Graphe() {
+    // supprime toutes les cases
     auto ite = getIterator();
     auto end_ite_c = ite;
     end_ite_c.endColonne();
@@ -48,7 +52,8 @@ Graphe::~Graphe() {
 }
 
 
-Graphe::Iterator Graphe::findCasePlace(double c, double l) const {
+Graphe::Iterator Graphe::findCasePlace(double c, double l) const { //renvoie itérateur pointant vers l'emplacement de la case (existante ou non)
+    // pointe directement sur la case si elle existe, sur une autre ou la fin d'une ligne/colonne sinon
     auto ite = getIterator();
     auto end_ite = getIterator(); end_ite.endColonne();
 
@@ -64,7 +69,7 @@ Graphe::Iterator Graphe::findCasePlace(double c, double l) const {
 }
 
 
-Case* Graphe::getMutableCase(double c, double l) const {
+Case* Graphe::getMutableCase(double c, double l) const { //renvoie pointeur nul si case n'existe pas
     if (nb_cases==0 || c>max_x || c<min_x || l>max_y || l<min_x) return nullptr;
 
     auto ite = getIterator();
@@ -89,15 +94,19 @@ Case* Graphe::getMutableCase(const Coords& c) const {
     return getMutableCase(c.getX(), c.getY());
 }
 
-const Case& Graphe::getCase(double c, double l) const {
-    return *getMutableCase(c, l);
+const Case& Graphe::getCase(double c, double l) const { //erreur si case pas dans graphe
+    Case* pt = getMutableCase(c, l);
+    if (pt==nullptr) throw "Case n'existe pas.";
+    return *pt;
 }
 
 const Case& Graphe::getCase(const Coords& c) const {
-    return *getMutableCase(c);
+    Case* pt = getMutableCase(c);
+    if (pt==nullptr) throw "Case n'existe pas.";
+    return *pt;
 }
 
-const Coords Graphe::coordsAdjacent(const Coords& c, unsigned int side) const {
+const Coords Graphe::coordsAdjacent(const Coords& c, unsigned int side) const { //renvoie coordonnées de case adjacente (même si adjacente inexistante)
     if (side == 0) return coordsNorth(c);
     if (side == 1) return coordsNorthEast(c);
     if (side == 2) return coordsSouthEast(c);
@@ -108,7 +117,7 @@ const Coords Graphe::coordsAdjacent(const Coords& c, unsigned int side) const {
 }
 
 
-void Graphe::addPiece(const Piece& p, const Coords& c) {
+void Graphe::addPiece(const Piece& p, const Coords& c) { //erreur si case inexistante ou contient déjà la pièce
     Case* ca = getMutableCase(c);
 
     if (ca==nullptr) throw "Case non inexistante.";
@@ -117,7 +126,7 @@ void Graphe::addPiece(const Piece& p, const Coords& c) {
     ca->addPiece(&p);
 }
 
-void Graphe::addCase(const Coords& c) {
+void Graphe::addCase(const Coords& c) { //erreur si case existe déjà
     auto ite = findCasePlace(c);
     auto end_ite = ite;
     end_ite.endColonne();
@@ -177,7 +186,7 @@ void Graphe::addCase(const Coords& c) {
 
 
 // iterator
-void Graphe::Iterator::goToColonne(double c) {
+void Graphe::Iterator::goToColonne(double c) { //coordonnées "réelles", erreur si colonne n'existe pas
     auto end_ite = *this;
     end_ite.endColonne();
 
@@ -187,7 +196,7 @@ void Graphe::Iterator::goToColonne(double c) {
     if (*this==end_ite || getCurrent().getColonne()>c) throw "Colonne non occupée.";
 }
 
-void Graphe::Iterator::goToLigne(double l) {
+void Graphe::Iterator::goToLigne(double l) { //coordonnées "réelles", erreur si ligne n'existe pas dans colonne actuelle
     auto end_ite = *this;
     end_ite.goToVectorColonne(getVectorColonne());
     end_ite.endLigne();
@@ -199,7 +208,7 @@ void Graphe::Iterator::goToLigne(double l) {
 }
 
 
-void Graphe::Iterator::goToCoords(double c, double l) {
+void Graphe::Iterator::goToCoords(double c, double l) { //coordonnées "réelles", erreur si n'existent pas
     goToColonne(c);
     goToLigne(l);
 }
