@@ -18,6 +18,7 @@ Scarabee,Abeille,Fourmi,Sauterelle, Araignee, Moustique, Coccinelle
 class Piece {
     int x_position;
     int y_position;
+    bool camp;
     TYPE_PIECE type_piece;
     friend class Mouvement;
     friend class Case;

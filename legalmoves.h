@@ -9,7 +9,7 @@
 class LegalMoveInterface{
 public:
     virtual ~LegalMoveInterface()=default;
-    virtual Coords** searchMoves(int x, int y) const = 0;
+    virtual Coords** searchMoves(int x, int y, bool camp) const = 0;
 };
 
 class LegalMoveContext{
@@ -27,49 +27,49 @@ public:
         LegalMoveContext instance;
         return instance;
     }
-    Coords** searchLegalMoves(TYPE_PIECE typePiece,int x, int y);
+    Coords** searchLegalMoves(TYPE_PIECE typePiece,int x, int y, bool camp);
     void changeStrategy(TYPE_PIECE typePiece);
 
 };
 
 
 class LegalMoveMoustique : public LegalMoveInterface{
-    Coords** searchMoves(int x, int y) const override{
+    Coords** searchMoves(int x, int y, bool camp) const override{
         return 0;
     }
 };
 
 class LegalMoveFourmi : public LegalMoveInterface{
-    Coords** searchMoves(int x, int y) const override{
+    Coords** searchMoves(int x, int y, bool camp) const override{
         return 0;
     }
 };
 
 class LegalMoveScarabee : public LegalMoveInterface{
-    Coords** searchMoves(int x, int y) const override{
+    Coords** searchMoves(int x, int y, bool camp) const override{
         return 0;
     }
 };
 
 class LegalMoveCoccinelle : public LegalMoveInterface{
-    Coords** searchMoves(int x, int y) const override{
+    Coords** searchMoves(int x, int y, bool camp) const override{
         return 0;
     }
 };
 
 class LegalMoveAbeille : public LegalMoveInterface{
-    Coords** searchMoves(int x, int y) const override{
+    Coords** searchMoves(int x, int y, bool camp) const override{
         return 0;
     }
 };
 class LegalMoveSauterelle : public LegalMoveInterface{
-    Coords** searchMoves(int x, int y) const override{
+    Coords** searchMoves(int x, int y, bool camp) const override{
         return 0;
     }
 };
 
 class LegalMoveAraignee : public LegalMoveInterface{
-    Coords** searchMoves(int x, int y) const override{
+    Coords** searchMoves(int x, int y, bool camp) const override{
         return 0;
     }
 };
