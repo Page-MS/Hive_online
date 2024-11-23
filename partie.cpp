@@ -1,4 +1,4 @@
-#include "partie.hpp" AAAAAAAAAAAAAAA
+#include "partie.hpp" AAAAA
 
 MementoPartie::MementoPartie(int num_tour, const Plateau& p, const Joueur& j1, const Joueur& j2, const Joueur& jc){
     numero_tour = num_tour;
