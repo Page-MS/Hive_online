@@ -9,63 +9,27 @@
 #include <initializer_list>
 #include <array>
 #include <cstdlib>
+#include "coords.h"
 using namespace std;
+enum TYPE_PIECE
+{
+Scarabee,Abeille,Fourmi,Sauterelle, Araignee, Moustique, Coccinelle
+};
 class Piece {
     int x_position;
     int y_position;
+    bool camp;
+    TYPE_PIECE type_piece;
     friend class Mouvement;
     friend class Case;
     friend class GameManager;
 public:
-    //le destructeur est virtuel pour permettre la mise en place de classes concrètes
-    virtual ~Piece()=default;
-    virtual int** coupsPossibles() = 0;
-    //le pointeur unique permet d'éviter les problèmes de mémoire
-    static Piece* createPiece(int choice);
+    //Si les pièces sont crées avant d'être mises sur le plateau, elles sont alors toutes placées à un emplacement abérant
+    Piece(TYPE_PIECE type,int x=-100, int y=-100): x_position(x), y_position(y), type_piece(type){}
+    ~Piece()=default;
+    Coords** coupsPossibles();
+    TYPE_PIECE get_type(){return type_piece;}
 
 };
-
-class Abeille : public Piece{
-public :
-    int** coupsPossibles() override;
-
-};
-
-class Fourmi : public Piece{
-public :
-    int** coupsPossibles() override;
-
-};
-
-class Scarabee : public Piece{
-public :
-    int** coupsPossibles() override;
-
-};
-
-class Sauterelle : public Piece{
-public :
-    int** coupsPossibles() override;
-
-};
-
-class Araignee : public Piece{
-public :
-    int** coupsPossibles() override;
-
-};
-
-class Moustique : public Piece{
-public :
-    int** coupsPossibles() override;
-
-};
-
-class Coccinelle : public Piece{
-public :
-    int** coupsPossibles() override;
-
-};
-
 
 #endif //LO21_PIECES_H
