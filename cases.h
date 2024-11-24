@@ -3,6 +3,8 @@
 #include "coords.h"
 #include "pieces.h"
 #include <vector>
+#include <iostream>
+#include <string>
 
 // CASES
 class Case {
@@ -23,7 +25,7 @@ class Case {
         public:
             // recopie
             Iterator(const Iterator& ite)=default;
-            Iterator operator=(const Iterator& ite) { current=ite.current; }
+            Iterator operator=(const Iterator& ite) { current=ite.current; return ite; }
 
             // renvoyer pièce actuelle
             const Piece* getCurrent() const { return vect.at(current); }
@@ -42,6 +44,9 @@ class Case {
     };
 
     private:
+        // longueur de nom de case lors de l'affichage console
+        static const size_t name_length = 2;
+
         // attributs (coordonnées de la case et liste de pièces)
         Coords coords;
         std::vector<const Piece*> pieces;
@@ -55,7 +60,7 @@ class Case {
         Case operator=(const Case& c)=delete;
 
         // modifier emplacement case (pour recentrage du graphe)
-        virtual void setCoords(double ligne, double colonne) { coords.changeXY(colonne, ligne); }
+        virtual void setCoords(double ligne, double colonne) { coords= Coords(colonne, ligne); }
         virtual void setCoords(const Coords& c) { coords=c; }
 
         // ajouter pièce sur le dessus, supprimer pièce du dessus ou tout supprimer
@@ -64,6 +69,11 @@ class Case {
         void clear();
 
     public:
+        // longueur du nom de case lors de l'affichage console
+        static size_t getNameLength() { return name_length; }
+        // affichage en string de la case
+        std::string showCase() const;
+
         // getters
         virtual const Coords& getCoords() const { return coords; }
         double getLigne() const { return coords.getY(); }
@@ -74,6 +84,8 @@ class Case {
         bool empty() const { return (getNbPieces()==0); }
         // vrai si pièce est placée sur la case
         bool hasPiece(const Piece* p) const;
+        // renvoie la pièce sur le dessus de la pile
+        const Piece& getUpperPiece() const;
 
         // itérateur
         Iterator begin() const { return Iterator(pieces); }
@@ -109,7 +121,7 @@ class Graphe {
             public:
                 // recopie et destructeur
                 Iterator(const Iterator& ite)=default;
-                Iterator operator=(const Iterator& ite) { colonne=ite.colonne ; ligne=ite.ligne; }
+                Iterator operator=(const Iterator& ite) { colonne=ite.colonne; ligne=ite.ligne; return ite; }
                 ~Iterator()=default;
 
                 // renvoie case actuelle non modifiable
@@ -117,6 +129,10 @@ class Graphe {
                 // renvoie emplacement de l'itérateur dans la ruche (coordonnées "réelles" des cases)
                 double getCurrentColonne() const { return vect.at(colonne).at(0)->getColonne(); }
                 double getCurrentLigne() const { return vect.at(colonne).at(ligne)->getLigne(); }
+
+                // renvoie si itérateurs au même endroit
+                bool onSameColonne(const Iterator& ite) const { return colonne==ite.colonne; }
+                bool onSameLigne(const Iterator& ite) const { return ligne==ite.ligne; }
                 
                 // début/fin, avant/arrière, et vers colonne précise (selon coordonnées "réelles" dans la ruche)
                 void firstColonne() { colonne=0; }
@@ -151,21 +167,33 @@ class Graphe {
         Graphe(const Graphe& g)=delete;
         Graphe operator=(const Graphe& g)=delete;
 
+        // met les attributs min, max et nb_cases à jour après la création d'une nouvelle case
+        void updateAttributes(const Coords& c);
+
         // renvoie une case modifiable
         Case* getMutableCase(double c, double l) const;
         Case* getMutableCase(const Coords& c) const;
 
         // ajoute case dans la ruche
         void addCase(const Coords& c);
+        void addCase(double c, double l) { addCase(Coords(c, l)); }
 
     public:
         // constructeur/destructeur
-        Graphe() : nb_cases(0), max_x(0), min_x(0), max_y(0), min_y(0) {}
+        Graphe() : nb_cases(0), max_x(0), min_x(0), max_y(0), min_y(0) { addCase(0, 0); }
         virtual ~Graphe();
 
         // getters
+        double getMaxX() const { return max_x; }
+        double getMinX() const { return min_x; }
+        double getMaxY() const { return max_y; }
+        double getMinY() const { return min_y; }
         unsigned int getNbCases() const { return nb_cases; }
-        virtual bool estVide() const { return (getNbCases()==0); }
+        virtual bool empty() const { return (getNbCases()==0); }
+
+        // renvoie si graphe contient case
+        bool hasCase(double c, double l) const { return (getMutableCase(c, l)!=nullptr); }
+        bool hasCase(const Coords& c) const { return (getMutableCase(c)!=nullptr); }
 
         // itérateur
         Iterator getIterator() const { Iterator ite = Iterator(cases); return ite; }
@@ -191,5 +219,20 @@ class Graphe {
         // ajoute pièce dans une case de la ruche
         void addPiece(const Piece& p, const Coords& c);
 };
+
+// AFFICHAGE
+// renvoie la frontière nord ou sud d'une case
+std::string caseBorder();
+// renvoie un espace vide de la taille d'une case
+std::string caseVoid();
+// renvoie un espace vide de la taille d'une frontière
+std::string caseBorderVoid();
+
+// renvoie si les coordonnées sont correctes pour une case
+bool isCaseCoords(int c, int l) { return ( (c%2==0 && l%2==0) || (c%2!=0 && l%2!=0) ); }
+bool isCaseCoords(const Coords& c) { return isCaseCoords(c.getX(), c.getY()); }
+
+std::ostream& operator<<(std::ostream& flux, const Case& c);
+std::ostream& operator<<(std::ostream& flux, const Graphe& g);
 
 #endif
