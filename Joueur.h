@@ -67,10 +67,14 @@ class EtatDuJeu {
 private:
     Plateau plateau;               // plateau avec les pièces
     vector<Mouvement> historique;  // liste des coups
-    vector<Joueur> joueurs;        // liste des joueurs
+    Joueur joueurs[2];              // liste des joueurs
+    int numero_tour;
+    Joueur* joueur_courant;
 
 public:
-    EtatDuJeu(const std::vector<Joueur>& joueurs):joueurs(joueurs) {}
+    EtatDuJeu(int num_tour, const Plateau& p,  const Joueur& j1, const Joueur& j2, const Joueur& jc);
+    EtatDuJeu();
+    EtatDuJeu& operator=(const EtatDuJeu& jeu);
 
     vector<Mouvement> coupPossibles(Joueur& j);  // coups possibles
 
@@ -82,6 +86,18 @@ public:
 
     Plateau& getPlateau() { return plateau; } // accès au plateau
 
+};
+
+class MementoPartie{
+    int numero_tour;
+    Plateau plateau;
+    Joueur joueurs[2];
+    Joueur* joueur_courant;
+public:
+    friend class Partie;//evite de faire des getters, a voir si c'est judicieux
+    MementoPartie(int num_tour, const Plateau& p, const Joueur& joueur1, const Joueur& joueur2, const Joueur& joueur_courant);
+    MementoPartie();
+    MementoPartie& operator=(const MementoPartie& memento);
 };
 
 
