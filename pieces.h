@@ -13,7 +13,7 @@
 using namespace std;
 enum TYPE_PIECE
 {
-Scarabee,Abeille,Fourmi,Sauterelle, Araignee, Moustique, Coccinelle
+Scarabee,Abeille,Fourmi,Sauterelle,Araignee,Moustique,Coccinelle
 };
 class Piece {
     int x_position;
@@ -28,7 +28,8 @@ public:
     Piece(TYPE_PIECE type,int x=-100, int y=-100): x_position(x), y_position(y), type_piece(type){}
     ~Piece()=default;
     Coords** coupsPossibles();
-    TYPE_PIECE get_type(){return type_piece;}
+    TYPE_PIECE getType() const {return type_piece;}
+
 
 };
 
