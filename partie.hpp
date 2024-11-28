@@ -2,8 +2,8 @@
 #define PARTIE_HPP
 
 #include <iostream>
-#include "plateau.hpp"
-#include "joueur.hpp"
+#include "plateau.h"
+#include "Joueur.h"
 
 using namespace std;
 
@@ -51,10 +51,6 @@ public:
     ~Partie();
 };
 
-class GameManager{
-    Partie partie_active;
-    MementoPartie** sauvegardes;
-    static GameManager* instance;
-};
+
 
 #endif
