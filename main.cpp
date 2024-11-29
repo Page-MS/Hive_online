@@ -1,5 +1,6 @@
 
-#include "Pieces.h"
+#include "pieces.h"
+
 int main() {
     std::cout << "Hello, World!" << std::endl;
     return 0;
