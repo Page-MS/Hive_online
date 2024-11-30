@@ -1,60 +1,10 @@
-#include "partie.hpp" 
-
-MementoPartie::MementoPartie(int num_tour, const Plateau& p, const Joueur& j1, const Joueur& j2, const Joueur& jc){
-    numero_tour = num_tour;
-    plateau = p; //nécessite un constructeur de recopie de Plateau
-    joueurs[0] = j1; //constructeur de recopie de Joueur
-    joueurs[1] = j2;
-    joueur_courant = nullptr;
-
-    if(&jc == &j1) {
-        joueur_courant = &joueurs[0]; 
-    }else if(&jc == &j2) {
-        joueur_courant = &joueurs[1]; 
-    }else{
-        joueur_courant = nullptr; // Au cas où `joueurCourant` est nul dans `partie`
-    }
-}
-
-MementoPartie::MementoPartie(){
-    numero_tour = 0;
-    plateau = Plateau();
-    joueurs[0] = Joueur(); //constructeur de recopie de Joueur
-    joueurs[1] = Joueur();
-    joueur_courant = nullptr;
-}
-
-
-MementoPartie& MementoPartie::operator=(const MementoPartie& memento){
-    if(this != &memento){
-        numero_tour = memento.numero_tour;
-        plateau = memento.plateau; //nécessite un constructeur de recopie de Plateau
-        joueurs[0] = memento.joueurs[0]; //constructeur de recopie de Joueur
-        joueurs[1] = memento.joueurs[1];
-        if(memento.joueur_courant == &memento.joueurs[0]) {
-            joueur_courant = &joueurs[0]; 
-        }else if(memento.joueur_courant == &memento.joueurs[1]) {
-            joueur_courant = &joueurs[1]; 
-        }else{
-            joueur_courant = nullptr; // Au cas où `joueurCourant` est nul dans le memento que l'on recopie
-        }
-    }
-    return *this;
-}
-
+#include "partie.hpp"
 
 Partie::Partie(){
-    tourActuel = 0;
-    etat_precedent = MementoPartie();
-    plateau = Plateau();
-    joueurs[0] = nullptr;
-    joueurs[1] = nullptr;
-    joueur_courant = nullptr;
-}
-
-Partie::~Partie(){
-    delete joueurs[0];
-    delete joueurs[1];
+    nb_retour_arriere = 0;
+    etat_precedent = EtatDuJeu();
+    etat_actuel = EtatDuJeu();
+    start_joueur_id = 0;
 }
 
 void Partie::setStartJoueurId(){
@@ -104,10 +54,6 @@ void Partie::restaurerEtat(const MementoPartie& etat){
     }
 }
 
-void Partie::annulerCoup(){
-    restaurerEtat(etat_precedent); //annuler un coup revient à restaurer l'état précédent
-}
-
 void Partie::lancerProchainTour(){
     etat_precedent = MementoPartie(this->tourActuel, this->plateau,*this->joueurs[0], *this->joueurs[1], *this->joueur_courant); //on sauvegarde l'état actuel avant de lancer le tour suivant
     tourActuel++;
@@ -126,4 +72,54 @@ void Partie::lancerProchainTour(){
             }
         }
     //faire le tour 
+}
+
+Partie& operator=(const Partie& partie);
+
+
+Partie(const Partie& partie);
+
+
+// à replacer dans Joueur.cpp
+
+MementoPartie::MementoPartie(int num_tour, const Plateau& p, const Joueur& j1, const Joueur& j2, const Joueur& jc){
+    numero_tour = num_tour;
+    plateau = p; //nécessite un constructeur de recopie de Plateau
+    joueurs[0] = j1; //constructeur de recopie de Joueur
+    joueurs[1] = j2;
+    joueur_courant = nullptr;
+
+    if(&jc == &j1) {
+        joueur_courant = &joueurs[0];
+    }else if(&jc == &j2) {
+        joueur_courant = &joueurs[1];
+    }else{
+        joueur_courant = nullptr; // Au cas où `joueurCourant` est nul dans `partie`
+    }
+}
+
+MementoPartie::MementoPartie(){
+    numero_tour = 0;
+    plateau = Plateau();
+    joueurs[0] = Joueur(); //constructeur de recopie de Joueur
+    joueurs[1] = Joueur();
+    joueur_courant = nullptr;
+}
+
+
+MementoPartie& MementoPartie::operator=(const MementoPartie& memento){
+    if(this != &memento){
+        numero_tour = memento.numero_tour;
+        plateau = memento.plateau; //nécessite un constructeur de recopie de Plateau
+        joueurs[0] = memento.joueurs[0]; //constructeur de recopie de Joueur
+        joueurs[1] = memento.joueurs[1];
+        if(memento.joueur_courant == &memento.joueurs[0]) {
+            joueur_courant = &joueurs[0];
+        }else if(memento.joueur_courant == &memento.joueurs[1]) {
+            joueur_courant = &joueurs[1];
+        }else{
+            joueur_courant = nullptr; // Au cas où `joueurCourant` est nul dans le memento que l'on recopie
+        }
+    }
+    return *this;
 }

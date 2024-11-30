@@ -19,13 +19,12 @@ class Partie{
         Partie(const Partie& partie);
     public:
         Partie();
-        ~Partie();
         void setStartJoueurId();//méthode qui détermine qui commence la partie
         void commencerPartie(string pseudo1, string pseudo2);
         void lancerProchainTour();
         void sauvegarderEtat();
         void terminerPartie();
-        void restaurerEtat(const MementoPartie &etat);
+        void restaurerEtat(const EtatDuJeu &etat);
 };
 
 class GameManager{

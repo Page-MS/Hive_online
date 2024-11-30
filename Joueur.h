@@ -41,7 +41,7 @@ public:
 
     void ajouterPiece(Piece* piece) { pieces.push_back(piece); } // ajoute une piece
 
-    bool getIaIA() { return isIA; }
+    bool getIsIA() { return isIA; }
 };
 
 
