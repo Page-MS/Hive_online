@@ -16,11 +16,11 @@ class Case {
         friend class Case;
 
         // attributs
-        const std::vector<const Piece*>& vect;
+        const std::vector<const Piece*>* vect;
         unsigned int current;
 
         // constructeur/destructeur privés (recopie possible)
-        Iterator(const std::vector<const Piece*>& v, unsigned int n=0) : vect(v), current(n) {}
+        Iterator(const std::vector<const Piece*>& v, unsigned int n=0) : vect(&v), current(n) {}
         ~Iterator()=default;
 
         public:
@@ -29,14 +29,14 @@ class Case {
             Iterator operator=(const Iterator& ite) { current=ite.current; return ite; }
 
             // renvoyer pièce actuelle
-            const Piece* getCurrent() const { return vect.at(current); }
+            const Piece* getCurrent() const { return vect->at(current); }
             // renvoyer niveau dans la pile (0 tout en bas)
             unsigned int getNiveau() const { return current; }
 
             // remonter/descendre dans la pile
             void next() { (*this)++; }
             void prev() { (*this)--; }
-            bool atEnd() const { return current==vect.size(); }
+            bool atEnd() const { return current==vect->size(); }
 
             // opérateurs
             Iterator operator++(int) { current++; return *this; }
@@ -171,7 +171,7 @@ class Graphe {
         std::vector<std::vector<Case*>> cases;
 
         // recopie interdite
-        Graphe(const Graphe& g)=delete;
+        Graphe(const Graphe& g);
         Graphe operator=(const Graphe& g)=delete;
 
         // met les attributs min, max et nb_cases à jour après la création d'une nouvelle case
