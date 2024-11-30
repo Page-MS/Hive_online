@@ -5,6 +5,7 @@
 #include <vector>
 #include <iostream>
 #include <string>
+#include <iomanip>
 
 // CASES
 class Case {
@@ -35,12 +36,14 @@ class Case {
             // remonter/descendre dans la pile
             void next() { (*this)++; }
             void prev() { (*this)--; }
+            bool atEnd() const { return current==vect.size(); }
 
             // opérateurs
             Iterator operator++(int) { current++; return *this; }
             Iterator operator--(int) { current--; return *this; }
             bool operator==(const Iterator& ite) const { return ite.getNiveau()==getNiveau(); }
             bool operator!=(const Iterator& ite) const { return ite.getNiveau()!=getNiveau(); }
+            const Piece& operator*() const { return *getCurrent(); }
     };
 
     private:
@@ -64,7 +67,7 @@ class Case {
         virtual void setCoords(const Coords& c) { coords=c; }
 
         // ajouter pièce sur le dessus, supprimer pièce du dessus ou tout supprimer
-        void addPiece(const Piece* p);
+        void addPiece(const Piece& p);
         void supprPiece();
         void clear();
 
@@ -83,9 +86,11 @@ class Case {
         // vrai si aucune pièce sur la case
         bool empty() const { return (getNbPieces()==0); }
         // vrai si pièce est placée sur la case
-        bool hasPiece(const Piece* p) const;
+        bool hasPiece(const Piece& p) const;
         // renvoie la pièce sur le dessus de la pile
         const Piece& getUpperPiece() const;
+        // renvoie si la pièce est bloquée
+        bool isPieceStuck(const Piece& p) const;
 
         // itérateur
         Iterator begin() const { return Iterator(pieces); }
@@ -140,6 +145,7 @@ class Graphe {
                 void nextColonne() { colonne++; }
                 void prevColonne() { colonne--; }
                 void goToColonne(double c);
+                bool atEndColonne() const {return colonne == vect.size(); }
 
                 // début/fin, avant/arrière, et vers ligne précise (besoin d'être déjà sur la colonne désirée)
                 void firstLigne() { ligne=0; }
@@ -147,6 +153,7 @@ class Graphe {
                 void nextLigne() { ligne++; }
                 void prevLigne() { ligne--; }
                 void goToLigne(double l);
+                bool atEndLigne() const {return ligne == vect.at(colonne).size(); }
 
                 // déplacement vers case précise dans la ruche (erreur si n'existe pas)
                 void goToCoords(double c, double l);
@@ -173,10 +180,15 @@ class Graphe {
         // renvoie une case modifiable
         Case* getMutableCase(double c, double l) const;
         Case* getMutableCase(const Coords& c) const;
+        Case& getExistentCase(const Coords& c) const;
 
         // ajoute case dans la ruche
         void addCase(const Coords& c);
         void addCase(double c, double l) { addCase(Coords(c, l)); }
+        void supprCase(const Coords& c);
+        void supprPiece(Case& c);
+
+        const Coords* coordsPiecePointer(const Piece& p) const;
 
     public:
         // constructeur/destructeur
@@ -194,6 +206,12 @@ class Graphe {
         // renvoie si graphe contient case
         bool hasCase(double c, double l) const { return (getMutableCase(c, l)!=nullptr); }
         bool hasCase(const Coords& c) const { return (getMutableCase(c)!=nullptr); }
+
+        // renvoie si graphe contient pièce, et coordonnées pièce
+        bool hasPiece(const Piece& p) const { return coordsPiecePointer(p)!=nullptr; };
+        const Coords& coordsPiece(const Piece& p) const;
+        bool isPieceStuck(const Piece& p) const;
+        bool isIsland(const Coords& c) const;
 
         // itérateur
         Iterator getIterator() const { Iterator ite = Iterator(cases); return ite; }
@@ -216,8 +234,10 @@ class Graphe {
         Iterator findCasePlace(double c, double l) const;
         Iterator findCasePlace(const Coords& c) const { return findCasePlace(c.getX(), c.getY()); }
 
-        // ajoute pièce dans une case de la ruche
+        // ajoute/supprime/déplace pièce dans une case de la ruche
         void addPiece(const Piece& p, const Coords& c);
+        void supprPiece(const Coords& c);
+        void movePiece(const Piece& p, const Coords& c);
 };
 
 // AFFICHAGE
@@ -229,8 +249,8 @@ std::string caseVoid();
 std::string caseBorderVoid();
 
 // renvoie si les coordonnées sont correctes pour une case
-bool isCaseCoords(int c, int l) { return ( (c%2==0 && l%2==0) || (c%2!=0 && l%2!=0) ); }
-bool isCaseCoords(const Coords& c) { return isCaseCoords(c.getX(), c.getY()); }
+inline bool isCaseCoords(int c, int l) { return ( (c%2==0 && l%2==0) || (c%2!=0 && l%2!=0) ); }
+inline bool isCaseCoords(const Coords& c) { return isCaseCoords(c.getX(), c.getY()); }
 
 std::ostream& operator<<(std::ostream& flux, const Case& c);
 std::ostream& operator<<(std::ostream& flux, const Graphe& g);

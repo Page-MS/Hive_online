@@ -1,3 +1,0 @@
-C:/Users/page/Documents/UTC/A24/LO21/Projet/LO21/cmake-build-debug/CMakeFiles/LO21.dir
-C:/Users/page/Documents/UTC/A24/LO21/Projet/LO21/cmake-build-debug/CMakeFiles/edit_cache.dir
-C:/Users/page/Documents/UTC/A24/LO21/Projet/LO21/cmake-build-debug/CMakeFiles/rebuild_cache.dir

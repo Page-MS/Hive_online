@@ -29,7 +29,6 @@ public:
     ~Piece()=default;
     Coords** coupsPossibles();
     TYPE_PIECE getType() const {return type_piece;}
-
 };
 
 #endif //LO21_PIECES_H

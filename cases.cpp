@@ -2,11 +2,15 @@
 
 // AFFICHAGE
 std::ostream& operator<<(std::ostream& flux, const Case& c) {
+    /* Affichage d'une case, peut être ajouté au cout<< */
+
     flux<<c.showCase();
     return flux;
 }
 
 std::ostream& operator<<(std::ostream& flux, const Graphe& g) {
+    /* Affichage du graphe, peut être ajouté au cout<< */
+
     flux<<"Graphe :"<<std::endl;
 
     // variables
@@ -74,6 +78,8 @@ std::ostream& operator<<(std::ostream& flux, const Graphe& g) {
     return flux;
 }
 
+/*! \brief Pour affichage du graphe, renvoie un string de frontière de case (plusieurs tirets côte à côte).
+*/
 std::string caseBorder() {
     string str;
     for (auto i=0 ; i < 2 + Case::getNameLength() ; i++)
@@ -81,13 +87,17 @@ std::string caseBorder() {
     return str;
 }
 
+/*! \brief Pour affichage du graphe, renvoie un vide (plusieurs espaces côte à côte).
+*/
 std::string caseVoid() {
     string str;
-    for (auto i=0 ; i < 4 + Case::getNameLength() ; i++)
+    for (auto i=0 ; i < 3 + Case::getNameLength() ; i++)
         str = str + " ";
     return str;
 }
 
+/*! \brief Pour affichage du graphe, renvoie un espace (symbolise qu'il n'y a pas de case directement à gauche).
+*/
 std::string caseBorderVoid() {
     string str;
     for (auto i=0 ; i < 2 + Case::getNameLength() ; i++)
@@ -96,9 +106,11 @@ std::string caseBorderVoid() {
 }
 
 // METHODES CASE
+/*! \brief Pour affichage d'une case, mais renvoie uniquement le string à utiliser.
+*/
 std::string Case::showCase() const {
     string str;
-    if (empty()) str="XX";
+    if (empty()) str="xx";
     else {
         TYPE_PIECE p = getUpperPiece().getType();
         
@@ -132,30 +144,41 @@ std::string Case::showCase() const {
     return str;
 }
 
-bool Case::hasPiece(const Piece* p) const { //renvoie True si pièce est sur la case, False sinon
+/*! \brief Permet de savoir si une pièce est contenue dans la case impliquée, pour supprimer la pièce ou récupérer ses coordonnées.
+*/
+bool Case::hasPiece(const Piece& p) const { //renvoie True si pièce est sur la case, False sinon
     bool has_piece = false;
     auto ite = begin();
-    auto end_ite = end();
 
     // parcourt toutes les pièces dans la case, s'arrête quand la pièce a été trouvée ou que l'on a atteint la fin
-    while (ite!=end_ite && !has_piece) {
+    while (!ite.atEnd() && !has_piece) {
+        has_piece = *ite==p;
         ite++;
-        has_piece = ite.getCurrent()==p;
     }
+    
     return has_piece;
 }
 
-void Case::addPiece(const Piece* p) { //erreur si pièce est déjà sur la case
+/*! \brief [PRIVÉ] Pour ajouter une pièce sur une case, tout en haut de la pile (erreur si pièce déjà sur la case).
+    Utiliser Case::hasPiece pour savoir si pièce sur la case.
+*/
+void Case::addPiece(const Piece& p) { //erreur si pièce est déjà sur la case
     if (hasPiece(p)) throw exception("ERROR Case::addPiece : Pièce déjà sur cette case.");
-    pieces.push_back(p);
+    pieces.push_back(&p);
 }
 
+/*! \brief [PRIVÉ] Pour supprimer la pièce en haut de la pile de pièces de la case (erreur si case vide).
+    Utiliser Case::empty pour savoir si case vide.
+*/
 void Case::supprPiece() { //supprime la pièce la plus haut placée
     // erreur si aucune pièce à supprimer sur la case
     if (empty()) throw exception("ERROR Case::supprPiece : Case non occupée.");
     pieces.pop_back();
 }
 
+/*! \brief [PRIVÉ] Pour supprimer toutes les pièces présentes sur la case (erreur si case vide).
+    Utiliser Case::empty pour savoir si case vide.
+*/
 void Case::clear() { //supprime toutes les pièces
     // erreur si aucune pièce à supprimer sur la case
     if (empty()) throw exception("ERROR Case::clear : Case déjà vide.");
@@ -163,92 +186,114 @@ void Case::clear() { //supprime toutes les pièces
     for (unsigned int i=getNbPieces() ; i>0 ; i--) supprPiece();
 }
 
+/*! \brief Pour récupérer la pièce située tout en haut de la pile de pièces (erreur si case vide).
+    Utiliser Case::empty pour savoir si case vide.
+*/
 const Piece& Case::getUpperPiece() const { //erreur si pas de pièce sur la case
     if (empty()) throw exception("ERROR Case::getUpperPiece : Case vide, aucune pièce à récupérer");
     auto ite = end()--;
 
-    return *(ite.getCurrent());
+    return *ite;
 };
+
+/*! \brief Pour savoir si une pièce peut effectuer une action depuis cette case (pièce coincée si pas sur cette case).
+*/
+bool Case::isPieceStuck(const Piece& p) const {
+    return (empty() || getUpperPiece()!=p);
+}
 
 // METHODES GRAPHE
 Graphe::~Graphe() {
     // supprime toutes les cases
     auto ite = getIterator();
-    auto end_ite_c = ite;
-    end_ite_c.endColonne();
-    auto end_ite_l = ite;
 
-    while (ite.getVectorColonne()!=end_ite_c.getVectorColonne()) {
-        end_ite_l.endLigne();
-        while (ite.getVectorColonne()!=end_ite_c.getVectorColonne()) {
+    while (!ite.atEndColonne()) {
+        while (!ite.atEndLigne()) {
             delete ite.getMutableCurrent();
             ite.nextLigne();
         }
-        end_ite_l.nextColonne();
+        ite.firstLigne();
         ite.nextColonne();
     }
 }
 
-
-Graphe::Iterator Graphe::findCasePlace(double c, double l) const { //renvoie itérateur pointant vers l'emplacement de la case (existante ou non)
-    // pointe directement sur la case si elle existe, sur une autre ou la fin d'une ligne/colonne sinon
-    auto ite = getIterator();
-    auto end_ite = getIterator(); end_ite.endColonne();
-
-    while (ite!=end_ite && ite.getCurrent().getColonne()<c) ite.nextColonne();
-
-    //si colonne déjà occupée
-    if (ite.getVectorColonne()!=end_ite.getVectorColonne() && ite.getCurrent().getColonne()==c) {
-        end_ite=ite;
-        end_ite.endLigne();
-        while (ite!=end_ite && ite.getCurrent().getLigne()<l) ite.nextLigne();
-    }
-    
-    return ite;
-}
-
-
+// getters case
+/*! \brief [PRIVÉ] Pour récupérer une case modifiable en fonction de ses coordonnées.
+*/
 Case* Graphe::getMutableCase(double c, double l) const { //renvoie pointeur nul si case n'existe pas
     // renvoie pointeur nul si graphe vide, ou coordonnées hors des extrêmes du graphe
     if (nb_cases==0 || c>max_x || c<min_x || l>max_y || l<min_y) return nullptr;
 
-    //création des itérateurs
+    //création de l'itérateur
     auto ite = getIterator();
-    auto end_ite = getIterator() ;
-    end_ite.endColonne();
 
     // parcourt les colonnes jusqu'à arriver à la fin ou trouver celle qui contient peut-être la case
-    while (!ite.onSameColonne(end_ite) && ite.getCurrent().getColonne()<c ) ite.nextColonne();
+    while (!ite.atEndColonne() && ite.getCurrent().getColonne()<c ) ite.nextColonne();
     
     // renvoie pointeur nul si tout parcouru sans succès
-    if (ite.onSameColonne(end_ite) || ite.getCurrent().getColonne()>c ) return nullptr;
+    if (ite.atEndColonne() || ite.getCurrent().getColonne()>c ) return nullptr;
 
-    end_ite=ite;
-    end_ite.endLigne();
-    
-    while (ite!=end_ite && ite.getCurrent().getLigne()<l ) ite.nextLigne();
+    while (!ite.atEndLigne() && ite.getCurrent().getLigne()<l ) ite.nextLigne();
 
-    if (ite==end_ite || ite.getCurrent().getLigne()>l ) return nullptr;
+    if (ite.atEndLigne() || ite.getCurrent().getLigne()>l ) return nullptr;
 
     return ite.getMutableCurrent();
 }
 
+/*! \brief [PRIVÉ] Pour récupérer une case modifiable en fonction de ses coordonnées.
+*/
 Case* Graphe::getMutableCase(const Coords& c) const {
     return getMutableCase(c.getX(), c.getY());
 }
 
+/*! \brief [PRIVÉ] Pour récupérer une case modifiable en fonction de ses coordonnées, en étant certain qu'elle existe.
+*/
+Case& Graphe::getExistentCase(const Coords& c) const {
+    auto ite = getIterator();
+    ite.goToCoords(c);
+    if (ite.getMutableCurrent()==nullptr) throw exception("ERROR Graphe::getExistentCase : Case n'existe pas.");
+    return *ite.getMutableCurrent();
+}
+
+/*! \brief Pour récupérer une case non modifiable en fonction de ses coordonnées (erreur si case n'existe pas).
+    Utiliser Graphe::hasCase pour savoir si case existe.
+*/
 const Case& Graphe::getCase(double c, double l) const { //erreur si case pas dans graphe
     Case* pt = getMutableCase(c, l);
     if (pt==nullptr) throw exception("ERROR Graphe::getCase : Case n'existe pas.");
     return *pt;
 }
 
+/*! \brief Pour récupérer une case non modifiable en fonction de ses coordonnées (erreur si case n'existe pas).
+    Utiliser Graphe::hasCase pour savoir si case existe.
+*/
 const Case& Graphe::getCase(const Coords& c) const {
     Case* pt = getMutableCase(c);
     if (pt==nullptr) throw exception("ERROR Graphe::getCase : Case n'existe pas.");
     return *pt;
 }
 
+// getters coords
+/*! \brief Pour trouver l'emplacement supposé d'une case (si case existe, l'itérateur pointe directement sur la case, sinon sur la case triée après ou sur la fin d'une ligne/colonne).
+*/
+Graphe::Iterator Graphe::findCasePlace(double c, double l) const { //renvoie itérateur pointant vers l'emplacement de la case (existante ou non)
+    // pointe directement sur la case si elle existe, sur une autre ou la fin d'une ligne/colonne sinon
+    auto ite = getIterator();
+    auto end_ite = getIterator(); end_ite.endColonne();
+
+    while (!ite.atEndColonne() && ite.getCurrent().getColonne()<c) ite.nextColonne();
+
+    //si colonne déjà occupée
+    if (!ite.atEndColonne() && ite.getCurrent().getColonne()==c)
+        while (!ite.atEndLigne() && ite.getCurrent().getLigne()<l) ite.nextLigne();
+    
+    return ite;
+}
+
+/*! \brief Pour récupérer les coordonnées d'un adjacent d'une case (qu'elle existe ou pas).
+    Utiliser Graphe::hasCase pour savoir si case existe.
+    Argument side = 0~5, 0 -> adjacent nord, puis dans sens horaire.
+*/
 const Coords Graphe::coordsAdjacent(const Coords& c, unsigned int side) const { //renvoie coordonnées de case adjacente (même si adjacente inexistante)
     if (side == 0) return coordsNorth(c);
     if (side == 1) return coordsNorthEast(c);
@@ -259,6 +304,60 @@ const Coords Graphe::coordsAdjacent(const Coords& c, unsigned int side) const { 
     throw exception("ERROR Graphe::coordsAdjacent : Côté invalide.");
 }
 
+/*! \brief [PRIVÉ] Pour connaître les coordonnées d'une pièce (pointeur nul si pièce pas dans graphe).
+*/
+const Coords* Graphe::coordsPiecePointer(const Piece& p) const {
+    // création itérateur
+    auto ite = getIterator();
+
+    // parcourt tout le graphe jusqu'à pièce trouvée
+    while (!ite.atEndColonne()) {
+        while (!ite.atEndLigne()) {
+            if (ite.getCurrent().hasPiece(p)) return &ite.getCurrent().getCoords();
+            ite.nextLigne();
+        }
+        
+        ite.nextColonne();
+        ite.firstLigne();
+    }
+    
+    return nullptr;
+}
+
+/*! \brief Pour connaître les coordonnées d'une pièce sur le graphe (erreur si pièce pas dans graphe).
+*/
+const Coords& Graphe::coordsPiece(const Piece& p) const {
+    const Coords* coords = coordsPiecePointer(p);
+    
+    if (coords==nullptr) throw exception("ERROR Graphe::coordsPiece : Piece pas dans graphe.");
+    
+    return *coords;
+}
+
+/*! \brief Pour savoir si une pièce peut effectuer une action (erreur si pièce pas dans graphe).
+    Utiliser Graphe::hasPiece pour savoir si la pièce est sur le graphe.
+*/
+bool Graphe::isPieceStuck(const Piece& p) const {
+    const Case& c = getExistentCase(coordsPiece(p));
+
+    return c.isPieceStuck(p);
+}
+
+/*! \brief Pour savoir si une case est entourée de cases vides, pas en contact avec la ruche.
+*/
+bool Graphe::isIsland(const Coords& c) const {
+    unsigned int i = 0;
+
+    // on s'arrête quand tous les adjacents ont été parcourus, ou quand une case non vide a été trouvée.
+    while (i<=5 && (!hasCase(coordsAdjacent(c, i)) || getCase(coordsAdjacent(c, i)).empty()))
+        i++;
+
+    return i>5;
+}
+
+// modification graphe
+/*! \brief [PRIVÉ] Pour mettre à jour attributs de Graphe après ajout d'une nouvelle case (nombre de cases et extrémités gauche/droite/haute/basse).
+*/
 void Graphe::updateAttributes(const Coords& c) {
     nb_cases++;
 
@@ -271,30 +370,15 @@ void Graphe::updateAttributes(const Coords& c) {
     else if (min_y>c.getY()) min_y=c.getY();
 }
 
-void Graphe::addPiece(const Piece& p, const Coords& c) { //erreur si case inexistante ou contient déjà la pièce
-    Case* ca = getMutableCase(c);
-
-    if (ca==nullptr) throw exception("ERROR Graphe::addPiece : Case non existante.");
-    if (ca->hasPiece(&p)) throw exception("ERROR Graphe::addPiece : Case contient déjà la pièce.");
-
-    ca->addPiece(&p);
-
-    // ajout de cases adjacentes vides s'il n'y en a pas
-    Coords coords_adjac(0, 0);
-    for (unsigned int i=0; i<6; i++) {
-        coords_adjac = coordsAdjacent(c, i);
-        if (!hasCase(coords_adjac))
-            addCase(coords_adjac);
-    }
-}
-
+/*! \brief [PRIVÉ] Pour ajouter une case à des coordonnées précises (erreur si case existe déjà).
+    Utiliser Graphe::hasCase pour savoir si case existe.
+*/
 void Graphe::addCase(const Coords& c) { //erreur si case existe déjà
 
     auto ite = findCasePlace(c);
-    auto end_ite = ite;
-    end_ite.endColonne();
+
     // si colonne inédite et à la fin du tableau, ajout d'une nouvelle colonne à la fin et création de la nouvelle case
-    if (ite.getVectorColonne()==end_ite.getVectorColonne()) {
+    if (ite.atEndColonne()) {
         std::vector<Case*> new_colonne;
         Case* new_case = new Case(c);
 
@@ -321,11 +405,8 @@ void Graphe::addCase(const Coords& c) { //erreur si case existe déjà
         return;
     }
 
-    end_ite.goToVectorColonne( ite.getVectorColonne() );
-    end_ite.endLigne();
-
     // si colonne pré-existante et case inédite à la fin du tableau, création de la nouvelle case à la fin du tableau
-    if (ite.getVectorLigne()==end_ite.getVectorLigne()) {
+    if (ite.atEndLigne()) {
         Case* new_case = new Case(c);
 
         cases[ite.getVectorColonne()].push_back( new_case );
@@ -351,35 +432,108 @@ void Graphe::addCase(const Coords& c) { //erreur si case existe déjà
     if (ite.getCurrent().getCoords()==c) throw exception("ERROR Graphe::addCase : Case existe déjà.");
 }
 
+/*! \brief [PRIVÉ] Pour supprimer une case à des coordonnées précises (erreur si case n'existe pas).
+*/
+void Graphe::supprCase(const Coords& c) {
+    auto ite = findCasePlace(c);
+
+    if (ite.atEndColonne() || ite.atEndLigne() || ite.getCurrent().getCoords()!=c) throw exception("ERROR Graphe::supprCase : Case n'existe pas.");
+
+    const Case* ca = &ite.getCurrent();
+
+    
+}
+
+/*! \brief Pour ajouter une pièce à des coordonnées précises (erreur si pièce déjà dans le graphe).
+    Utiliser Graphe::hasPiece pour savoir si pièce dans graphe.
+*/
+void Graphe::addPiece(const Piece& p, const Coords& c) { //erreur si case inexistante ou contient déjà la pièce
+    Case* ca = getMutableCase(c);
+
+    if (ca==nullptr) throw exception("ERROR Graphe::addPiece : Case non existante.");
+    if (ca->hasPiece(p)) throw exception("ERROR Graphe::addPiece : Case contient déjà la pièce.");
+
+    ca->addPiece(p);
+
+    // ajout de cases adjacentes vides s'il n'y en a pas
+    Coords coords_adjac(0, 0);
+    for (unsigned int i=0; i<6; i++) {
+        coords_adjac = coordsAdjacent(c, i);
+        if (!hasCase(coords_adjac))
+            addCase(coords_adjac);
+    }
+}
+
+/*! \brief [PRIVÉ] Pour supprimer une pièce du graphe, prend la pièce sur le dessus aux coordonnées indiquées (erreur si case inexistante ou vide).
+    Bien vérifier coordonnées de la pièce avant d'exécuter.
+*/
+void Graphe::supprPiece(Case& c) {
+    c.supprPiece();
+
+    //suppression des cases pas en contact avec la ruche
+    unsigned int i=0;
+    while (i<=5) {
+        const Coords adjacent = coordsAdjacent(c.getCoords(), i);
+        if (hasCase(adjacent) && isIsland(adjacent))
+            std::cout<<"Suppr case "<<adjacent<<std::endl;
+        i++;
+    }
+}
+
+/*! \brief Pour supprimer une pièce du graphe, prend la pièce sur le dessus aux coordonnées indiquées (erreur si case inexistante ou vide).
+    Bien vérifier coordonnées de la pièce avant d'exécuter.
+*/
+void Graphe::supprPiece(const Coords& c) {
+    supprPiece(*getMutableCase(c));
+}
+
+/*! Pour déplacer une pièce du graphe aux coordonnées indiquées (erreur si case inexistante ou pièce coincée).
+*/
+void Graphe::movePiece(const Piece& p, const Coords& c) {
+    const Coords& coords = coordsPiece(p);
+    if (getExistentCase(coords).isPieceStuck(p)) throw exception("ERROR Graphe::movePiece : Pièce coincée, mouvement impossible.");
+    
+    Case* ca = getMutableCase(c);
+    if (ca==nullptr) throw exception("ERROR Graphe::movePiece : Case de destination inexistante.");
+
+    addPiece(p, c);
+    supprPiece(coords);
+}
 
 // iterator
-void Graphe::Iterator::goToColonne(double c) { //coordonnées "réelles", erreur si colonne n'existe pas
-    auto end_ite = *this;
-    end_ite.endColonne();
 
+/*! \brief Pour déplacer l'itérateur sur une colonne précise (erreur si colonne n'existe pas).
+    Déplacer l'itérateur "manuellement" pour savoir si colonne existe.
+*/
+void Graphe::Iterator::goToColonne(double c) { //coordonnées "réelles", erreur si colonne n'existe pas
     firstColonne();
 
-    while (*this!=end_ite && getCurrent().getColonne()<c) nextColonne();
-    if (*this==end_ite || getCurrent().getColonne()>c) throw exception("ERROR Graphe::Iterator::goToColonne : Colonne non occupée.");
+    while (!this->atEndColonne() && getCurrent().getColonne()<c) nextColonne();
+    if (this->atEndColonne() || getCurrent().getColonne()>c) throw exception("ERROR Graphe::Iterator::goToColonne : Colonne non occupée.");
 }
 
+/*! \brief Pour déplacer l'itérateur sur une ligne précise, en étant déjà sur la bonne colonne (erreur si ligne n'existe pas).
+    Utiliser Graphe::hasCase pour savoir si la case existe, ou déplacer l'itérateur "manuellement".
+*/
 void Graphe::Iterator::goToLigne(double l) { //coordonnées "réelles", erreur si ligne n'existe pas dans colonne actuelle
-    auto end_ite = *this;
-    end_ite.goToVectorColonne(getVectorColonne());
-    end_ite.endLigne();
-
     firstLigne();
 
-    while (*this!=end_ite && getCurrent().getLigne()<l) nextLigne();
-    if (*this==end_ite || getCurrent().getColonne()>l) throw exception("ERROR Graphe::Iterator::goToLigne : Ligne non occupée dans cette colonne.");
+    while (!this->atEndLigne() && getCurrent().getLigne()<l) nextLigne();
+    if (this->atEndLigne() || getCurrent().getColonne()>l) throw exception("ERROR Graphe::Iterator::goToLigne : Ligne non occupée dans cette colonne.");
 }
 
 
+/*! \brief Pour déplacer l'itérateur sur une case précise (erreur si case n'existe pas).
+    Utiliser Graphe::hasCase pour savoir si la case existe, ou déplacer l'itérateur "manuellement".
+*/
 void Graphe::Iterator::goToCoords(double c, double l) { //coordonnées "réelles", erreur si n'existent pas
     goToColonne(c);
     goToLigne(l);
 }
 
+/*! \brief Pour déplacer l'itérateur sur une case précise (erreur si case n'existe pas).
+    Utiliser Graphe::hasCase pour savoir si la case existe, ou déplacer l'itérateur "manuellement".
+*/
 void Graphe::Iterator::goToCoords(const Coords& c) {
     goToCoords(c.getX(), c.getY());
 }
