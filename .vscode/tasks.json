@@ -2,26 +2,6 @@
     "tasks": [
         {
             "type": "cppbuild",
-            "label": "C/C++: g++.exe build active file",
-            "command": "C:/msys64/ucrt64/bin/g++.exe",
-            "args": [
-                "-fdiagnostics-color=always",
-                "-g",
-                "*.cpp",
-                "-o",
-                "${fileDirname}\\${fileBasenameNoExtension}.exe"
-            ],
-            "options": {
-                "cwd": "C:/msys64/ucrt64/bin"
-            },
-            "problemMatcher": [
-                "$gcc"
-            ],
-            "group": "build",
-            "detail": "compiler: C:/msys64/ucrt64/bin/g++.exe"
-        },
-        {
-            "type": "cppbuild",
             "label": "C/C++: cl.exe build active file",
             "command": "cl.exe",
             "args": [
