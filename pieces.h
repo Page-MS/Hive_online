@@ -29,6 +29,9 @@ public:
     ~Piece()=default;
     Coords** coupsPossibles();
     TYPE_PIECE getType() const {return type_piece;}
+
+    bool operator==(const Piece& p) const { return this==&p; }
+    bool operator!=(const Piece& p) const { return this!=&p; }
 };
 
 #endif //LO21_PIECES_H
