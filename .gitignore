@@ -34,7 +34,3 @@
 # Other
 *.ilk
 *.pdb
-
-cmake-build-debug
-.vscode
-.idea
