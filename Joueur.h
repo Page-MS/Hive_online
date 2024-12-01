@@ -88,17 +88,7 @@ public:
 
 };
 
-class MementoPartie{
-    int numero_tour;
-    Plateau plateau;
-    Joueur joueurs[2];
-    Joueur* joueur_courant;
-public:
-    friend class Partie;//evite de faire des getters, a voir si c'est judicieux
-    MementoPartie(int num_tour, const Plateau& p, const Joueur& joueur1, const Joueur& joueur2, const Joueur& joueur_courant);
-    MementoPartie();
-    MementoPartie& operator=(const MementoPartie& memento);
-};
+
 
 
 class IAJoueur : public Joueur {
