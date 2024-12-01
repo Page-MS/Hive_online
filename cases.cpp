@@ -137,7 +137,7 @@ std::string Case::showCase() const {
                 str="Co";
                 break;
             default :
-                throw exception("ERROR Case::showCase : Ce type de pièce n'est pas pris en compte.");
+                throw exception("ERROR Case::showCase : Ce type de piece n'est pas pris en compte.");
         }
     }
 
@@ -163,7 +163,7 @@ bool Case::hasPiece(const Piece& p) const { //renvoie True si pièce est sur la 
     Utiliser Case::hasPiece pour savoir si pièce sur la case.
 */
 void Case::addPiece(const Piece& p) { //erreur si pièce est déjà sur la case
-    if (hasPiece(p)) throw exception("ERROR Case::addPiece : Pièce déjà sur cette case.");
+    if (hasPiece(p)) throw exception("ERROR Case::addPiece : Piece deja sur cette case.");
     pieces.push_back(&p);
 }
 
@@ -172,7 +172,7 @@ void Case::addPiece(const Piece& p) { //erreur si pièce est déjà sur la case
 */
 void Case::supprPiece() { //supprime la pièce la plus haut placée
     // erreur si aucune pièce à supprimer sur la case
-    if (empty()) throw exception("ERROR Case::supprPiece : Case non occupée.");
+    if (empty()) throw exception("ERROR Case::supprPiece : Case non occupee.");
     pieces.pop_back();
 }
 
@@ -181,7 +181,7 @@ void Case::supprPiece() { //supprime la pièce la plus haut placée
 */
 void Case::clear() { //supprime toutes les pièces
     // erreur si aucune pièce à supprimer sur la case
-    if (empty()) throw exception("ERROR Case::clear : Case déjà vide.");
+    if (empty()) throw exception("ERROR Case::clear : Case deja vide.");
 
     for (unsigned int i=getNbPieces() ; i>0 ; i--) supprPiece();
 }
@@ -190,7 +190,7 @@ void Case::clear() { //supprime toutes les pièces
     Utiliser Case::empty pour savoir si case vide.
 */
 const Piece& Case::getUpperPiece() const { //erreur si pas de pièce sur la case
-    if (empty()) throw exception("ERROR Case::getUpperPiece : Case vide, aucune pièce à récupérer");
+    if (empty()) throw exception("ERROR Case::getUpperPiece : Case vide, aucune pièce à recuperer");
     auto ite = end()--;
 
     return *ite;
@@ -298,7 +298,7 @@ const Coords Graphe::coordsAdjacent(const Coords& c, unsigned int side) const { 
     if (side == 3) return coordsSouth(c);
     if (side == 4) return coordsSouthWest(c);
     if (side == 5) return coordsNorthWest(c);
-    throw exception("ERROR Graphe::coordsAdjacent : Côté invalide.");
+    throw exception("ERROR Graphe::coordsAdjacent : Cote invalide.");
 }
 
 /*! \brief [PRIVÉ] Pour connaître les coordonnées d'une pièce (pointeur nul si pièce pas dans graphe).
@@ -467,7 +467,7 @@ void Graphe::addCase(const Coords& c) { //erreur si case existe déjà
     }
 
     // si case déjà existante, erreur
-    if (ite.getCurrent().getCoords()==c) throw exception("ERROR Graphe::addCase : Case existe déjà.");
+    if (ite.getCurrent().getCoords()==c) throw exception("ERROR Graphe::addCase : Case existe deja.");
 }
 
 /*! \brief [PRIVÉ] Pour supprimer une case à des coordonnées précises (erreur si case n'existe pas).
@@ -502,7 +502,7 @@ void Graphe::addPiece(const Piece& p, const Coords& c) { //erreur si case inexis
     Case* ca = getMutableCase(c);
     
     if (ca==nullptr) throw exception("ERROR Graphe::addPiece : Case non existante.");
-    if (ca->hasPiece(p)) throw exception("ERROR Graphe::addPiece : Case contient déjà la pièce.");
+    if (ca->hasPiece(p)) throw exception("ERROR Graphe::addPiece : Case contient deja la piece.");
 
     ca->addPiece(p);
 
@@ -551,7 +551,7 @@ void Graphe::supprPiece(const Coords& c) {
 */
 void Graphe::movePiece(const Piece& p, const Coords& c) {
     const Coords& coords = coordsPiece(p);
-    if (getExistentCase(coords).isPieceStuck(p)) throw exception("ERROR Graphe::movePiece : Pièce coincée, mouvement impossible.");
+    if (getExistentCase(coords).isPieceStuck(p)) throw exception("ERROR Graphe::movePiece : Piece coincee, mouvement impossible.");
     
     Case* ca = getMutableCase(c);
     if (ca==nullptr) throw exception("ERROR Graphe::movePiece : Case de destination inexistante.");
@@ -569,7 +569,7 @@ void Graphe::Iterator::goToColonne(double c) { //coordonnées "réelles", erreur
     firstColonne();
 
     while (!this->atEndColonne() && getCurrent().getColonne()<c) nextColonne();
-    if (this->atEndColonne() || getCurrent().getColonne()>c) throw exception("ERROR Graphe::Iterator::goToColonne : Colonne non occupée.");
+    if (this->atEndColonne() || getCurrent().getColonne()>c) throw exception("ERROR Graphe::Iterator::goToColonne : Colonne non occupee.");
 }
 
 /*! \brief Pour déplacer l'itérateur sur une ligne précise, en étant déjà sur la bonne colonne (erreur si ligne n'existe pas).
@@ -580,7 +580,7 @@ void Graphe::Iterator::goToLigne(double l) { //coordonnées "réelles", erreur s
     while (!atEndLigne() && getCurrentLigne() < l)
         nextLigne();
     
-    if (atEndLigne() || getCurrentLigne()!=l) throw exception("ERROR Graphe::Iterator::goToLigne : Ligne non occupée dans cette colonne.");
+    if (atEndLigne() || getCurrentLigne()!=l) throw exception("ERROR Graphe::Iterator::goToLigne : Ligne non occupee dans cette colonne.");
 }
 
 

@@ -5,6 +5,7 @@
 #include "coords.cpp"
 
 int main() {
+    try {
     Plateau plateau;
 
     Piece abeille(TYPE_PIECE::Abeille);
@@ -18,6 +19,9 @@ int main() {
 
     plateau.getMutableGraphe().movePiece(abeille, Coords(0, 2));
     cout<<plateau.getMutableGraphe()<<endl;
+    } catch (const exception& e) {
+        cout<<e.what()<<endl;
+    }
 
     cout<<"Tout nickel !"<<endl;
     return 0;
