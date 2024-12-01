@@ -155,15 +155,16 @@ bool Case::hasPiece(const Piece& p) const { //renvoie True si pièce est sur la 
         has_piece = ite.getCurrent() == &p;
         ite++;
     }
-    
+
     return has_piece;
 }
 
 /*! \brief [PRIVÉ] Pour ajouter une pièce sur une case, tout en haut de la pile (erreur si pièce déjà sur la case).
     Utiliser Case::hasPiece pour savoir si pièce sur la case.
 */
-void Case::addPiece(const Piece& p) { //erreur si pièce est déjà sur la case
+void Case::addPiece(const Piece& p) {
     if (hasPiece(p)) throw exception("ERROR Case::addPiece : Piece deja sur cette case.");
+
     pieces.push_back(&p);
 }
 
@@ -171,8 +172,8 @@ void Case::addPiece(const Piece& p) { //erreur si pièce est déjà sur la case
     Utiliser Case::empty pour savoir si case vide.
 */
 void Case::supprPiece() { //supprime la pièce la plus haut placée
-    // erreur si aucune pièce à supprimer sur la case
     if (empty()) throw exception("ERROR Case::supprPiece : Case non occupee.");
+
     pieces.pop_back();
 }
 
@@ -470,49 +471,62 @@ void Graphe::addCase(const Coords& c) { //erreur si case existe déjà
     if (ite.getCurrent().getCoords()==c) throw exception("ERROR Graphe::addCase : Case existe deja.");
 }
 
+/*! \brief [PRIVÉ] Pour supprimer une case précise.
+*/
+void Graphe::supprCase(const Case& c) {
+    auto ite = getIterator();
+    ite.goToCoords(c.getCoords());
+
+    // suppression de la case
+    auto* colonne = &cases.at(ite.getVectorColonne());
+    auto i=0;
+    while (i<colonne->size() && colonne->at(i)!=&c) i++;
+
+    colonne->erase(colonne->begin() + i );
+
+    // suppression de la colonne vide
+    if (colonne->size()==0)
+        cases.erase( cases.begin() + ite.getVectorColonne() );
+
+    updateAttributes(c.getCoords());
+    c.~Case();
+}
+
 /*! \brief [PRIVÉ] Pour supprimer une case à des coordonnées précises (erreur si case n'existe pas).
 */
 void Graphe::supprCase(const Coords& c) {
-    auto ite = findCasePlace(c);
 
-    if (ite.atEndColonne() || ite.atEndLigne() || ite.getCurrent().getCoords()!=c) throw exception("ERROR Graphe::supprCase : Case n'existe pas.");
+    const Case* ca = getMutableCase(c);
+    if (ca==nullptr) throw exception("ERROR Graphe::supprCase : Case n'existe pas.");
 
-    const Case* ca = &ite.getCurrent();
+    supprCase(*ca);
+}
 
-    ite.goToColonne(c.getX());
+/*! \brief Pour ajouter une pièce à des coordonnées précises (erreur si pièce déjà dans le graphe).
+    Utiliser Graphe::hasPiece pour savoir si pièce dans graphe.
+*/
+void Graphe::addPiece(const Piece& p, Case& c) { //erreur si case inexistante ou contient déjà la pièce
+    c.addPiece(p);
 
-    // suppression de la case
-    for (auto i=0; i<cases.at(ite.getVectorColonne()).size(); i++)
-        if (cases.at(ite.getVectorColonne()).at(i)==ca)
-            cases.at(ite.getVectorColonne()).erase( cases.at(ite.getVectorColonne()).begin() + i );
+    // ajout de cases adjacentes vides s'il n'y en a pas
+    Coords coords_adjac(0, 0);
 
-    // suppression de la colonne vide
-    if (cases.at(ite.getVectorColonne()).size()==0)
-        cases.erase( cases.begin() + ite.getVectorColonne() );
-
-    delete ca;
-
-    updateAttributes(c);
+    for (unsigned int i=0; i<6; i++) {
+        coords_adjac = coordsAdjacent(c.getCoords(), i);
+        if (!hasCase(coords_adjac))
+            addCase(coords_adjac);
+    }
 }
 
 /*! \brief Pour ajouter une pièce à des coordonnées précises (erreur si pièce déjà dans le graphe).
     Utiliser Graphe::hasPiece pour savoir si pièce dans graphe.
 */
 void Graphe::addPiece(const Piece& p, const Coords& c) { //erreur si case inexistante ou contient déjà la pièce
+
     Case* ca = getMutableCase(c);
-    
     if (ca==nullptr) throw exception("ERROR Graphe::addPiece : Case non existante.");
-    if (ca->hasPiece(p)) throw exception("ERROR Graphe::addPiece : Case contient deja la piece.");
 
-    ca->addPiece(p);
-
-    // ajout de cases adjacentes vides s'il n'y en a pas
-    Coords coords_adjac(0, 0);
-    for (unsigned int i=0; i<6; i++) {
-        coords_adjac = coordsAdjacent(c, i);
-        if (!hasCase(coords_adjac))
-            addCase(coords_adjac);
-    }
+    addPiece(p, *ca);
 }
 
 /*! \brief [PRIVÉ] Pour supprimer une pièce du graphe, prend la pièce sur le dessus aux coordonnées indiquées (erreur si case inexistante ou vide).
@@ -521,18 +535,16 @@ void Graphe::addPiece(const Piece& p, const Coords& c) { //erreur si case inexis
 void Graphe::supprPiece(Case& c) {
     c.supprPiece();
 
-        //suppression des cases pas en contact avec la ruche
+    //suppression des cases pas en contact avec la ruche
     if (c.empty()) {
 
-        const Case* ca = nullptr;
         unsigned int i = 0;
-        auto ite = getIterator();
-
         while (i <= 5) {
             const Coords adjacent = coordsAdjacent(c.getCoords(), i);
 
-            if (hasCase(adjacent) && isIsland(adjacent)) {
-                supprCase(adjacent);
+            Case* adjacase = getMutableCase(adjacent);
+            if (adjacase!=nullptr && isDeletable(*adjacase)) {
+                supprCase(*adjacase);
                 adjacent.~Coords();
             }
             i++;
@@ -550,14 +562,16 @@ void Graphe::supprPiece(const Coords& c) {
 /*! Pour déplacer une pièce du graphe aux coordonnées indiquées (erreur si case inexistante ou pièce coincée).
 */
 void Graphe::movePiece(const Piece& p, const Coords& c) {
-    const Coords& coords = coordsPiece(p);
-    if (getExistentCase(coords).isPieceStuck(p)) throw exception("ERROR Graphe::movePiece : Piece coincee, mouvement impossible.");
-    
-    Case* ca = getMutableCase(c);
-    if (ca==nullptr) throw exception("ERROR Graphe::movePiece : Case de destination inexistante.");
 
-    addPiece(p, c);
-    supprPiece(coords);
+    const Coords& coords = coordsPiece(p);
+    Case& ca_from = getExistentCase(coords);
+    if (ca_from.isPieceStuck(p)) throw exception("ERROR Graphe::movePiece : Piece coincee, mouvement impossible.");
+
+    Case* ca_to = getMutableCase(c);
+    if (ca_to==nullptr) throw exception("ERROR Graphe::movePiece : Case de destination inexistante.");
+
+    supprPiece(ca_from);
+    addPiece(p, *ca_to);
 }
 
 // iterator

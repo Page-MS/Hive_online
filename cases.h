@@ -185,8 +185,11 @@ class Graphe {
         // ajoute case dans la ruche
         void addCase(const Coords& c);
         void addCase(double c, double l) { addCase(Coords(c, l)); }
+        void supprCase(const Case& c);
         void supprCase(const Coords& c);
+        void addPiece(const Piece& p, Case& c);
         void supprPiece(Case& c);
+        bool isDeletable(const Case& c) const { return (c.empty() && isIsland(c.getCoords())); }
 
         const Coords* coordsPiecePointer(const Piece& p) const;
 
