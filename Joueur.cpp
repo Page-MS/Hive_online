@@ -18,7 +18,6 @@ void Joueur::jouerCoup(Piece* pieceChoisie, const Coords& destination, Plateau& 
 }
 
 
-
 void Mouvement::ExecuterMvt(){
 
 }
