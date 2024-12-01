@@ -158,7 +158,14 @@ EtatDuJeu& EtatDuJeu::operator=(const EtatDuJeu& jeu){
 }
 
 vector<Mouvement> EtatDuJeu::coupPossibles(Joueur& j){
-    
+    vector<Mouvement> mvt;
+    vector<Piece*> pj = j.getPiece();
+    for (const Piece* piece : pj) {
+        if(!plateau.isPieceStuck(*piece)){
+            const Coords* c = plateau.coordsPiece(*piece);
+            const Coords* prochains = &piece->coupsPossibles()
+        }
+    }
 }
 
 bool EtatDuJeu::FinDuJeu() const{
