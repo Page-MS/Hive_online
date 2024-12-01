@@ -480,8 +480,15 @@ void Graphe::supprCase(const Coords& c) {
     const Case* ca = &ite.getCurrent();
 
     ite.goToColonne(c.getX());
-    std::erase(cases.at(ite.getVectorColonne()), ca);
-    std::erase_if(cases, [](std::vector<Case*> v) { return v.size() == 0; });
+
+    // suppression de la case
+    for (auto i=0; i<cases.at(ite.getVectorColonne()).size(); i++)
+        if (cases.at(ite.getVectorColonne()).at(i)==ca)
+            cases.at(ite.getVectorColonne()).erase( cases.at(ite.getVectorColonne()).begin() + i );
+
+    // suppression de la colonne vide
+    if (cases.at(ite.getVectorColonne()).size()==0)
+        cases.erase( cases.begin() + ite.getVectorColonne() );
 
     delete ca;
 

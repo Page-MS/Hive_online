@@ -2,7 +2,7 @@
 #include <iostream>
 
 
-/*! \brief Pour savoir si la pièce est dans la réserve.
+/*! \brief Pour savoir si la piÃ¨ce est dans la rÃ©serve.
 */
 bool Plateau::inReserve(const Piece& p) const {
 	auto i = 0;
@@ -11,7 +11,13 @@ bool Plateau::inReserve(const Piece& p) const {
 	return i < reserve.size();
 }
 
-/*! \brief Déplace la pièce depuis le graphe ou la réserve.
+void Plateau::supprPieceReserve(const Piece& p) {
+	for (auto i=0; i<reserve.size(); i++)
+		if (reserve.at(i)==&p)
+			reserve.erase(reserve.begin()+i);
+}
+
+/*! \brief DÃ©place la piÃ¨ce depuis le graphe ou la rÃ©serve.
 */
 void Plateau::movePiece(const Piece& p, const Coords& c) {
 	if (isPieceStuck(p)) throw exception("ERROR Plateau::movePiece : Piece bloquee.");
@@ -27,18 +33,18 @@ void Plateau::movePiece(const Piece& p, const Coords& c) {
 	}
 }
 
-/*! \brief Renvoie les coordonnées de la pièce (pointeur nul si elle est dans la réserve, erreur si elle n'est nulle part).
+/*! \brief Renvoie les coordonnÃ©es de la piÃ¨ce (pointeur nul si elle est dans la rÃ©serve, erreur si elle n'est nulle part).
 */
 const Coords* Plateau::coordsPiece(const Piece& p) const {
-	// renvoie nullptr si pièce dans réserve
+	// renvoie nullptr si piÃ¨ce dans rÃ©serve
 	if (inReserve(p)) return nullptr;
-	// erreur si pièce pas sur le plateau
+	// erreur si piÃ¨ce pas sur le plateau
 	if (!getGraphe().hasPiece(p)) throw exception("ERROR Plateau::coordsPiece : Piece inexistante.");
-	// renvoie coordonnées de la pièce si dans graphe
+	// renvoie coordonnÃ©es de la piÃ¨ce si dans graphe
 	return &getGraphe().coordsPiece(p);
 }
 
-/*! \brief Renvoie si la pièce peut effectuer une action (sortir de la réserve ou se déplacer sur le graphe.
+/*! \brief Renvoie si la piÃ¨ce peut effectuer une action (sortir de la rÃ©serve ou se dÃ©placer sur le graphe.
 */
 bool Plateau::isPieceStuck(const Piece& p) const {
 	return (!inReserve(p) && getGraphe().isPieceStuck(p));
