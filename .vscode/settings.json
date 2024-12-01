@@ -1,7 +1,0 @@
-{
-    "files.associations": {
-        "cstdlib": "cpp",
-        "initializer_list": "cpp",
-        "vector": "cpp"
-    }
-}
