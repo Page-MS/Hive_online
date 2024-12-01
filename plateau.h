@@ -17,7 +17,7 @@ class Plateau {
         bool inReserve(const Piece& p) const;
 
         void addPieceReserve(const Piece& p) { reserve.push_back(&p); }
-        void supprPieceReserve(const Piece& p) { erase(reserve, &p); }
+        void supprPieceReserve(const Piece& p) { std::erase(reserve, &p); }
         void movePiece(const Piece& p, const Coords& c);
 
         const Coords* coordsPiece(const Piece& p) const;
