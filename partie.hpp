@@ -3,7 +3,11 @@
 
 #include <iostream>
 #include "plateau.h"
+<<<<<<< HEAD
 #include "joueur.h"
+=======
+#include "Joueur.h"
+>>>>>>> feature/main
 
 using namespace std;
 
@@ -48,11 +52,15 @@ class Partie{
         void restaurerEtat(const EtatDuJeu &etat);
 };
 
+<<<<<<< HEAD
 class GameManager{
     Partie partie_active;
     EtatDuJeu** sauvegardes;
     static GameManager* instance;
 };
+=======
+
+>>>>>>> feature/main
 
 class MementoPartie{
     private :
