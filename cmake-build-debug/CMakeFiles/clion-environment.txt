@@ -1,4 +1,5 @@
-ToolSet: w64 9.0 (local)@C:\Program Files\JetBrains\CLion 2023.1.1\bin\mingw
+ToolSet: 11.0 w64 (local)@C:\Users\page\AppData\Local\Programs\CLion\bin\mingw
+Ninja: 1.12.1@C:\Users\page\AppData\Local\Programs\CLion\bin\ninja\win\x64\ninja.exe
 Options: 
 
 Options:
