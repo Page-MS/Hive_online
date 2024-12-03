@@ -3,11 +3,13 @@
 
 #include <iostream>
 #include "plateau.h"
-
 #include "Joueur.h"
 
 
+
 using namespace std;
+//Forward Definitions
+
 
 
 class Partie{

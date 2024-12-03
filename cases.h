@@ -5,7 +5,8 @@
 #include <vector>
 #include <iostream>
 #include <string>
-
+//Forward definition
+class Piece;
 // CASES
 class Case {
     friend class Graphe;

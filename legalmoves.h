@@ -26,6 +26,9 @@ private:
     ~LegalMoveContext(){delete strategy;}
     LegalMoveInterface* strategy;
     TYPE_PIECE current_strategy;
+    //Pour calculer sur le graph
+    Graphe graphe_avant_coup;
+    Graphe graphe_a_manipuler;
 public:
     //usage de singleton pour obtenir l'unique instance du legalMoveContext
     static LegalMoveContext& getInstance(){
