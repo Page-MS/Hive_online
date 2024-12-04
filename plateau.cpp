@@ -48,7 +48,7 @@ void Plateau::supprPieceReserve(const Piece& p) {
 /*! \brief Déplace la pièce depuis le graphe ou la réserve.
 */
 void Plateau::movePiece(const Piece& p, const Coords& c) {
-	if (isPieceStuck(p)) throw exception("ERROR Plateau::movePiece : Piece bloquee.");
+	if (isPieceStuck(p)) throw runtime_error("ERROR Plateau::movePiece : Piece bloquee.");
 
 	if (inReserve(p)) {
 		getMutableGraphe().addPiece(p, c);
@@ -56,7 +56,7 @@ void Plateau::movePiece(const Piece& p, const Coords& c) {
 	}
 	else {
 		const Coords* coords = coordsPiece(p);
-		if (*coords == c) throw exception("ERROR Plateau::movePiece : Coordonnees de destination et d'arrivee de la piece identiques.");
+		if (*coords == c) throw runtime_error("ERROR Plateau::movePiece : Coordonnees de destination et d'arrivee de la piece identiques.");
 		getMutableGraphe().movePiece(p, c);
 	}
 }
@@ -67,7 +67,7 @@ const Coords* Plateau::coordsPiece(const Piece& p) const {
 	// renvoie nullptr si pièce dans réserve
 	if (inReserve(p)) return nullptr;
 	// erreur si pièce pas sur le plateau
-	if (!getGraphe().hasPiece(p)) throw exception("ERROR Plateau::coordsPiece : Piece inexistante.");
+	if (!getGraphe().hasPiece(p)) throw runtime_error("ERROR Plateau::coordsPiece : Piece inexistante.");
 	// renvoie coordonnées de la pièce si dans graphe
 	return &getGraphe().coordsPiece(p);
 }

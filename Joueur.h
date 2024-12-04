@@ -8,6 +8,7 @@
 #include "plateau.h"
 #include "coords.h"
 #include "cases.h"
+#include "partie.hpp"
 #include <initializer_list>
 #include <array>
 #include <cstdlib>
@@ -28,7 +29,7 @@ public:
             pieces.push_back(new Piece(*piece)); // copie chaque pièce
         }
     }
-    Joueur& operator=(const Joueur& autre);
+    Joueur& operator=(const Joueur& autre);*
     ~Joueur() {
         for (Piece* piece : pieces) {
             delete piece; // libère chaque pièce
@@ -41,7 +42,7 @@ public:
 
     void ajouterPiece(Piece* piece) { pieces.push_back(piece); } // ajoute une piece
 
-    bool getIaIA() { return isIA; }
+    bool getIsIA() { return isIA; }
 };
 
 
@@ -67,10 +68,14 @@ class EtatDuJeu {
 private:
     Plateau plateau;               // plateau avec les pièces
     vector<Mouvement> historique;  // liste des coups
-    vector<Joueur> joueurs;        // liste des joueurs
+    Joueur joueurs[2];              // liste des joueurs
+    int numero_tour;
+    Joueur* joueur_courant;
 
 public:
-    EtatDuJeu(const std::vector<Joueur>& joueurs):joueurs(joueurs) {}
+    EtatDuJeu(int num_tour, const Plateau& p,  const Joueur& j1, const Joueur& j2, const Joueur& jc);
+    EtatDuJeu();
+    EtatDuJeu& operator=(const EtatDuJeu& jeu);
 
     vector<Mouvement> coupPossibles(Joueur& j);  // coups possibles
 
@@ -83,6 +88,9 @@ public:
     Plateau& getPlateau() { return plateau; } // accès au plateau
 
 };
+
+
+
 
 
 class IAJoueur : public Joueur {
