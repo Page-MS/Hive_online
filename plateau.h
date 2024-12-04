@@ -23,6 +23,8 @@ class Plateau {
         const Coords* coordsPiece(const Piece& p) const;
         bool isPieceStuck(const Piece& p) const;
 
+        void afficher(bool joueur_courant);
+
 
 
 };

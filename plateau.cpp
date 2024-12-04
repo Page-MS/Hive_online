@@ -1,6 +1,34 @@
 #include "plateau.h"
 #include <iostream>
 
+// METHODES PLATEAU
+void Plateau::afficher(bool joueur_courant) {
+
+	Graphe g;
+	const Coords c(0, 0);
+
+	std::cout<<"--------------------------------"<<std::endl;
+	for (size_t i=0; i<reserve.size(); i++)
+		if (reserve.at(i)->getCamp() != joueur_courant) {
+			g.addPiece(*reserve.at(i), c);
+			std::cout<<"<"<<g.getCase(c)<<">";
+			g.supprPiece(c);
+		}
+	std::cout<<std::endl<<"---------- ADVERSAIRE ----------"<<std::endl;
+
+	std::cout<<getGraphe()<<std::endl;
+
+	std::cout<<"------------- VOUS -------------"<<std::endl;
+	for (size_t i=0; i<reserve.size(); i++)
+		if (reserve.at(i)->getCamp() == joueur_courant) {
+			g.addPiece(*reserve.at(i), c);
+			std::cout<<"<"<<g.getCase(c)<<">";
+			g.supprPiece(c);
+		}
+	std::cout<<std::endl<<"--------------------------------"<<std::endl;
+
+	std::cout<<std::endl;
+}
 
 /*! \brief Pour savoir si la pièce est dans la réserve.
 */

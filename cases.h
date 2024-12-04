@@ -21,12 +21,12 @@ class Case {
 
         // constructeur/destructeur privés (recopie possible)
         Iterator(const std::vector<const Piece*>& v, unsigned int n=0) : vect(&v), current(n) {}
-        ~Iterator()=default;
 
         public:
             // recopie
             Iterator(const Iterator& ite)=default;
             Iterator operator=(const Iterator& ite) { current=ite.current; return ite; }
+            ~Iterator()=default;
 
             // renvoyer pièce actuelle
             const Piece* getCurrent() const { return vect->at(current); }
@@ -75,7 +75,7 @@ class Case {
         // longueur du nom de case lors de l'affichage console
         static size_t getNameLength() { return name_length; }
         // affichage en string de la case
-        std::string showCase() const;
+        std::string strCase() const;
 
         // getters
         virtual const Coords& getCoords() const { return coords; }
@@ -95,6 +95,9 @@ class Case {
         // itérateur
         Iterator begin() const { return Iterator(pieces); }
         Iterator end() const { return Iterator(pieces, pieces.size()); }
+
+        void operator<<(const Piece& p) { return addPiece(p); }
+        void operator--(int) { return supprPiece(); }
 };
 
 // GRAPHE
@@ -175,11 +178,15 @@ class Graphe {
         Graphe operator=(const Graphe& g)=delete;
 
         // met les attributs min, max et nb_cases à jour après la création d'une nouvelle case
-        void updateAttributes(const Coords& c);
+        void updateAttributesAdd(double c, double l);
+        void updateAttributesAdd(const Coords& c) { updateAttributesAdd(c.getX(), c.getY()); }
+        void updateAttributesSuppr(double c, double l);
+        void updateAttributesSuppr(const Coords& c) { updateAttributesSuppr(c.getX(), c.getY()); }
+        void updateAttributes(const Coords& c, size_t modif=2);
 
         // renvoie une case modifiable
         Case* getMutableCase(double c, double l) const;
-        Case* getMutableCase(const Coords& c) const;
+        Case* getMutableCase(const Coords& c) const {return getMutableCase(c.getX(), c.getY());}
         Case& getExistentCase(const Coords& c) const;
 
         // ajoute case dans la ruche
@@ -208,20 +215,24 @@ class Graphe {
 
         // renvoie si graphe contient case
         bool hasCase(double c, double l) const { return (getMutableCase(c, l)!=nullptr); }
-        bool hasCase(const Coords& c) const { return (getMutableCase(c)!=nullptr); }
+        bool hasCase(const Coords& c) const { return hasCase(c.getX(), c.getY()); }
 
         // renvoie si graphe contient pièce, et coordonnées pièce
         bool hasPiece(const Piece& p) const { return coordsPiecePointer(p)!=nullptr; };
         const Coords& coordsPiece(const Piece& p) const;
         bool isPieceStuck(const Piece& p) const;
+        bool isIsland(double c, double l) const { return isIsland(Coords(c, l)); }
         bool isIsland(const Coords& c) const;
+        bool isIsland(const Case& c) const { return isIsland(c.getCoords()); }
+        bool isSurrounded(const Coords& c) const;
+        bool isSurrounded(const Case& c) const { return isSurrounded(c.getCoords()); }
 
         // itérateur
         Iterator getIterator() const { Iterator ite = Iterator(cases); return ite; }
 
         // renvoie case non modifiable
         const Case& getCase(double c, double l) const;
-        const Case& getCase(const Coords& c) const;
+        const Case& getCase(const Coords& c) const { return getCase(c.getX(), c.getY()); } ;
         
         // renvoie coordonnées de la case adjacente (side 0-6, à partir de nord dans sens horaire)
         const Coords coordsAdjacent(const Coords& c, unsigned int side) const;
@@ -250,6 +261,8 @@ std::string caseBorder();
 std::string caseVoid();
 // renvoie un espace vide de la taille d'une frontière
 std::string caseBorderVoid();
+//renvoie si deux cases sont sur la même ligne
+bool onStraightLine(const Coords& c1, const Coords& c2);
 
 // renvoie si les coordonnées sont correctes pour une case
 inline bool isCaseCoords(int c, int l) { return ( (c%2==0 && l%2==0) || (c%2!=0 && l%2!=0) ); }

@@ -1,10 +1,10 @@
 #include "cases.h"
 
 // AFFICHAGE
-std::ostream& operator<<(std::ostream& flux, const Case& c) {
-    /* Affichage d'une case, peut être ajouté au cout<< */
+std::ostream& operator<<(std::ostream& flux, const Case& c) { // Affichage d'une case, peut être ajouté au cout<<
 
-    flux<<c.showCase();
+    flux<<c.strCase();
+    
     return flux;
 }
 
@@ -29,7 +29,7 @@ std::ostream& operator<<(std::ostream& flux, const Graphe& g) {
         while(coords.getY()<=g.getMaxY()) {
             // si on est sur une case existante, on l'affiche, puis on déplace l'itérateur à la prochaine case
             if (coords == ite.getCurrent().getCoords() ) {
-                str.at(i_vect) += "< " + ite.getCurrent().showCase() + " >";
+                str.at(i_vect) += "<" + ite.getCurrent().strCase() + ">";
 
                 // déplacement de l'itérateur, retour au début si fin atteinte
                 ite.nextLigne();
@@ -105,43 +105,30 @@ std::string caseBorderVoid() {
     return str;
 }
 
+/*! \brief Pour savoir si deux cases sont sur la même ligne (donc atteignable par un saut)
+*/
+bool onStraightLine(const Coords& c1, const Coords& c2) {
+    return (c1.getX()==c2.getX() ||
+                (
+                    abs(c1.getX()-c2.getX()) &&
+                    abs(c1.getY()-c2.getY())
+                )
+            );
+}
+
 // METHODES CASE
 /*! \brief Pour affichage d'une case, mais renvoie uniquement le string à utiliser.
 */
-std::string Case::showCase() const {
-    string str;
-    if (empty()) str="xx";
-    else {
-        TYPE_PIECE p = getUpperPiece().getType();
-        
-        switch (p) {
-            case TYPE_PIECE::Scarabee :
-                str="Sc";
-                break;
-            case TYPE_PIECE::Abeille :
-                str="Ab";
-                break;
-            case TYPE_PIECE::Fourmi :
-                str="Fo";
-                break;
-            case TYPE_PIECE::Sauterelle :
-                str="Sa";
-                break;
-            case TYPE_PIECE::Araignee :
-                str="Ar";
-                break;
-            case TYPE_PIECE::Moustique :
-                str="Mo";
-                break;
-            case TYPE_PIECE::Coccinelle :
-                str="Co";
-                break;
-            default :
-                throw exception("ERROR Case::showCase : Ce type de piece n'est pas pris en compte.");
-        }
-    }
+std::string Case::strCase() const {
 
-    return str;
+    if (empty()) return " xx ";
+
+    std::string symbole;
+    if (getUpperPiece().getCamp())
+        symbole="+";
+    else symbole=".";
+
+    return symbole + getUpperPiece().strPiece() + symbole;
 }
 
 /*! \brief Permet de savoir si une pièce est contenue dans la case impliquée, pour supprimer la pièce ou récupérer ses coordonnées.
@@ -152,7 +139,7 @@ bool Case::hasPiece(const Piece& p) const { //renvoie True si pièce est sur la 
 
     // parcourt toutes les pièces dans la case, s'arrête quand la pièce a été trouvée ou que l'on a atteint la fin
     while (!ite.atEnd() && !has_piece) {
-        has_piece = ite.getCurrent() == &p;
+        if (ite.getCurrent() == &p) return true;
         ite++;
     }
 
@@ -191,7 +178,7 @@ void Case::clear() { //supprime toutes les pièces
     Utiliser Case::empty pour savoir si case vide.
 */
 const Piece& Case::getUpperPiece() const { //erreur si pas de pièce sur la case
-    if (empty()) throw exception("ERROR Case::getUpperPiece : Case vide, aucune pièce à recuperer");
+    if (empty()) throw exception("ERROR Case::getUpperPiece : Case vide, aucune piece a recuperer");
     auto ite = end()--;
 
     return *ite;
@@ -239,12 +226,6 @@ Case* Graphe::getMutableCase(double c, double l) const { //renvoie pointeur nul 
     return ite.getMutableCurrent();
 }
 
-/*! \brief [PRIVÉ] Pour récupérer une case modifiable en fonction de ses coordonnées.
-*/
-Case* Graphe::getMutableCase(const Coords& c) const {
-    return getMutableCase(c.getX(), c.getY());
-}
-
 /*! \brief [PRIVÉ] Pour récupérer une case modifiable en fonction de ses coordonnées, en étant certain qu'elle existe.
 */
 Case& Graphe::getExistentCase(const Coords& c) const {
@@ -258,15 +239,6 @@ Case& Graphe::getExistentCase(const Coords& c) const {
 */
 const Case& Graphe::getCase(double c, double l) const { //erreur si case pas dans graphe
     Case* pt = getMutableCase(c, l);
-    if (pt==nullptr) throw exception("ERROR Graphe::getCase : Case n'existe pas.");
-    return *pt;
-}
-
-/*! \brief Pour récupérer une case non modifiable en fonction de ses coordonnées (erreur si case n'existe pas).
-    Utiliser Graphe::hasCase pour savoir si case existe.
-*/
-const Case& Graphe::getCase(const Coords& c) const {
-    Case* pt = getMutableCase(c);
     if (pt==nullptr) throw exception("ERROR Graphe::getCase : Case n'existe pas.");
     return *pt;
 }
@@ -353,37 +325,51 @@ bool Graphe::isIsland(const Coords& c) const {
     return i>5;
 }
 
-// modification graphe
-/*! \brief [PRIVÉ] Pour mettre à jour attributs de Graphe après ajout d'une nouvelle case (nombre de cases et extrémités gauche/droite/haute/basse).
+/*! \brief Pour savoir si une case est entourée de cases occupées, par exemple si la reine est encerclée.
 */
-void Graphe::updateAttributes(const Coords& c) {
-    
-    // modification des attributs du graphe en cas d'ajout de case
-    if (getMutableCase(c) != nullptr) {
-        nb_cases++;
+bool Graphe::isSurrounded(const Coords& c) const {
+    const Case* ca;
 
-        // si nouvelle colonne à gauche ou à droite, mettre à jour min/max de X
-        if (nb_cases == 1) max_x, min_x = c.getX();
-        else if (max_x < c.getX()) max_x = c.getX();
-        else if (min_x > c.getX()) min_x = c.getX();
-
-        // si nouvelle ligne en haut ou en bas, mettre à jour min/max de Y
-        if (nb_cases == 1) max_y, min_y = c.getY();
-        if (max_y < c.getY()) max_y = c.getY();
-        else if (min_y > c.getY()) min_y = c.getY();
-
+    // on s'arrête quand tous les adjacents ont été parcourus, ou quand une case vide a été trouvée.
+    for (unsigned int i=0; i<=5; i++) {
+        
+        ca = getMutableCase(coordsAdjacent(c, i));
+        if (ca==nullptr || ca->empty()) return false;
     }
 
-    // modification des attributs du graphe en cas de suppression de case
-    else {
-        nb_cases--;
-        auto ite = getIterator();
+    return true;
+}
 
-        // si le graphe est vide, alors tout est set à 0
-        if (ite.atEndColonne()) {
-            max_x, min_x, max_y, min_y = 0;
-            return;
-        }
+// modification graphe
+
+/*! \brief [PRIVÉ] Pour mettre à jour attributs de Graphe après ajout d'une nouvelle case (nombre de cases et extrémités gauche/droite/haute/basse).
+*/
+void Graphe::updateAttributesAdd(double c, double l) {
+    nb_cases++;
+
+    // si nouvelle colonne à gauche ou à droite, mettre à jour min/max de X
+    if (nb_cases == 1) max_x, min_x = c;
+    else if (max_x < c) max_x = c;
+    else if (min_x > c) min_x = c;
+
+    // si nouvelle ligne en haut ou en bas, mettre à jour min/max de Y
+    if (nb_cases == 1) max_y, min_y = l;
+    if (max_y < l) max_y = l;
+    else if (min_y > l) min_y = l;
+}
+
+/*! \brief [PRIVÉ] Pour mettre à jour attributs de Graphe après suppression d'une nouvelle case (nombre de cases et extrémités gauche/droite/haute/basse).
+*/
+void Graphe::updateAttributesSuppr(double c, double l) {
+    nb_cases--;
+    if (nb_cases==0) {
+        max_x, min_x, max_y, min_y = 0;
+        return;
+    }
+    
+    // on ne recherche de nouvelles extrémités que si les anciennes étaient elles-mêmes aux extrémités
+    if (c==max_x || c==min_x || l==max_y || l==min_y) {
+        auto ite = getIterator();
 
         // si la colonne est vide, il y a une erreur dans le vecteur cases
         if (ite.atEndLigne()) throw exception("ERROR Graphe::updateAttributes : Colonne vide.");
@@ -392,7 +378,7 @@ void Graphe::updateAttributes(const Coords& c) {
 
         while (!ite.atEndColonne()) {
             if (ite.getCurrentLigne() < min_ligne) min_ligne = ite.getCurrentLigne();
-            
+                
             ite.endLigne();
             ite.prevLigne();
 
@@ -406,6 +392,25 @@ void Graphe::updateAttributes(const Coords& c) {
         if (ite.getCurrentColonne() < max_x) max_x = ite.getCurrentColonne();
         min_y = min_ligne;
         max_y = max_ligne;
+    }
+}
+
+/*! \brief [PRIVÉ] Pour mettre à jour attributs de Graphe après ajout ou suppression d'une nouvelle case (nombre de cases et extrémités gauche/droite/haute/basse).
+    1 : ajout de la case
+    0 : suppression de la case
+    2 (default) : programme détermine lui-même
+*/
+void Graphe::updateAttributes(const Coords& c, size_t modif) {
+    if (modif!=0 && modif!=1) modif= hasCase(c);
+
+    if (modif==1) {
+        return updateAttributesAdd(c);
+    }
+    if (modif==0) {
+        return updateAttributesSuppr(c);
+    }
+    else {
+        throw exception("ERROR updateAttributes : argument de modification invalide, raison inconnue.");
     }
 }
 
@@ -424,7 +429,7 @@ void Graphe::addCase(const Coords& c) { //erreur si case existe déjà
         new_colonne.push_back( new_case );
         cases.push_back(new_colonne);
 
-        updateAttributes(c);
+        updateAttributes(c, 1);
         return;
     }
 
@@ -440,7 +445,7 @@ void Graphe::addCase(const Coords& c) { //erreur si case existe déjà
 
         cases.emplace(vect_ite, new_colonne);
 
-        updateAttributes(c);
+        updateAttributes(c, 1);
         return;
     }
 
@@ -450,7 +455,7 @@ void Graphe::addCase(const Coords& c) { //erreur si case existe déjà
 
         cases[ite.getVectorColonne()].push_back( new_case );
         
-        updateAttributes(c);
+        updateAttributes(c, 1);
         return;
     }
 
@@ -463,7 +468,7 @@ void Graphe::addCase(const Coords& c) { //erreur si case existe déjà
 
         cases[ite.getVectorColonne()].emplace(vect_ite, new_case);
 
-        updateAttributes(c);
+        updateAttributes(c, 1);
         return;
     }
 
@@ -488,7 +493,7 @@ void Graphe::supprCase(const Case& c) {
     if (colonne->size()==0)
         cases.erase( cases.begin() + ite.getVectorColonne() );
 
-    updateAttributes(c.getCoords());
+    updateAttributes(c.getCoords(), 0);
     c.~Case();
 }
 
@@ -506,7 +511,7 @@ void Graphe::supprCase(const Coords& c) {
     Utiliser Graphe::hasPiece pour savoir si pièce dans graphe.
 */
 void Graphe::addPiece(const Piece& p, Case& c) { //erreur si case inexistante ou contient déjà la pièce
-    c.addPiece(p);
+    c<<p;
 
     // ajout de cases adjacentes vides s'il n'y en a pas
     Coords coords_adjac(0, 0);
@@ -533,7 +538,7 @@ void Graphe::addPiece(const Piece& p, const Coords& c) { //erreur si case inexis
     Bien vérifier coordonnées de la pièce avant d'exécuter.
 */
 void Graphe::supprPiece(Case& c) {
-    c.supprPiece();
+    c--;
 
     //suppression des cases pas en contact avec la ruche
     if (c.empty()) {
@@ -556,7 +561,10 @@ void Graphe::supprPiece(Case& c) {
     Bien vérifier coordonnées de la pièce avant d'exécuter.
 */
 void Graphe::supprPiece(const Coords& c) {
-    supprPiece(*getMutableCase(c));
+    Case* ca = getMutableCase(c);
+    if (ca==nullptr) throw exception("ERROR Graphe::supprPiece : Case n'existe pas.");
+
+    supprPiece(*ca);
 }
 
 /*! Pour déplacer une pièce du graphe aux coordonnées indiquées (erreur si case inexistante ou pièce coincée).
