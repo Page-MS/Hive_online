@@ -35,7 +35,6 @@
 .idea/
 cmake-build-debug/
 
-#Random files
-vc140.pdb
-main.pdb
-main.ilk
+# Other
+*.ilk
+*.pdb
