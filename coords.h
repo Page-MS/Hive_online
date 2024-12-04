@@ -1,6 +1,7 @@
 #ifndef COORDS_H
 #define COORDS_H
 #include <ostream>
+#include <stdexcept>
 
 class Coords {
     protected:
@@ -8,7 +9,7 @@ class Coords {
         double y;
 
     public:
-        Coords(double xx, double yy) : x(xx), y(yy) {}
+        Coords(double xx=0, double yy=0) : x(xx), y(yy) {}
         Coords(const Coords& c)=default;
         virtual Coords& operator=(const Coords& c) { x=c.getX(); y=c.getY(); return *this; };
         virtual ~Coords()=default;

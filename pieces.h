@@ -25,12 +25,12 @@ class Piece {
     friend class GameManager;
 public:
     //Si les pièces sont crées avant d'être mises sur le plateau, elles sont alors toutes placées à un emplacement abérant
-    Piece(TYPE_PIECE type,int x=-100, int y=-100): x_position(x), y_position(y), type_piece(type){}
+    Piece(TYPE_PIECE type,bool c): camp(c), type_piece(type){}
     ~Piece()=default;
     Coords** coupsPossibles();
     TYPE_PIECE getType() const {return type_piece;}
-
-
+    bool getCamp() const { return camp; }
+    std::string strPiece() const;
 };
 
 #endif //LO21_PIECES_H
