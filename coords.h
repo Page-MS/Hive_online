@@ -1,6 +1,7 @@
 #ifndef COORDS_H
 #define COORDS_H
 #include <ostream>
+#include <stdexcept>
 
 class Coords {
     protected:

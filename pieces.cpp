@@ -1,6 +1,7 @@
 
 #include "pieces.h"
 
+
 std::string Piece::strPiece() const {
     std::string str("");
     switch (getType()) {
@@ -26,7 +27,7 @@ std::string Piece::strPiece() const {
             str.append("Co");
             break;
         default :
-            throw exception("ERROR Case::showCase : Ce type de piece n'est pas pris en compte.");
+            throw runtime_error("ERROR Case::showCase : Ce type de piece n'est pas pris en compte.");
     }
 
     return str;

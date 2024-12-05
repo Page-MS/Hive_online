@@ -1,0 +1,3 @@
+C:\Users\page\AppData\Local\Programs\CLion\bin\cmake\win\x64\bin\cmake.exe -E rm -f CMakeFiles\LO21.dir/objects.a
+C:\Users\page\AppData\Local\Programs\CLion\bin\mingw\bin\ar.exe qc CMakeFiles\LO21.dir/objects.a @CMakeFiles\LO21.dir\objects1.rsp
+C:\Users\page\AppData\Local\Programs\CLion\bin\mingw\bin\g++.exe -g -Wl,--whole-archive CMakeFiles\LO21.dir/objects.a -Wl,--no-whole-archive -o LO21.exe -Wl,--out-implib,libLO21.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\LO21.dir\linkLibs.rsp
