@@ -274,6 +274,46 @@ const Coords Graphe::coordsAdjacent(const Coords& c, unsigned int side) const { 
     throw exception("ERROR Graphe::coordsAdjacent : Cote invalide.");
 }
 
+/*! \brief Renvoie la liste des coordonnées adjacentes à une case.
+*/
+std::vector<Coords> Graphe::coordsAllAdjacents(const Coords& c) const {
+    std::vector<Coords> coords;
+
+    for (auto i=0; i<6; i++) {
+        coords.push_back(coordsAdjacent(c, i));
+    }
+
+    return coords;
+}
+
+/*! \brief Renvoie la liste des coordonnées adjacentes à une case dont les cases existent dans le graphe.
+*/
+std::vector<Coords> Graphe::coordsExistentAdjacents(const Coords& c) const {
+    std::vector<Coords> coords;
+
+    for (auto i=0; i<6; i++) {
+        if (hasCase(coordsAdjacent(c, i)))
+            coords.push_back(coordsAdjacent(c, i));
+    }
+
+    return coords;
+}
+
+/*! \brief Renvoie la liste des coordonnées adjacentes à une case dont les cases existent dans le graphe et ne sont pas vides.
+*/
+std::vector<Coords> Graphe::coordsInhabitedAdjacents(const Coords& c) const {
+    std::vector<Coords> coords;
+
+    for (auto i=0; i<6; i++) {
+        if (hasCase(coordsAdjacent(c, i)) && !getCase(coordsAdjacent(c, i)).empty()) {
+            coords.push_back(coordsAdjacent(c, i));
+        }
+    }
+
+    return coords;
+}
+
+
 /*! \brief [PRIVÉ] Pour connaître les coordonnées d'une pièce (pointeur nul si pièce pas dans graphe).
 */
 const Coords* Graphe::coordsPiecePointer(const Piece& p) const {
@@ -340,8 +380,47 @@ bool Graphe::isSurrounded(const Coords& c) const {
     return true;
 }
 
-// modification graphe
+/*! \brief Renvoie si la ruche serait séparée dans le cas du déplacement d'une pièce depuis des coordonnées précises (erreur si coordonnées pas dans graphe ou case vide).
+*/
+bool Graphe::wouldHiveBreak(const Coords& c) const {
+    const Case* ca = getMutableCase(c);
+    if (ca==nullptr) throw exception("ERROR Graphe::wouldHiveBreak : Case inexistante.");
+    if (ca->empty()) throw exception("ERROR Graphe::wouldHiveBreak : Case vide.");
 
+    // ruche intacte si case contient plus d'une pièce
+    if (ca->getNbPieces()>1) return false;
+
+    // vecteur pour stocker les cases explorees
+    std::vector<Coords> coords_list = coordsInhabitedAdjacents(ca->getCoords());
+    // si la case n'est en contact avec aucune case habitee, ruche brisee
+    if (coords_list.empty()) return false;
+    // on prend un seul adjacent pour voir si on arrive à parcourir toute la ruche avec
+    coords_list.resize(1);
+
+
+    size_t to_search = 0;
+    std::vector<Coords> adjacents;
+    
+    // on explore autant que possible jusqu'à atteindre la fin du vecteur (donc aucun nouvel adjacent à explorer)
+    while (to_search<coords_list.size()) {
+        adjacents = coordsExistentAdjacents(coords_list[to_search]);
+
+        for (auto i_adja=0; i_adja<adjacents.size(); i_adja++) {
+            if (adjacents[i_adja] != ca->getCoords()
+                && std::find(coords_list.begin(), coords_list.end(), adjacents[i_adja]) == coords_list.end()
+                && !getCase(adjacents[i_adja]).empty()) {
+
+                coords_list.push_back(adjacents[i_adja]);
+            }
+        }
+        to_search++;
+    }
+
+    return coords_list.size() != getNbInhabitedCases()-1;
+
+}
+
+// modification graphe
 /*! \brief [PRIVÉ] Pour mettre à jour attributs de Graphe après ajout d'une nouvelle case (nombre de cases et extrémités gauche/droite/haute/basse).
 */
 void Graphe::updateAttributesAdd(double c, double l) {
@@ -512,6 +591,7 @@ void Graphe::supprCase(const Coords& c) {
 */
 void Graphe::addPiece(const Piece& p, Case& c) { //erreur si case inexistante ou contient déjà la pièce
     c<<p;
+    if (c.getNbPieces()==1) nb_inhabited_cases++;
 
     // ajout de cases adjacentes vides s'il n'y en a pas
     Coords coords_adjac(0, 0);
@@ -542,6 +622,7 @@ void Graphe::supprPiece(Case& c) {
 
     //suppression des cases pas en contact avec la ruche
     if (c.empty()) {
+        nb_inhabited_cases--;
 
         unsigned int i = 0;
         while (i <= 5) {
@@ -567,7 +648,7 @@ void Graphe::supprPiece(const Coords& c) {
     supprPiece(*ca);
 }
 
-/*! Pour déplacer une pièce du graphe aux coordonnées indiquées (erreur si case inexistante ou pièce coincée).
+/*! \brief Pour déplacer une pièce du graphe aux coordonnées indiquées (erreur si case inexistante ou pièce coincée).
 */
 void Graphe::movePiece(const Piece& p, const Coords& c) {
 
