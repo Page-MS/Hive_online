@@ -6,8 +6,8 @@
 //#include <windows.h>
 //#include "Joueur.cpp"
 //#include "partie.cpp"
-#include "legalmoves.cpp"
-#include "gamemanager.cpp"
+//#include "legalmoves.cpp"
+//#include "gamemanager.cpp"
 
 
 int main() {
@@ -116,6 +116,10 @@ int main() {
     cout<<"Cases habitees = "<<g.getNbInhabitedCases()<<endl;
     cout<<"Ruche brisee si bouge a "<<Coords(0, 2)<<" : "<<g.wouldHiveBreak(Coords(0, 2))<<endl;
 
+    Graphe g2= g;
+
+    cout<<g<<endl;
+    cout<<g2<<endl;
 
     } catch (const exception& e) {
         cout<<e.what()<<endl;
