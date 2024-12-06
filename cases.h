@@ -60,8 +60,8 @@ class Case {
         Case(const Coords& c) : coords(c) {}
         Case(double ligne, double colonne) : coords(Coords(colonne, ligne)) {};
         virtual ~Case()=default;
-        Case(const Case& c)=delete;
-        Case operator=(const Case& c)=delete;
+        Case(const Case& c)=default;
+        Case& operator=(const Case& c) { coords=c.coords; pieces=c.pieces; return *this; }
 
         // modifier emplacement case (pour recentrage du graphe)
         virtual void setCoords(double ligne, double colonne) { coords= Coords(colonne, ligne); }
@@ -176,8 +176,6 @@ class Graphe {
         std::vector<std::vector<Case*>> cases;
 
 
-
-
         // met les attributs min, max et nb_cases à jour après la création d'une nouvelle case
         void updateAttributesAdd(double c, double l);
         void updateAttributesAdd(const Coords& c) { updateAttributesAdd(c.getX(), c.getY()); }
@@ -191,8 +189,8 @@ class Graphe {
         Case& getExistentCase(const Coords& c) const;
 
         // ajoute case dans la ruche
-        void addCase(const Coords& c);
-        void addCase(double c, double l) { addCase(Coords(c, l)); }
+        Case* addCase(const Coords& c);
+        Case* addCase(double c, double l) { return addCase(Coords(c, l)); }
         void supprCase(const Case& c);
         void supprCase(const Coords& c);
         void addPiece(const Piece& p, Case& c);
@@ -205,8 +203,10 @@ class Graphe {
         // constructeur/destructeur
         Graphe() : nb_cases(0), nb_inhabited_cases(0), max_x(0), min_x(0), max_y(0), min_y(0) { addCase(0, 0); }
         virtual ~Graphe();
-        Graphe operator=(const Graphe& g);
-        Graphe(const Graphe& g)=default;
+        Graphe(const Graphe& g);
+        Graphe& operator=(const Graphe& g);
+
+        void clear();
 
         // getters
         double getMaxX() const { return max_x; }
@@ -238,9 +238,9 @@ class Graphe {
         // renvoie case non modifiable
         const Case& getCase(double c, double l) const;
         const Case& getCase(const Coords& c) const { return getCase(c.getX(), c.getY()); } ;
-
+        
         const Coords coordsAdjacent(const Coords& c, unsigned int side) const;
-
+        
         const Coords coordsNorth(const Coords& c) const { return Coords(c.getX(), c.getY()-2); }
         const Coords coordsNorthEast(const Coords& c) const { return Coords(c.getX()+1, c.getY()-1); }
         const Coords coordsSouthEast(const Coords& c) const { return Coords(c.getX()+1, c.getY()+1); }

@@ -13,6 +13,10 @@ std::ostream& operator<<(std::ostream& flux, const Graphe& g) {
     /* Affichage du graphe, peut être ajouté au cout<< */
 
     flux<<std::endl;
+    if (g.empty()) {
+        flux<<"Graphe vide."<<std::endl;
+        return flux;
+    }
 
     // variables
     std::vector<std::string> str (g.getMaxY() - g.getMinY() + 1, "");
@@ -204,6 +208,41 @@ Graphe::~Graphe() {
         ite.firstLigne();
         ite.nextColonne();
     }
+}
+
+Graphe::Graphe(const Graphe& g) {
+    max_x=0;
+    min_x=0;
+    max_y=0;
+    min_y=0;
+    nb_inhabited_cases=0;
+    nb_cases=0;
+
+    *this = g;
+}
+
+Graphe& Graphe::operator=(const Graphe& g) {
+    clear();
+
+    auto ite = g.getIterator();
+    Case* c = nullptr;
+
+    // on parcourt toutes les cases du graphe à copier
+    while (!ite.atEndColonne()) {
+        while (!ite.atEndLigne()) {
+            c = addCase(ite.getCurrent().getCoords());
+            
+            for (auto i=ite.getCurrent().begin(); i!=ite.getCurrent().end(); i++) {
+                c->addPiece(*i);
+                nb_inhabited_cases++;
+            }
+            ite.nextLigne();
+        }
+        ite.firstLigne();
+        ite.nextColonne();
+    }
+
+    return *this;
 }
 
 // getters case
@@ -445,7 +484,10 @@ void Graphe::updateAttributesAdd(double c, double l) {
 void Graphe::updateAttributesSuppr(double c, double l) {
     nb_cases--;
     if (nb_cases==0) {
-        max_x, min_x, max_y, min_y = 0;
+        max_x=0;
+        min_x=0;
+        max_y=0;
+        min_y=0;
         return;
     }
     
@@ -499,26 +541,26 @@ void Graphe::updateAttributes(const Coords& c, size_t modif) {
 /*! \brief [PRIVÉ] Pour ajouter une case à des coordonnées précises (erreur si case existe déjà).
     Utiliser Graphe::hasCase pour savoir si case existe.
 */
-void Graphe::addCase(const Coords& c) { //erreur si case existe déjà
+Case* Graphe::addCase(const Coords& c) { //erreur si case existe déjà
 
     auto ite = findCasePlace(c);
+    Case* new_case;
 
     // si colonne inédite et à la fin du tableau, ajout d'une nouvelle colonne à la fin et création de la nouvelle case
     if (ite.atEndColonne()) {
         std::vector<Case*> new_colonne;
-        Case* new_case = new Case(c);
+        new_case = new Case(c);
 
         new_colonne.push_back( new_case );
         cases.push_back(new_colonne);
 
         updateAttributes(c, 1);
-        return;
     }
 
     // si colonne inédite dans le tableau, ajout d'une nouvelle colonne et création de la nouvelle case
-    if (ite.getCurrentColonne()!=c.getX()) {
+    else if (ite.getCurrentColonne()!=c.getX()) {
         std::vector<Case*> new_colonne;
-        Case* new_case = new Case(c);
+        new_case = new Case(c);
 
         new_colonne.push_back( new_case );
 
@@ -528,22 +570,20 @@ void Graphe::addCase(const Coords& c) { //erreur si case existe déjà
         cases.emplace(vect_ite, new_colonne);
 
         updateAttributes(c, 1);
-        return;
     }
 
     // si colonne pré-existante et case inédite à la fin du tableau, création de la nouvelle case à la fin du tableau
-    if (ite.atEndLigne()) {
-        Case* new_case = new Case(c);
+    else if (ite.atEndLigne()) {
+        new_case = new Case(c);
 
         cases[ite.getVectorColonne()].push_back( new_case );
         
         updateAttributes(c, 1);
-        return;
     }
 
     // si colonne pré-existante et case inédite dans le tableau, création de la nouvelle case
-    if (ite.getCurrentLigne()!=c.getY()) {
-        Case* new_case = new Case(c);
+    else if (ite.getCurrentLigne()!=c.getY()) {
+        new_case = new Case(c);
 
         auto vect_ite = cases[ite.getVectorColonne()].begin();
         for (unsigned int i=0; i<ite.getVectorLigne(); i++) vect_ite++;
@@ -551,11 +591,12 @@ void Graphe::addCase(const Coords& c) { //erreur si case existe déjà
         cases[ite.getVectorColonne()].emplace(vect_ite, new_case);
 
         updateAttributes(c, 1);
-        return;
     }
 
     // si case déjà existante, erreur
-    if (ite.getCurrent().getCoords()==c) throw runtime_error("ERROR Graphe::addCase : Case existe deja.");
+    else if (ite.getCurrent().getCoords()==c) throw runtime_error("ERROR Graphe::addCase : Case existe deja.");
+
+    return new_case;
 }
 
 /*! \brief [PRIVÉ] Pour supprimer une case précise.
@@ -576,6 +617,9 @@ void Graphe::supprCase(const Case& c) {
         cases.erase( cases.begin() + ite.getVectorColonne() );
 
     updateAttributes(c.getCoords(), 0);
+
+    if (!c.empty()) nb_inhabited_cases--;
+
     c.~Case();
 }
 
@@ -664,6 +708,19 @@ void Graphe::movePiece(const Piece& p, const Coords& c) {
 
     supprPiece(ca_from);
     addPiece(p, *ca_to);
+}
+
+/*! \brief Vide entièrement le graphe
+*/
+void Graphe::clear() {
+    if (empty()) return;
+
+    auto ite = getIterator();
+
+    while (!empty()) {
+        supprCase(*ite.getMutableCurrent());
+        ite = getIterator();
+    }
 }
 
 // iterator
