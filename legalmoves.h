@@ -9,21 +9,36 @@
 class LegalMoveInterface{
 public:
     virtual ~LegalMoveInterface()=default;
-    virtual vector<Coords> searchMoves(Coords coord,Graphe graph, bool camp) const = 0;
+    virtual vector<Coords> searchMoves(Coords coord,Graphe graph, bool camp) = 0;
     bool checkReineAbeille(Coords case_a_check) const; //return true si le coup est valide par rapport aux règles de pose de la reine abeille en debut de partie
     bool aUnVoisin(Coords depart, Coords arrivee) const; //return true si la case passée en argument a au moins un voisin qui n'est pas la pièce déplacée
-    bool cassePasRuche(Coords depart) const;//check que le coup ne casse pas la hive (qu'on a un passage entre tout)
+    bool cassePasRuche(Coords depart);//check que le coup ne casse pas la hive (qu'on a un passage entre tout)
     bool peutPasser(Coords depart, Coords arrivee) const; //vérifier qu'une pièce peut passer dans un trou en vérifiant que les cases ont moins de 2 voisins en commun
     //Pour calculer sur le graph
     Graphe graphe_avant_coup;
     Graphe graphe_a_manipuler;
 };
 class LegalMoveAbeille : public LegalMoveInterface{
-    vector<Coords> searchMoves(Coords coord,Graphe graph, bool camp) const override{
-        Coords a(5,6);
-        vector<Coords> b;
-        b.push_back(a);
-        return b;
+    vector<Coords> searchMoves(Coords coord,Graphe graph, bool camp)  override{
+        graphe_avant_coup=graph;
+        graphe_a_manipuler=graph;
+        vector<Coords> resultat;
+        if(graphe_a_manipuler.wouldHiveBreak(coord)){
+            cout<<"\ne peut pas bouger sans casser la hive";
+            return resultat;
+        }
+        vector<Coords> voisins=graphe_a_manipuler.coordsAllAdjacents(coord);
+        for(auto i:voisins){
+            if (graphe_a_manipuler.getCase(i).empty()){
+                resultat.push_back(i);
+                cout<<"\n On ajoute :"<<i.getX()<<":"<<i.getY();
+            }
+        }
+        return resultat;
+
+        //Coords a(5,6);
+        //b.push_back(a);
+        return resultat;
 
     }
 };
@@ -50,7 +65,7 @@ public:
 
 
 class LegalMoveMoustique : public LegalMoveInterface{
-    vector<Coords> searchMoves(Coords coord,Graphe graph, bool camp) const override{
+    vector<Coords> searchMoves(Coords coord,Graphe graph, bool camp){
         Coords a(5,6);
         vector<Coords> b;
         b.push_back(a);
@@ -59,7 +74,7 @@ class LegalMoveMoustique : public LegalMoveInterface{
 };
 
 class LegalMoveFourmi : public LegalMoveInterface{
-    vector<Coords> searchMoves(Coords coord,Graphe graph, bool camp) const override{
+    vector<Coords> searchMoves(Coords coord,Graphe graph, bool campvector){
         Coords a(5,6);
         vector<Coords> b;
         b.push_back(a);
@@ -69,7 +84,7 @@ class LegalMoveFourmi : public LegalMoveInterface{
 };
 
 class LegalMoveScarabee : public LegalMoveInterface{
-    vector<Coords> searchMoves(Coords coord,Graphe graph, bool camp) const override{
+    vector<Coords> searchMoves(Coords coord,Graphe graph, bool campvector){
         Coords a(5,6);
         vector<Coords> b;
         b.push_back(a);
@@ -79,7 +94,7 @@ class LegalMoveScarabee : public LegalMoveInterface{
 };
 
 class LegalMoveCoccinelle : public LegalMoveInterface{
-    vector<Coords> searchMoves(Coords coord,Graphe graph, bool camp) const override{
+    vector<Coords> searchMoves(Coords coord,Graphe graph, bool camp) override{
         Coords a(5,6);
         vector<Coords> b;
         b.push_back(a);
@@ -90,7 +105,7 @@ class LegalMoveCoccinelle : public LegalMoveInterface{
 
 
 class LegalMoveSauterelle : public LegalMoveInterface{
-    vector<Coords> searchMoves(Coords coord,Graphe graph, bool camp) const override{
+    vector<Coords> searchMoves(Coords coord,Graphe graph, bool camp) override{
         Coords a(5,6);
         vector<Coords> b;
         b.push_back(a);
@@ -99,7 +114,7 @@ class LegalMoveSauterelle : public LegalMoveInterface{
 };
 
 class LegalMoveAraignee : public LegalMoveInterface{
-    vector<Coords> searchMoves(Coords coord,Graphe graph, bool camp) const override{
+    vector<Coords> searchMoves(Coords coord,Graphe graph, bool camp) override{
         Coords a(5,6);
         vector<Coords> b;
         b.push_back(a);

@@ -12,18 +12,25 @@ void LegalMoveContext::changeStrategy(TYPE_PIECE typePiece) {
         }
         if (typePiece == Abeille) {
             strategy = new LegalMoveAbeille();
+            current_strategy=Abeille;
         } else if (typePiece == Fourmi) {
             strategy = new LegalMoveFourmi();
+            current_strategy=Fourmi;
         } else if (typePiece == Scarabee) {
             strategy = new LegalMoveScarabee();
+            current_strategy=Scarabee;
         } else if (typePiece == Sauterelle) {
             strategy = new LegalMoveSauterelle();
+            current_strategy=Sauterelle;
         } else if (typePiece == Araignee) {
             strategy = new LegalMoveAraignee();
+            current_strategy=Araignee;
         } else if (typePiece == Moustique) {
             strategy = new LegalMoveMoustique();
+            current_strategy=Moustique;
         } else if (typePiece == Coccinelle) {
             strategy = new LegalMoveCoccinelle();
+            current_strategy=Coccinelle;
         } else {
             std::cout << "Attention choix de piece invalide";
             strategy = nullptr;
