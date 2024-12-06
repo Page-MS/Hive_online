@@ -6,7 +6,6 @@
 #include <iostream>
 #include <string>
 #include <iomanip>
-
 //Forward definition
 class Piece;
 // CASES
@@ -172,6 +171,7 @@ class Graphe {
     private:
         // attributs (min/max sont coordonnées "réelles" dans la ruche)
         unsigned int nb_cases;
+        unsigned int nb_inhabited_cases;
         double max_x, min_x, max_y, min_y;
         std::vector<std::vector<Case*>> cases;
 
@@ -195,7 +195,7 @@ class Graphe {
         void addCase(double c, double l) { addCase(Coords(c, l)); }
         void supprCase(const Case& c);
         void supprCase(const Coords& c);
-        void addPiece( const Piece& p, Case& c);
+        void addPiece(const Piece& p, Case& c);
         void supprPiece(Case& c);
         bool isDeletable(const Case& c) const { return (c.empty() && isIsland(c.getCoords())); }
 
@@ -203,10 +203,10 @@ class Graphe {
 
     public:
         // constructeur/destructeur
-        Graphe() : nb_cases(0), max_x(0), min_x(0), max_y(0), min_y(0) { addCase(0, 0); }
+        Graphe() : nb_cases(0), nb_inhabited_cases(0), max_x(0), min_x(0), max_y(0), min_y(0) { addCase(0, 0); }
         virtual ~Graphe();
         Graphe operator=(const Graphe& g);
-        Graphe(const Graphe& g);
+        Graphe(const Graphe& g)=default;
 
         // getters
         double getMaxX() const { return max_x; }
@@ -214,6 +214,7 @@ class Graphe {
         double getMaxY() const { return max_y; }
         double getMinY() const { return min_y; }
         unsigned int getNbCases() const { return nb_cases; }
+        unsigned int getNbInhabitedCases() const { return nb_inhabited_cases; }
         virtual bool empty() const { return (getNbCases()==0); }
 
         // renvoie si graphe contient case
@@ -229,6 +230,7 @@ class Graphe {
         bool isIsland(const Case& c) const { return isIsland(c.getCoords()); }
         bool isSurrounded(const Coords& c) const;
         bool isSurrounded(const Case& c) const { return isSurrounded(c.getCoords()); }
+        bool wouldHiveBreak(const Coords& c) const;
 
         // itérateur
         Iterator getIterator() const { Iterator ite = Iterator(cases); return ite; }
@@ -236,10 +238,9 @@ class Graphe {
         // renvoie case non modifiable
         const Case& getCase(double c, double l) const;
         const Case& getCase(const Coords& c) const { return getCase(c.getX(), c.getY()); } ;
-        
-        // renvoie coordonnées de la case adjacente (side 0-6, à partir de nord dans sens horaire)
+
         const Coords coordsAdjacent(const Coords& c, unsigned int side) const;
-        // renvoie coordonnées de la case adjacente
+
         const Coords coordsNorth(const Coords& c) const { return Coords(c.getX(), c.getY()-2); }
         const Coords coordsNorthEast(const Coords& c) const { return Coords(c.getX()+1, c.getY()-1); }
         const Coords coordsSouthEast(const Coords& c) const { return Coords(c.getX()+1, c.getY()+1); }
@@ -247,11 +248,16 @@ class Graphe {
         const Coords coordsSouthWest(const Coords& c) const { return Coords(c.getX()-1, c.getY()+1); }
         const Coords coordsNorthWest(const Coords& c) const { return Coords(c.getX()-1, c.getY()-1); }
 
-        // renvoie endroit où devrait se situer une case (coordonnées différentes si case pas dans graphe)
+        std::vector<Coords> coordsAllAdjacents(const Coords& c) const;
+        std::vector<Coords> coordsExistentAdjacents(const Coords& c) const;
+        std::vector<Coords> coordsInhabitedAdjacents(const Coords& c) const;
+
+
         Iterator findCasePlace(double c, double l) const;
         Iterator findCasePlace(const Coords& c) const { return findCasePlace(c.getX(), c.getY()); }
 
-        // ajoute/supprime/déplace pièce dans une case de la ruche
+        // déplacements pièce dans ruche
+
         void addPiece(const Piece& p, const Coords& c);
         void supprPiece(const Coords& c);
         void movePiece(const Piece& p, const Coords& c);

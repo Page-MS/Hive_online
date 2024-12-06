@@ -103,6 +103,7 @@ int main() {
     plateau.addPieceReserve(coccinelle2);
     plateau.addPieceReserve(moustique2);
     plateau.addPieceReserve(araignee2);
+    plateau.movePiece(araignee2, Coords(0, 4));
 
 
     plateau.afficher(true);
@@ -111,6 +112,8 @@ int main() {
     }*/
 
 
+    cout<<"Cases habitees = "<<g.getNbInhabitedCases()<<endl;
+    cout<<"Ruche brisee si bouge a "<<Coords(0, 2)<<" : "<<g.wouldHiveBreak(Coords(0, 2))<<endl;
 
 
     } catch (const exception& e) {

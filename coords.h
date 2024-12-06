@@ -17,6 +17,8 @@ class Coords {
         virtual bool operator==(const Coords& c) const { return ( x==c.x && y==c.y ); }
         virtual bool operator!=(const Coords& c) const { return ( x!=c.x || y!=c.y ); }
         virtual Coords operator+(const Coords& c) const { return Coords(x+c.x, y+c.y); }
+        virtual bool operator<(const Coords& c) const { return ( x<c.x && y<c.y ); }
+        virtual bool operator>(const Coords& c) const { return ( x>c.x && y>c.y ); }
 
         double getX() const { return x; }
         double getY() const { return y; }
