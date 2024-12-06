@@ -6,7 +6,7 @@
 //#include <windows.h>
 //#include "Joueur.cpp"
 //#include "partie.cpp"
-//#include "legalmoves.cpp"
+#include "legalmoves.cpp"
 //#include "gamemanager.cpp"
 
 
@@ -107,9 +107,7 @@ int main() {
 
 
     plateau.afficher(true);
-    /*if (not plateau.getGraphe().getCase(1,2).empty()){
-        plateau.getGraphe().getCase(1,2).getUpperPiece().
-    }*/
+
 
 
     cout<<"Cases habitees = "<<g.getNbInhabitedCases()<<endl;
@@ -119,11 +117,17 @@ int main() {
 
     cout<<g<<endl;
     cout<<g2<<endl;
-
+    cout<<g.hasCase(0,2)<<endl;
+    if (not g.getCase(0,2).empty()){
+        cout<<"Type de la piece :"<<g.getCase(0,2).getUpperPiece().getType()<<endl;
+        vector<Coords*> coups_test=g.getCase(0,2).getUpperPiece().coupsPossibles(plateau.getGraphe(),plateau.getGraphe().getCase(0,2).getCoords());
+        cout<<coups_test[0];
+        }
     } catch (const exception& e) {
         cout<<e.what()<<endl;
     }
 
     cout<<"\n\nTout nickel !"<<endl;
+
     return 0;
 }

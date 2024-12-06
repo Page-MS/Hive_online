@@ -18,11 +18,19 @@ public:
     Graphe graphe_avant_coup;
     Graphe graphe_a_manipuler;
 };
+class LegalMoveAbeille : public LegalMoveInterface{
+    vector<Coords*> searchMoves(Coords coord,Graphe graph, bool camp) const override{
+        Coords* a=nullptr;
+        vector<Coords*> b;
+        b.push_back(a);
+        return b;
 
+    }
+};
 
 class LegalMoveContext{
 private:
-    LegalMoveContext(): strategy(nullptr){};
+    LegalMoveContext(): strategy(new LegalMoveAbeille){};
     //on supprime l'affectation et la copie
     LegalMoveContext(const LegalMoveContext&) = delete;
     LegalMoveContext& operator=(const LegalMoveContext&) = delete;
@@ -80,15 +88,7 @@ class LegalMoveCoccinelle : public LegalMoveInterface{
     }
 };
 
-class LegalMoveAbeille : public LegalMoveInterface{
-    vector<Coords*> searchMoves(Coords coord,Graphe graph, bool camp) const override{
-        Coords* a=nullptr;
-        vector<Coords*> b;
-        b.push_back(a);
-        return b;
 
-    }
-};
 class LegalMoveSauterelle : public LegalMoveInterface{
     vector<Coords*> searchMoves(Coords coord,Graphe graph, bool camp) const override{
         Coords* a=nullptr;
