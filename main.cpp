@@ -120,9 +120,8 @@ int main() {
     cout<<g.hasCase(0,2)<<endl;
     if (not g.getCase(0,2).empty()){
         cout<<"Type de la piece :"<<g.getCase(0,2).getUpperPiece().getType()<<endl;
-        vector<Coords*> coups_test=g.getCase(0,2).getUpperPiece().coupsPossibles(plateau.getGraphe(),plateau.getGraphe().getCase(0,2).getCoords());
-        cout<<coups_test[0];
-        }
+        vector<Coords> coups_test=g.getCase(0,2).getUpperPiece().coupsPossibles(plateau.getGraphe(),plateau.getGraphe().getCase(0,2).getCoords());
+        cout<<"\nCoordonnees retournees : "<<coups_test[0].getX()<<":"<<coups_test[0].getY();   }
     } catch (const exception& e) {
         cout<<e.what()<<endl;
     }

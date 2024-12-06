@@ -6,9 +6,8 @@
 
 void LegalMoveContext::changeStrategy(TYPE_PIECE typePiece) {
     //si la strategie à appliquer est la même, on ne la change pas
-    if (current_strategy != typePiece) {
         if (strategy != nullptr) {
-            cout<<"On suppprime la stratégie";
+            cout<<"\nOn suppprime la strategie";
             delete strategy;
         }
         if (typePiece == Abeille) {
@@ -31,13 +30,13 @@ void LegalMoveContext::changeStrategy(TYPE_PIECE typePiece) {
         }
     }
 
-}
 
-vector<Coords *> LegalMoveContext::searchLegalMoves(Coords coord, Graphe graph, bool camp) {
+
+vector<Coords > LegalMoveContext::searchLegalMoves(Coords coord, Graphe graph, bool camp) {
     changeStrategy(graph.getCase(coord).getUpperPiece().getType());
-    vector<Coords*> result=strategy->searchMoves(coord,graph,camp);
-    if (result[0] == nullptr){
-        cout<<"\n Oh non le nullptr\n";
+    vector<Coords> result=strategy->searchMoves(coord,graph,camp);
+    if (result.empty()){
+        cout<<"\n Oh non le gros nullos\n";
         }
     return result;
 }

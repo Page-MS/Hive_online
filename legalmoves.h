@@ -9,7 +9,7 @@
 class LegalMoveInterface{
 public:
     virtual ~LegalMoveInterface()=default;
-    virtual vector<Coords*> searchMoves(Coords coord,Graphe graph, bool camp) const = 0;
+    virtual vector<Coords> searchMoves(Coords coord,Graphe graph, bool camp) const = 0;
     bool checkReineAbeille(Coords case_a_check) const; //return true si le coup est valide par rapport aux règles de pose de la reine abeille en debut de partie
     bool aUnVoisin(Coords depart, Coords arrivee) const; //return true si la case passée en argument a au moins un voisin qui n'est pas la pièce déplacée
     bool cassePasRuche(Coords depart) const;//check que le coup ne casse pas la hive (qu'on a un passage entre tout)
@@ -19,9 +19,9 @@ public:
     Graphe graphe_a_manipuler;
 };
 class LegalMoveAbeille : public LegalMoveInterface{
-    vector<Coords*> searchMoves(Coords coord,Graphe graph, bool camp) const override{
-        Coords* a=nullptr;
-        vector<Coords*> b;
+    vector<Coords> searchMoves(Coords coord,Graphe graph, bool camp) const override{
+        Coords a(5,6);
+        vector<Coords> b;
         b.push_back(a);
         return b;
 
@@ -43,25 +43,25 @@ public:
         static LegalMoveContext instance;
         return instance;
     }
-    vector<Coords*> searchLegalMoves(Coords coord,Graphe graph, bool camp);
+    vector<Coords> searchLegalMoves(Coords coord,Graphe graph, bool camp);
     void changeStrategy(TYPE_PIECE typePiece);
 
 };
 
 
 class LegalMoveMoustique : public LegalMoveInterface{
-    vector<Coords*> searchMoves(Coords coord,Graphe graph, bool camp) const override{
-        Coords* a=nullptr;
-        vector<Coords*> b;
+    vector<Coords> searchMoves(Coords coord,Graphe graph, bool camp) const override{
+        Coords a(5,6);
+        vector<Coords> b;
         b.push_back(a);
         return b;
     }
 };
 
 class LegalMoveFourmi : public LegalMoveInterface{
-    vector<Coords*> searchMoves(Coords coord,Graphe graph, bool camp) const override{
-        Coords* a=nullptr;
-        vector<Coords*> b;
+    vector<Coords> searchMoves(Coords coord,Graphe graph, bool camp) const override{
+        Coords a(5,6);
+        vector<Coords> b;
         b.push_back(a);
         return b;
 
@@ -69,9 +69,9 @@ class LegalMoveFourmi : public LegalMoveInterface{
 };
 
 class LegalMoveScarabee : public LegalMoveInterface{
-    vector<Coords*> searchMoves(Coords coord,Graphe graph, bool camp) const override{
-        Coords* a=nullptr;
-        vector<Coords*> b;
+    vector<Coords> searchMoves(Coords coord,Graphe graph, bool camp) const override{
+        Coords a(5,6);
+        vector<Coords> b;
         b.push_back(a);
         return b;
 
@@ -79,9 +79,9 @@ class LegalMoveScarabee : public LegalMoveInterface{
 };
 
 class LegalMoveCoccinelle : public LegalMoveInterface{
-    vector<Coords*> searchMoves(Coords coord,Graphe graph, bool camp) const override{
-        Coords* a=nullptr;
-        vector<Coords*> b;
+    vector<Coords> searchMoves(Coords coord,Graphe graph, bool camp) const override{
+        Coords a(5,6);
+        vector<Coords> b;
         b.push_back(a);
         return b;
 
@@ -90,18 +90,18 @@ class LegalMoveCoccinelle : public LegalMoveInterface{
 
 
 class LegalMoveSauterelle : public LegalMoveInterface{
-    vector<Coords*> searchMoves(Coords coord,Graphe graph, bool camp) const override{
-        Coords* a=nullptr;
-        vector<Coords*> b;
+    vector<Coords> searchMoves(Coords coord,Graphe graph, bool camp) const override{
+        Coords a(5,6);
+        vector<Coords> b;
         b.push_back(a);
         return b;
     }
 };
 
 class LegalMoveAraignee : public LegalMoveInterface{
-    vector<Coords*> searchMoves(Coords coord,Graphe graph, bool camp) const override{
-        Coords* a=nullptr;
-        vector<Coords*> b;
+    vector<Coords> searchMoves(Coords coord,Graphe graph, bool camp) const override{
+        Coords a(5,6);
+        vector<Coords> b;
         b.push_back(a);
         return b;
 
