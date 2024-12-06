@@ -175,9 +175,8 @@ class Graphe {
         double max_x, min_x, max_y, min_y;
         std::vector<std::vector<Case*>> cases;
 
-        // recopie interdite
-        Graphe(const Graphe& g);
-        Graphe operator=(const Graphe& g)=delete;
+
+
 
         // met les attributs min, max et nb_cases à jour après la création d'une nouvelle case
         void updateAttributesAdd(double c, double l);
@@ -196,7 +195,7 @@ class Graphe {
         void addCase(double c, double l) { addCase(Coords(c, l)); }
         void supprCase(const Case& c);
         void supprCase(const Coords& c);
-        void addPiece(const Piece& p, Case& c);
+        void addPiece( const Piece& p, Case& c);
         void supprPiece(Case& c);
         bool isDeletable(const Case& c) const { return (c.empty() && isIsland(c.getCoords())); }
 
@@ -206,6 +205,8 @@ class Graphe {
         // constructeur/destructeur
         Graphe() : nb_cases(0), max_x(0), min_x(0), max_y(0), min_y(0) { addCase(0, 0); }
         virtual ~Graphe();
+        Graphe operator=(const Graphe& g);
+        Graphe(const Graphe& g);
 
         // getters
         double getMaxX() const { return max_x; }

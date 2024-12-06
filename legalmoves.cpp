@@ -31,3 +31,7 @@ void LegalMoveContext::changeStrategy(TYPE_PIECE typePiece) {
     }
 
 }
+
+vector<Coords *> LegalMoveContext::searchLegalMoves(Coords coord, Graphe graph, bool camp) {
+    return strategy->searchMoves(coord,graph,camp);
+}

@@ -106,6 +106,10 @@ int main() {
 
 
     plateau.afficher(true);
+    /*if (not plateau.getGraphe().getCase(1,2).empty()){
+        plateau.getGraphe().getCase(1,2).getUpperPiece().
+    }*/
+
 
 
 

@@ -151,8 +151,8 @@ bool Case::hasPiece(const Piece& p) const { //renvoie True si pièce est sur la 
 */
 void Case::addPiece(const Piece& p) {
     if (hasPiece(p)) throw runtime_error("ERROR Case::addPiece : Piece deja sur cette case.");
-
     pieces.push_back(&p);
+    //TODO: changer les coords de la piece
 }
 
 /*! \brief [PRIVÉ] Pour supprimer la pièce en haut de la pile de pièces de la case (erreur si case vide).
