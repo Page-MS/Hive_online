@@ -162,7 +162,8 @@ int main() {
             vector<Coords> coups_test = g.getCase(2, 2).getUpperPiece().coupsPossibles(plateau.getGraphe(),
                                                                                        plateau.getGraphe().getCase(2,2).getCoords());
             if (not coups_test.empty()) {
-                cout << "\nPremieres coordonnees retournees : " << coups_test[0].getX() << ":" << coups_test[0].getY();
+                for(auto i:coups_test)
+                cout << "\nCoordonnees retournees : " << i.getX() << ":" << i.getY();
             }
         }
 

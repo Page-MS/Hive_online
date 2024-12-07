@@ -56,7 +56,7 @@ vector<Coords> LegalMoveAbeille::searchMoves(Coords coord,Graphe graph, bool cam
         cout<<"\nNe peut pas bouger sans casser la hive";
         return resultat;
     }
-    vector<Coords> voisins=graphe_a_manipuler.coordsAllAdjacents(coord);
+    vector<Coords> voisins=graphe_a_manipuler.coordsExistentAdjacents(coord);
     int cote_voisin=0;
     for(auto i:voisins){
         if (graphe_a_manipuler.getCase(i).empty() and graphe_a_manipuler.canSlide(coord,cote_voisin)){
@@ -78,7 +78,7 @@ vector<Coords> LegalMoveScarabee::searchMoves(Coords coord,Graphe graph, bool ca
                 return resultat;
             }
         }
-        vector<Coords> voisins=graphe_a_manipuler.coordsAllAdjacents(coord);
+        vector<Coords> voisins=graphe_a_manipuler.coordsExistentAdjacents(coord);
         for(auto i:voisins){
                 resultat.push_back(i);
                 cout<<"\n On ajoute :"<<i.getX()<<":"<<i.getY();
@@ -111,16 +111,20 @@ vector<Coords> LegalMoveAraignee::rechercheDansVoisins(Coords coord, Graphe grap
     for(auto i:voisins) {
         if (graphe_a_manipuler.getCase(i).empty() and graphe_a_manipuler.canSlide(coord, cote_voisin) and (not graphe_a_manipuler.coordsInhabitedAdjacents(i).empty()) ) {
             vector<Coords> resultat_voisin = rechercheDansVoisins(i, graph, camp, profondeur);
-            cout<<"\nRecherche dans"<<i.getX()<<":"<<i.getY();
-            resultat.insert(resultat.end(), resultat_voisin.begin(), resultat_voisin.end());
-            cote_voisin++;
+            for(auto resultat_potentiel:resultat_voisin){
+                if (find(resultat.begin(), resultat.end(), resultat_potentiel) == resultat.end()) {
+                    resultat.push_back(resultat_potentiel);
+                }
+            }
+
+
         }
+        cote_voisin++;
     }
     }else if (profondeur==3){
         for(auto j:voisins)
             if (graphe_a_manipuler.getCase(j).empty() and graphe_a_manipuler.canSlide(coord, cote_voisin)and (not graphe_a_manipuler.coordsInhabitedAdjacents(j).empty()) ) {
                 resultat.push_back(j);
-                cout<<"\n On ajoute :"<<j.getX()<<":"<<j.getY();
                 cote_voisin++;
             }
         }
