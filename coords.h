@@ -11,12 +11,14 @@ class Coords {
     public:
         Coords(double xx=0, double yy=0) : x(xx), y(yy) {}
         Coords(const Coords& c)=default;
-        virtual Coords& operator=(const Coords& c) { x=c.getX(); y=c.getY(); return *this; };
         virtual ~Coords()=default;
+        virtual Coords& operator=(const Coords& c) { x=c.x; y=c.y; return *this; }
 
         virtual bool operator==(const Coords& c) const { return ( x==c.x && y==c.y ); }
         virtual bool operator!=(const Coords& c) const { return ( x!=c.x || y!=c.y ); }
         virtual Coords operator+(const Coords& c) const { return Coords(x+c.x, y+c.y); }
+        virtual bool operator<(const Coords& c) const { return ( x<c.x && y<c.y ); }
+        virtual bool operator>(const Coords& c) const { return ( x>c.x && y>c.y ); }
 
         double getX() const { return x; }
         double getY() const { return y; }

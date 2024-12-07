@@ -39,6 +39,8 @@ bool Plateau::inReserve(const Piece& p) const {
 	return i < reserve.size();
 }
 
+/*! \brief Supprime une pièce de la réserve (rien si pièce pas dans réserve).
+*/
 void Plateau::supprPieceReserve(const Piece& p) {
 	for (auto i=0; i<reserve.size(); i++)
 		if (reserve.at(i)==&p)

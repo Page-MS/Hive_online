@@ -7,7 +7,7 @@
 //#include "Joueur.cpp"
 //#include "partie.cpp"
 #include "legalmoves.cpp"
-#include "gamemanager.cpp"
+//#include "gamemanager.cpp"
 
 
 int main() {
@@ -33,12 +33,7 @@ int main() {
                  "        \\::/    /                \\::/    /                                         \\::/    /        \n"
                  "         \\/____/                  \\/____/                                           \\/____/         \n"
                  "                                                                                                    " << std::endl;
-    cout<<"\n\n"<<" ______     __   __        __  __     ______     __  __     ______        ______     ______     __    __     ______   __  __     ______   ______     ______    \n"
-                  "/\\  __ \\   /\\ \"-.\\ \\      /\\ \\_\\ \\   /\\  __ \\   /\\ \\/\\ \\   /\\  == \\      /\\  ___\\   /\\  __ \\   /\\ \"-./  \\   /\\  == \\ /\\ \\/\\ \\   /\\__  _\\ /\\  ___\\   /\\  == \\   \n"
-                  "\\ \\ \\/\\ \\  \\ \\ \\-.  \\     \\ \\____ \\  \\ \\ \\/\\ \\  \\ \\ \\_\\ \\  \\ \\  __<      \\ \\ \\____  \\ \\ \\/\\ \\  \\ \\ \\-./\\ \\  \\ \\  _-/ \\ \\ \\_\\ \\  \\/_/\\ \\/ \\ \\  __\\   \\ \\  __<   \n"
-                  " \\ \\_____\\  \\ \\_\\\\\"\\_\\     \\/\\_____\\  \\ \\_____\\  \\ \\_____\\  \\ \\_\\ \\_\\     \\ \\_____\\  \\ \\_____\\  \\ \\_\\ \\ \\_\\  \\ \\_\\    \\ \\_____\\    \\ \\_\\  \\ \\_____\\  \\ \\_\\ \\_\\ \n"
-                  "  \\/_____/   \\/_/ \\/_/      \\/_____/   \\/_____/   \\/_____/   \\/_/ /_/      \\/_____/   \\/_____/   \\/_/  \\/_/   \\/_/     \\/_____/     \\/_/   \\/_____/   \\/_/ /_/ \n"
-                  "                                                                                                                                                               ";
+
 
     cout<<"\n\n"<<"|)     /|  .      |  |. _ |-|- _     /|  .      ,_ |  |)     _ \n"
                   "|)\\/  /-||`|(|,  _|L|||(/_|_|_(/_,  /-||`|(|  (|||(|  | (|(|(/_\n"
@@ -108,16 +103,31 @@ int main() {
     plateau.addPieceReserve(coccinelle2);
     plateau.addPieceReserve(moustique2);
     plateau.addPieceReserve(araignee2);
+    plateau.movePiece(araignee2, Coords(0, 4));
+    plateau.movePiece(abeille2, Coords(0, 6));
 
 
     plateau.afficher(true);
 
 
 
+    cout<<"Cases habitees = "<<g.getNbInhabitedCases()<<endl;
+    cout<<"Ruche brisee si bouge a "<<Coords(0, 2)<<" : "<<g.wouldHiveBreak(Coords(0, 2))<<endl;
+
+    Graphe g2= g;
+
+    cout<<g<<endl;
+    cout<<g2<<endl;
+    cout<<g.hasCase(0,0)<<endl;
+    if (not g.getCase(0,0).empty()){
+        cout<<"Type de la piece :"<<g.getCase(0,6).getUpperPiece().getType()<<endl;
+        vector<Coords> coups_test=g.getCase(0,6).getUpperPiece().coupsPossibles(plateau.getGraphe(),plateau.getGraphe().getCase(0,6).getCoords());
+        cout<<"\nCoordonnees retournees : "<<coups_test[0].getX()<<":"<<coups_test[0].getY();   }
     } catch (const exception& e) {
         cout<<e.what()<<endl;
     }
 
     cout<<"\n\nTout nickel !"<<endl;
+
     return 0;
 }
