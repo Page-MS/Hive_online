@@ -11,10 +11,14 @@ class Plateau {
     public :
         Plateau()=default;
         ~Plateau()=default;
+        Plateau(const Plateau& p);
+        Plateau& operator=(const Plateau& p);
+
         const Graphe& getGraphe() const { return graphe; }
         Graphe& getMutableGraphe() { return graphe; }
 
         bool inReserve(const Piece& p) const;
+        bool canPlace(const Piece& p, const Coords& c) const { return getGraphe().canPlace(c, p.getCamp());}
 
         void addPieceReserve(const Piece& p) { reserve.push_back(&p); }
         void supprPieceReserve(const Piece& p);

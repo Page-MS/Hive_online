@@ -306,7 +306,7 @@ Graphe::Iterator Graphe::findCasePlace(double c, double l) const { //renvoie it�
     Utiliser Graphe::hasCase pour savoir si case existe.
     Argument side = 0~5, 0 -> adjacent nord, puis dans sens horaire.
 */
-const Coords Graphe::coordsAdjacent(const Coords& c, unsigned int side) const { //renvoie coordonnées de case adjacente (même si adjacente inexistante)
+Coords Graphe::coordsAdjacent(const Coords& c, unsigned int side) const { //renvoie coordonnées de case adjacente (même si adjacente inexistante)
     if (side == 0) return coordsNorth(c);
     if (side == 1) return coordsNorthEast(c);
     if (side == 2) return coordsSouthEast(c);
@@ -460,6 +460,38 @@ bool Graphe::wouldHiveBreak(const Coords& c) const {
 
     return coords_list.size() != getNbInhabitedCases()-1;
 
+}
+
+/*! \brief Renvoie si une pièce peut glisser d'une case à sa voisine (ne prend pas en compte la présence ou non de pièce sur la case d'arriver).
+*/
+bool Graphe::canSlide(const Coords& c, unsigned int side) const {
+    if (side<0 || side>5) throw runtime_error("ERROR Graphe::canSlide : Cote invalide.");
+
+    auto adjacent = coordsAdjacent(c, (side+5)%6);
+    if (!hasCase(adjacent) || getCase(adjacent).empty()) return true;
+
+    adjacent = coordsAdjacent(c, (side+1)%6);
+
+    return (!hasCase(adjacent) || getCase(adjacent).empty());
+}
+
+/*! \brief Renvoie si le joueur d'un camp donné peut poser sa pièce sur une case.
+*/
+bool Graphe::canPlace(const Coords& c, bool camp) const {
+    if (!hasCase(c) || !getCase(c).empty()) return false;
+
+    bool amie=false;
+    Case* adjacent;
+    for (auto i=0; i<6; i++) {
+        adjacent = getMutableCase(coordsAdjacent(c, i));
+
+        if (adjacent!=nullptr && !adjacent->empty()) {
+            if (adjacent->getUpperPiece().getCamp()!=camp) return false;
+            else amie=true;
+        }
+    }
+
+    return amie;
 }
 
 // modification graphe

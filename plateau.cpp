@@ -2,6 +2,17 @@
 #include <iostream>
 
 // METHODES PLATEAU
+Plateau::Plateau(const Plateau& p) {
+	reserve = p.reserve;
+	graphe = p.graphe;
+}
+
+Plateau& Plateau::operator=(const Plateau& p) {
+	graphe = p.graphe;
+	reserve = p.reserve;
+	return *this;
+}
+
 void Plateau::afficher(bool joueur_courant) {
 
 	Graphe g;
