@@ -95,6 +95,7 @@ int main() {
     Piece coccinelle2(TYPE_PIECE::Coccinelle, false);
     Piece moustique2(TYPE_PIECE::Moustique, false);
     Piece araignee2(TYPE_PIECE::Araignee, false);
+    Piece araignee3(TYPE_PIECE::Araignee, false);
     plateau.addPieceReserve(abeille2);
     plateau.addPieceReserve(fourmi2);
     plateau.addPieceReserve(scarabee2);
@@ -102,9 +103,11 @@ int main() {
     plateau.addPieceReserve(coccinelle2);
     plateau.addPieceReserve(moustique2);
     plateau.addPieceReserve(araignee2);
+    plateau.addPieceReserve(araignee3);
     plateau.movePiece(araignee2, Coords(0, 4));
     plateau.movePiece(abeille2, Coords(0, 6));
     plateau.movePiece(scarabee2, Coords(0, 8));
+    plateau.movePiece(araignee3, Coords(2, 2));
 
     plateau.afficher(true);
 
@@ -130,6 +133,7 @@ int main() {
         }
     }
     cout<<"\n########Test du scarabee 1########\n\n";
+
     cout<<g.hasCase(0,2)<<endl;
     if (not g.getCase(0,2).empty()) {
         cout << "Type de la piece :" << g.getCase(0, 2).getUpperPiece().getType() << endl;
@@ -150,6 +154,19 @@ int main() {
                 cout << "\nPremieres coordonnees retournees : " << coups_test[0].getX() << ":" << coups_test[0].getY();
             }
         }
+
+        cout<<"\n######## Test de l'araignee ########\n\n";
+        cout<<g.hasCase(2,2)<<endl;
+        if (not g.getCase(2,2).empty()) {
+            cout << "Type de la piece :" << g.getCase(2, 2).getUpperPiece().getType() << endl;
+            vector<Coords> coups_test = g.getCase(2, 2).getUpperPiece().coupsPossibles(plateau.getGraphe(),
+                                                                                       plateau.getGraphe().getCase(2,2).getCoords());
+            if (not coups_test.empty()) {
+                cout << "\nPremieres coordonnees retournees : " << coups_test[0].getX() << ":" << coups_test[0].getY();
+            }
+        }
+
+
 
     }
 

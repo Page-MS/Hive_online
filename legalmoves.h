@@ -83,13 +83,8 @@ class LegalMoveSauterelle : public LegalMoveInterface{
 };
 
 class LegalMoveAraignee : public LegalMoveInterface{
-    vector<Coords> searchMoves(Coords coord,Graphe graph, bool camp) override{
-        Coords a(5,6);
-        vector<Coords> b;
-        b.push_back(a);
-        return b;
-
-    }
+    vector<Coords> searchMoves(Coords coord,Graphe graph, bool camp) override;
+    vector<Coords> rechercheDansVoisins(Coords coord,Graphe graph, bool camp,unsigned int profondeur);
 };
 
 
