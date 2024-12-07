@@ -459,6 +459,18 @@ bool Graphe::wouldHiveBreak(const Coords& c) const {
 
 }
 
+
+bool Graphe::canSlide(const Coords& c, unsigned int side) const {
+    if (side<0 || side>5) throw runtime_error("ERROR Graphe::canSlide : Cote invalide.");
+
+    auto adjacent = coordsAdjacent(c, (side+5)%6);
+    if (!hasCase(adjacent) || getCase(adjacent).empty()) return true;
+
+    adjacent = coordsAdjacent(c, (side+1)%6);
+    
+    return (!hasCase(adjacent) || getCase(adjacent).empty());
+}
+
 // modification graphe
 /*! \brief [PRIVÉ] Pour mettre à jour attributs de Graphe après ajout d'une nouvelle case (nombre de cases et extrémités gauche/droite/haute/basse).
 */

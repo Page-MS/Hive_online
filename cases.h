@@ -229,6 +229,7 @@ class Graphe {
         bool isSurrounded(const Coords& c) const;
         bool isSurrounded(const Case& c) const { return isSurrounded(c.getCoords()); }
         bool wouldHiveBreak(const Coords& c) const;
+        bool canSlide(const Coords& c, unsigned int side) const;
 
         // itérateur
         Iterator getIterator() const { Iterator ite = Iterator(cases); return ite; }

@@ -11,6 +11,9 @@ class Plateau {
     public :
         Plateau()=default;
         ~Plateau()=default;
+        Plateau(const Plateau& p);
+        Plateau& operator=(const Plateau& p);
+
         const Graphe& getGraphe() const { return graphe; }
         Graphe& getMutableGraphe() { return graphe; }
 
