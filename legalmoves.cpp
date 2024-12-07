@@ -43,7 +43,45 @@ vector<Coords > LegalMoveContext::searchLegalMoves(Coords coord, Graphe graph, b
     changeStrategy(graph.getCase(coord).getUpperPiece().getType());
     vector<Coords> result=strategy->searchMoves(coord,graph,camp);
     if (result.empty()){
-        cout<<"\n Oh non le gros nullos\n";
+        cout<<"\n pas de resultat\n";
         }
     return result;
 }
+
+vector<Coords> LegalMoveAbeille::searchMoves(Coords coord,Graphe graph, bool camp) {
+    graphe_avant_coup=graph;
+    graphe_a_manipuler=graph;
+    vector<Coords> resultat;
+    if(graphe_a_manipuler.wouldHiveBreak(coord)){
+        cout<<"\nNe peut pas bouger sans casser la hive";
+        return resultat;
+    }
+    vector<Coords> voisins=graphe_a_manipuler.coordsAllAdjacents(coord);
+    for(auto i:voisins){
+        if (graphe_a_manipuler.getCase(i).empty()){
+            resultat.push_back(i);
+            cout<<"\n On ajoute :"<<i.getX()<<":"<<i.getY();
+        }
+    }
+    return resultat;
+};
+
+vector<Coords> LegalMoveScarabee::searchMoves(Coords coord,Graphe graph, bool campvector){
+        graphe_avant_coup=graph;
+        graphe_a_manipuler=graph;
+        vector<Coords> resultat;
+        if(graphe_a_manipuler.getCase(coord).getNbPieces()<=1){
+            if(graphe_a_manipuler.wouldHiveBreak(coord)){
+                cout<<"\nNe peut pas bouger sans casser la hive";
+                return resultat;
+            }
+        }
+        vector<Coords> voisins=graphe_a_manipuler.coordsAllAdjacents(coord);
+        for(auto i:voisins){
+                resultat.push_back(i);
+                cout<<"\n On ajoute :"<<i.getX()<<":"<<i.getY();
+        }
+        return resultat;
+
+    }
+
