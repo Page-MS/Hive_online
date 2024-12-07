@@ -230,6 +230,7 @@ class Graphe {
         bool isSurrounded(const Case& c) const { return isSurrounded(c.getCoords()); }
         bool wouldHiveBreak(const Coords& c) const;
         bool canSlide(const Coords& c, unsigned int side) const;
+        bool canPlace(const Coords& c, bool camp) const;
 
         // itérateur
         Iterator getIterator() const { Iterator ite = Iterator(cases); return ite; }
@@ -238,14 +239,14 @@ class Graphe {
         const Case& getCase(double c, double l) const;
         const Case& getCase(const Coords& c) const { return getCase(c.getX(), c.getY()); } ;
         
-        const Coords coordsAdjacent(const Coords& c, unsigned int side) const;
+        Coords coordsAdjacent(const Coords& c, unsigned int side) const;
         
-        const Coords coordsNorth(const Coords& c) const { return Coords(c.getX(), c.getY()-2); }
-        const Coords coordsNorthEast(const Coords& c) const { return Coords(c.getX()+1, c.getY()-1); }
-        const Coords coordsSouthEast(const Coords& c) const { return Coords(c.getX()+1, c.getY()+1); }
-        const Coords coordsSouth(const Coords& c) const { return Coords(c.getX(), c.getY()+2); }
-        const Coords coordsSouthWest(const Coords& c) const { return Coords(c.getX()-1, c.getY()+1); }
-        const Coords coordsNorthWest(const Coords& c) const { return Coords(c.getX()-1, c.getY()-1); }
+        Coords coordsNorth(const Coords& c) const { return Coords(c.getX(), c.getY()-2); }
+        Coords coordsNorthEast(const Coords& c) const { return Coords(c.getX()+1, c.getY()-1); }
+        Coords coordsSouthEast(const Coords& c) const { return Coords(c.getX()+1, c.getY()+1); }
+        Coords coordsSouth(const Coords& c) const { return Coords(c.getX(), c.getY()+2); }
+        Coords coordsSouthWest(const Coords& c) const { return Coords(c.getX()-1, c.getY()+1); }
+        Coords coordsNorthWest(const Coords& c) const { return Coords(c.getX()-1, c.getY()-1); }
 
         std::vector<Coords> coordsAllAdjacents(const Coords& c) const;
         std::vector<Coords> coordsExistentAdjacents(const Coords& c) const;

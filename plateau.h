@@ -18,6 +18,7 @@ class Plateau {
         Graphe& getMutableGraphe() { return graphe; }
 
         bool inReserve(const Piece& p) const;
+        bool canPlace(const Piece& p, const Coords& c) const { return getGraphe().canPlace(c, p.getCamp());}
 
         void addPieceReserve(const Piece& p) { reserve.push_back(&p); }
         void supprPieceReserve(const Piece& p);
