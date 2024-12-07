@@ -193,6 +193,12 @@ class Graphe {
         void supprCase(const Coords& c);
         void addPiece(const Piece& p, Case& c);
         void supprPiece(Case& c);
+        void clear();
+
+        // renvoie si une pièce est entourée de cases vides
+        bool isIsland(double c, double l) const { return isIsland(Coords(c, l)); }
+        bool isIsland(const Coords& c) const;
+        bool isIsland(const Case& c) const { return isIsland(c.getCoords()); }
         bool isDeletable(const Case& c) const { return (c.empty() && isIsland(c.getCoords())); }
 
         const Coords* coordsPiecePointer(const Piece& p) const;
@@ -203,8 +209,6 @@ class Graphe {
         virtual ~Graphe();
         Graphe(const Graphe& g);
         Graphe& operator=(const Graphe& g);
-        
-        void clear();
 
         // getters
         double getMaxX() const { return max_x; }
@@ -223,23 +227,16 @@ class Graphe {
         bool hasPiece(const Piece& p) const { return coordsPiecePointer(p)!=nullptr; };
         const Coords& coordsPiece(const Piece& p) const;
         bool isPieceStuck(const Piece& p) const;
-        bool isIsland(double c, double l) const { return isIsland(Coords(c, l)); }
-        bool isIsland(const Coords& c) const;
-        bool isIsland(const Case& c) const { return isIsland(c.getCoords()); }
+        // renvoie si une pièce est entourée d'autres pièces (pour la reine)
         bool isSurrounded(const Coords& c) const;
         bool isSurrounded(const Case& c) const { return isSurrounded(c.getCoords()); }
         bool wouldHiveBreak(const Coords& c) const;
         bool canSlide(const Coords& c, unsigned int side) const;
         bool canPlace(const Coords& c, bool camp) const;
 
-        // itérateur
-        Iterator getIterator() const { Iterator ite = Iterator(cases); return ite; }
-
         // renvoie case non modifiable
         const Case& getCase(double c, double l) const;
         const Case& getCase(const Coords& c) const { return getCase(c.getX(), c.getY()); } ;
-        
-        Coords coordsAdjacent(const Coords& c, unsigned int side) const;
         
         Coords coordsNorth(const Coords& c) const { return Coords(c.getX(), c.getY()-2); }
         Coords coordsNorthEast(const Coords& c) const { return Coords(c.getX()+1, c.getY()-1); }
@@ -248,19 +245,20 @@ class Graphe {
         Coords coordsSouthWest(const Coords& c) const { return Coords(c.getX()-1, c.getY()+1); }
         Coords coordsNorthWest(const Coords& c) const { return Coords(c.getX()-1, c.getY()-1); }
 
+        Coords coordsAdjacent(const Coords& c, unsigned int side) const;
         std::vector<Coords> coordsAllAdjacents(const Coords& c) const;
         std::vector<Coords> coordsExistentAdjacents(const Coords& c) const;
         std::vector<Coords> coordsInhabitedAdjacents(const Coords& c) const;
 
-
-        Iterator findCasePlace(double c, double l) const;
-        Iterator findCasePlace(const Coords& c) const { return findCasePlace(c.getX(), c.getY()); }
-
-        // déplacements pièce dans ruche
-
+        // déplacements pièce dans la ruche
         void addPiece(const Piece& p, const Coords& c);
         void supprPiece(const Coords& c);
         void movePiece(const Piece& p, const Coords& c);
+
+        // itérateur
+        Iterator getIterator() const { Iterator ite = Iterator(cases); return ite; }
+        Iterator findCasePlace(double c, double l) const;
+        Iterator findCasePlace(const Coords& c) const { return findCasePlace(c.getX(), c.getY()); }
 };
 
 // AFFICHAGE
