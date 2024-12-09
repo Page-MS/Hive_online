@@ -126,7 +126,7 @@ bool onStraightLine(const Coords& c1, const Coords& c2) {
 */
 std::string Case::strCase() const {
 
-    if (empty()) return " xx ";
+    if (empty()) return " :: ";
 
     std::string symbole;
     if (getUpperPiece().getCamp())
