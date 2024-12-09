@@ -102,7 +102,7 @@ vector<Coords> LegalMoveAraignee::searchMoves(Coords coord,Graphe graph, bool ca
 
 }
 
-vector<Coords> LegalMoveAraignee::rechercheDansVoisins(Coords coord, Graphe graph, bool camp,unsigned int profondeur) {
+vector<Coords> LegalMoveAraignee::rechercheDansVoisins(Coords coord, Graphe graph, bool camp,unsigned int profondeur) const {
     vector<Coords> resultat;
     vector<Coords> voisins=graphe_a_manipuler.coordsExistentAdjacents(coord);
     profondeur++;
@@ -133,3 +133,37 @@ vector<Coords> LegalMoveAraignee::rechercheDansVoisins(Coords coord, Graphe grap
 
         }
 
+    vector<Coords> LegalMoveFourmi::searchMoves(Coords coord, Graphe graph, bool camp) {
+        graphe_avant_coup=graph;
+        graphe_a_manipuler=graph;
+        vector<Coords> resultat;
+        if(graphe_a_manipuler.wouldHiveBreak(coord)){
+            cout<<"\nNe peut pas bouger sans casser la hive";
+            return resultat;
+        }
+        vector<Coords> voisins_traites;
+        voisins_traites.push_back(coord);
+        resultat= rechercheDansVoisins(coord,graph,camp,voisins_traites);
+
+        return resultat;
+}
+
+vector<Coords> LegalMoveFourmi::rechercheDansVoisins(Coords coord, Graphe graph, bool camp, vector<Coords>& voisins_traites) const {
+    vector<Coords> voisins = graphe_a_manipuler.coordsExistentAdjacents(coord);
+    unsigned int cote_voisin = 0;
+    for (auto i: voisins) {
+        if (graphe_a_manipuler.getCase(i).empty() and graphe_a_manipuler.canSlide(coord, cote_voisin) and
+            (not graphe_a_manipuler.coordsInhabitedAdjacents(i).empty()) and (find(voisins_traites.begin(), voisins_traites.end(), i) == voisins_traites.end())) {
+            voisins_traites.push_back(i);
+            vector<Coords> resultat_voisin = rechercheDansVoisins(i, graph, camp, voisins_traites);
+            for (auto resultat_potentiel: resultat_voisin) {
+                if (find(voisins_traites.begin(), voisins_traites.end(), resultat_potentiel) == voisins_traites.end()) {
+                    voisins_traites.push_back(resultat_potentiel);
+                }
+            }
+
+        }
+    }
+    return voisins_traites;
+
+}

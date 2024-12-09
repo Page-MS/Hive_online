@@ -49,13 +49,8 @@ class LegalMoveMoustique : public LegalMoveInterface{
 };
 
 class LegalMoveFourmi : public LegalMoveInterface{
-    vector<Coords> searchMoves(Coords coord,Graphe graph, bool campvector){
-        Coords a(5,6);
-        vector<Coords> b;
-        b.push_back(a);
-        return b;
-
-    }
+    vector<Coords> searchMoves(Coords coord,Graphe graph, bool campvector) override;
+    vector<Coords> rechercheDansVoisins(Coords coord, Graphe graph, bool camp, vector<Coords>& voisins_traites) const;
 };
 
 class LegalMoveScarabee : public LegalMoveInterface{
@@ -84,7 +79,7 @@ class LegalMoveSauterelle : public LegalMoveInterface{
 
 class LegalMoveAraignee : public LegalMoveInterface{
     vector<Coords> searchMoves(Coords coord,Graphe graph, bool camp) override;
-    vector<Coords> rechercheDansVoisins(Coords coord,Graphe graph, bool camp,unsigned int profondeur);
+    vector<Coords> rechercheDansVoisins(Coords coord,Graphe graph, bool camp,unsigned int profondeur) const;
 };
 
 
