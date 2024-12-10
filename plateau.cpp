@@ -13,29 +13,33 @@ Plateau& Plateau::operator=(const Plateau& p) {
 	return *this;
 }
 
+/*! \brief Affiche le plateau avec les pièces du joueur courant en bas et celles de son adversaire en haut.
+*/
 void Plateau::afficher(bool joueur_courant) {
 
 	Graphe g;
 	const Coords c(0, 0);
 
 	std::cout<<"--------------------------------"<<std::endl;
-	for (size_t i=0; i<reserve.size(); i++)
-		if (reserve.at(i)->getCamp() != joueur_courant) {
-			g.addPiece(*reserve.at(i), c);
-			std::cout<<"<"<<g.getCase(c)<<">";
-			g.supprPiece(c);
-		}
+	auto pieces_adversaire = piecesReserve(!joueur_courant);
+
+	for (size_t i=0; i<pieces_adversaire.size(); i++) {
+		g.addPiece(*pieces_adversaire.at(i), c);
+		std::cout<<"<"<<g.getCase(c)<<">";
+		g.supprPiece(c);
+	}
 	std::cout<<std::endl<<"---------- ADVERSAIRE ----------"<<std::endl;
 
 	std::cout<<getGraphe()<<std::endl;
 
 	std::cout<<"------------- VOUS -------------"<<std::endl;
-	for (size_t i=0; i<reserve.size(); i++)
-		if (reserve.at(i)->getCamp() == joueur_courant) {
-			g.addPiece(*reserve.at(i), c);
-			std::cout<<"<"<<g.getCase(c)<<">";
-			g.supprPiece(c);
-		}
+	auto pieces_vous = piecesReserve(joueur_courant);
+
+	for (size_t i=0; i<pieces_vous.size(); i++) {
+		g.addPiece(*pieces_vous.at(i), c);
+		std::cout<<"<"<<g.getCase(c)<<">";
+		g.supprPiece(c);
+	}
 	std::cout<<std::endl<<"--------------------------------"<<std::endl;
 
 	std::cout<<std::endl;
@@ -48,6 +52,18 @@ bool Plateau::inReserve(const Piece& p) const {
 	while (i < reserve.size() && reserve.at(i) != &p) i++;
 
 	return i < reserve.size();
+}
+
+/*! \brief Renvoie la liste des pièces du joueur pas déjà dans la ruche.
+*/
+std::vector<const Piece*> Plateau::piecesReserve(bool joueur) const {
+	std::vector<const Piece*> pieces_joueur;
+
+	for (size_t i=0; i<reserve.size(); i++)
+		if (reserve.at(i)->getCamp()==joueur)
+			pieces_joueur.push_back(reserve.at(i));
+
+	return pieces_joueur;
 }
 
 /*! \brief Supprime une pièce de la réserve (rien si pièce pas dans réserve).

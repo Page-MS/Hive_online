@@ -112,8 +112,8 @@ int main() {
     plateau.afficher(true);
 
     cout<<"Cases habitees = "<<plateau.getGraphe().getNbInhabitedCases()<<endl;
-    cout<<"Ruche brisee si bouge a "<<Coords(0, 2)<<" : "<<plateau.getGraphe().wouldHiveBreak(Coords(0, 2))<<endl;
-
+    cout<<"Ruche brisee si bouge a "<<Coords(0, 0)<<" : "<<plateau.getGraphe().wouldHiveBreak(Coords(0, 0))<<endl;
+    
     } catch (const exception& e) {
         cout<<e.what()<<endl;
     }

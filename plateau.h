@@ -18,6 +18,7 @@ class Plateau {
         const Graphe& getGraphe() const { return graphe; }
 
         bool inReserve(const Piece& p) const;
+        std::vector<const Piece*> piecesReserve(bool joueur) const;
 
         void addPieceReserve(const Piece& p) { if (!inReserve(p)) reserve.push_back(&p); }
         void supprPieceReserve(const Piece& p);
