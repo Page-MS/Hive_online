@@ -89,7 +89,6 @@ vector<Coords> LegalMoveScarabee::searchMoves(Coords coord,Graphe graph, bool ca
 
 
 vector<Coords> LegalMoveAraignee::searchMoves(Coords coord,Graphe graph, bool camp){
-    graphe_avant_coup=graph;
     graphe_a_manipuler=graph;
     vector<Coords> resultat;
     if(graphe_a_manipuler.wouldHiveBreak(coord)){
@@ -125,8 +124,9 @@ vector<Coords> LegalMoveAraignee::rechercheDansVoisins(Coords coord, Graphe grap
         for(auto j:voisins)
             if (graphe_a_manipuler.getCase(j).empty() and graphe_a_manipuler.canSlide(coord, cote_voisin)and (not graphe_a_manipuler.coordsInhabitedAdjacents(j).empty()) ) {
                 resultat.push_back(j);
-                cote_voisin++;
+
             }
+        cote_voisin++;
         }
 
     return resultat;
@@ -165,5 +165,49 @@ vector<Coords> LegalMoveFourmi::rechercheDansVoisins(Coords coord, Graphe graph,
         }
     }
     return voisins_traites;
+
+}
+
+vector<Coords> LegalMoveCoccinelle::searchMoves(Coords coord, Graphe graph, bool camp) {
+    graphe_a_manipuler=graph;
+    vector<Coords> resultat;
+    if(graphe_a_manipuler.wouldHiveBreak(coord)){
+        cout<<"\nNe peut pas bouger sans casser la hive";
+        return resultat;
+    }
+    resultat= rechercheDansVoisins(coord,graph,camp,0);
+
+    return resultat;
+}
+
+vector<Coords> LegalMoveCoccinelle::rechercheDansVoisins(Coords coord, Graphe graph, bool camp,unsigned int profondeur) const {
+    vector<Coords> resultat;
+    vector<Coords> voisins=graphe_a_manipuler.coordsExistentAdjacents(coord);
+    profondeur++;
+    unsigned int cote_voisin=0;
+    if (profondeur<3){
+        for(auto i:voisins) {
+            if ( (not graphe_a_manipuler.getCase(i).empty()) and (not graphe_a_manipuler.coordsInhabitedAdjacents(i).empty()) ) {
+                vector<Coords> resultat_voisin = rechercheDansVoisins(i, graph, camp, profondeur);
+                for(auto resultat_potentiel:resultat_voisin){
+                    if (find(resultat.begin(), resultat.end(), resultat_potentiel) == resultat.end()) {
+                        resultat.push_back(resultat_potentiel);
+                    }
+                }
+
+
+            }
+            cote_voisin++;
+        }
+    }else if (profondeur==3){
+        for(auto j:voisins)
+            if (graphe_a_manipuler.getCase(j).empty() and (not graphe_a_manipuler.coordsInhabitedAdjacents(j).empty()) ) {
+                resultat.push_back(j);
+
+            }
+        cote_voisin++;
+    }
+
+    return resultat;
 
 }

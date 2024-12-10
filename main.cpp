@@ -109,6 +109,8 @@ int main() {
     plateau.movePiece(scarabee2, Coords(0, 6));
     plateau.movePiece(araignee3, Coords(2, 2));
     plateau.movePiece(fourmi2, Coords(2, 4));
+    plateau.movePiece(sauterelle2, Coords(2, 6));
+    plateau.movePiece(coccinelle2, Coords(3, 1));
 
     plateau.afficher(true);
 
@@ -164,7 +166,7 @@ int main() {
                 for(auto i:coups_test)
                 cout << "\nCoordonnees retournees : " << i.getX() << ":" << i.getY();
             }
-        }*/
+        }
 
         cout<<"\n######## Test de la fourmi ########\n\n";
         cout<<g2.hasCase(2,4)<<endl;
@@ -172,6 +174,18 @@ int main() {
             cout << "Type de la piece :" << g2.getCase(2, 4).getUpperPiece().getType() << endl;
             vector<Coords> coups_test = g2.getCase(2, 4).getUpperPiece().coupsPossibles(plateau.getGraphe(),
                                                                                         plateau.getGraphe().getCase(2,4).getCoords());
+            if (not coups_test.empty()) {
+                for(auto i:coups_test)
+                    cout << "\nCoordonnees retournees : " << i.getX() << ":" << i.getY();
+            }
+        }*/
+
+        cout<<"\n######## Test de la coccinelle ########\n\n";
+        cout<<g2.hasCase(3,1)<<endl;
+        if (not g2.getCase(3,1).empty()) {
+            cout << "Type de la piece :" << g2.getCase(3, 1).getUpperPiece().getType() << endl;
+            vector<Coords> coups_test = g2.getCase(3, 1).getUpperPiece().coupsPossibles(plateau.getGraphe(),
+                                                                                        plateau.getGraphe().getCase(3,1).getCoords());
             if (not coups_test.empty()) {
                 for(auto i:coups_test)
                     cout << "\nCoordonnees retournees : " << i.getX() << ":" << i.getY();
