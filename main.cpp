@@ -178,7 +178,7 @@ int main() {
                 for(auto i:coups_test)
                     cout << "\nCoordonnees retournees : " << i.getX() << ":" << i.getY();
             }
-        }*/
+        }
 
         cout<<"\n######## Test de la coccinelle ########\n\n";
         cout<<g2.hasCase(3,1)<<endl;
@@ -186,6 +186,18 @@ int main() {
             cout << "Type de la piece :" << g2.getCase(3, 1).getUpperPiece().getType() << endl;
             vector<Coords> coups_test = g2.getCase(3, 1).getUpperPiece().coupsPossibles(plateau.getGraphe(),
                                                                                         plateau.getGraphe().getCase(3,1).getCoords());
+            if (not coups_test.empty()) {
+                for(auto i:coups_test)
+                    cout << "\nCoordonnees retournees : " << i.getX() << ":" << i.getY();
+            }
+        }*/
+
+        cout<<"\n######## Test de la sauterelle ########\n\n";
+        cout<<g2.hasCase(2,6)<<endl;
+        if (not g2.getCase(2,6).empty()) {
+            cout << "Type de la piece :" << g2.getCase(2, 6).getUpperPiece().getType() << endl;
+            vector<Coords> coups_test = g2.getCase(2, 6).getUpperPiece().coupsPossibles(plateau.getGraphe(),
+                                                                                        plateau.getGraphe().getCase(2,6).getCoords());
             if (not coups_test.empty()) {
                 for(auto i:coups_test)
                     cout << "\nCoordonnees retournees : " << i.getX() << ":" << i.getY();
