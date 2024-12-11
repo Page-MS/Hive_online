@@ -7,7 +7,6 @@
 void LegalMoveContext::changeStrategy(TYPE_PIECE typePiece) {
     //si la strategie à appliquer est la même, on ne la change pas
         if (strategy != nullptr) {
-            cout<<"\nOn suppprime la strategie";
             delete strategy;
         }
         if (typePiece == Abeille) {
@@ -32,7 +31,7 @@ void LegalMoveContext::changeStrategy(TYPE_PIECE typePiece) {
             strategy = new LegalMoveCoccinelle();
             current_strategy=Coccinelle;
         } else {
-            std::cout << "Attention choix de piece invalide";
+            std::cout << "\nAttention choix de piece invalide";
             strategy = nullptr;
         }
     }
@@ -235,7 +234,14 @@ vector<Coords> LegalMoveSauterelle::searchMoves(Coords coord,Graphe graph, bool 
         }
     return resultat;
 }
+vector<Coords> LegalMoveContext::searchNeighbourMosquito(Coords coord, Graphe graph,bool camp) {
+    vector<Coords> result=strategy->searchMoves(coord,graph,camp);
+    if (result.empty()){
+        cout<<"\n pas de resultat\n";
+    }
+    return result;
 
+}
 vector<Coords> LegalMoveMoustique::searchMoves(Coords coord,Graphe graph, bool camp){
     graphe_a_manipuler=graph;
     vector<Coords> resultat;
@@ -251,6 +257,18 @@ vector<Coords> LegalMoveMoustique::searchMoves(Coords coord,Graphe graph, bool c
         if (find(types_pieces_voisines.begin(), types_pieces_voisines.end(), type_voisin) == types_pieces_voisines.end()) {
             types_pieces_voisines.push_back(type_voisin);
         }
+    }
+    LegalMoveContext* legalmove=&LegalMoveContext::getInstance();
+    for (auto type:types_pieces_voisines){
+        //graphe_a_manipuler.getCase(coord)
+        if (type!=5){
+            legalmove->changeStrategy(type);
+            vector<Coords> results_with_neighbour_type=legalmove->searchNeighbourMosquito(coord,graph,camp);
+            for(auto potential_result:voisins){
+                if (find(resultat.begin(), resultat.end(), potential_result) == resultat.end()) {
+                    resultat.push_back(potential_result);
+                }
+        }}
 
 
     }

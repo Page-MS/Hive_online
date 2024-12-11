@@ -34,6 +34,7 @@ public:
         return instance;
     }
     vector<Coords> searchLegalMoves(Coords coord,Graphe graph, bool camp);
+    vector<Coords> searchNeighbourMosquito(Coords coord,Graphe graph,bool camp);
     void changeStrategy(TYPE_PIECE typePiece);
 
 };
