@@ -229,10 +229,30 @@ vector<Coords> LegalMoveSauterelle::searchMoves(Coords coord,Graphe graph, bool 
                 voisin_is_not_empty=(not graphe_a_manipuler.getCase(case_voisine).empty());
             }
             resultat.push_back(case_voisine);
-            cout<<"\n On ajoute :"<<i.getX()<<":"<<i.getY();
             cote_voisin++;
 
         }
         }
+    return resultat;
+}
+
+vector<Coords> LegalMoveMoustique::searchMoves(Coords coord,Graphe graph, bool camp){
+    graphe_a_manipuler=graph;
+    vector<Coords> resultat;
+    TYPE_PIECE type_voisin;
+    vector<TYPE_PIECE> types_pieces_voisines;
+    if(graphe_a_manipuler.wouldHiveBreak(coord)){
+        cout<<"\nNe peut pas bouger sans casser la hive";
+        return resultat;
+    }
+    vector<Coords> voisins=graphe_a_manipuler.coordsInhabitedAdjacents(coord);
+    for (auto i:voisins){
+        type_voisin=graphe_a_manipuler.getCase(i).getUpperPiece().getType();
+        if (find(types_pieces_voisines.begin(), types_pieces_voisines.end(), type_voisin) == types_pieces_voisines.end()) {
+            types_pieces_voisines.push_back(type_voisin);
+        }
+
+
+    }
     return resultat;
 }

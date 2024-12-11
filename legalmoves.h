@@ -40,12 +40,7 @@ public:
 
 
 class LegalMoveMoustique : public LegalMoveInterface{
-    vector<Coords> searchMoves(Coords coord,Graphe graph, bool camp){
-        Coords a(5,6);
-        vector<Coords> b;
-        b.push_back(a);
-        return b;
-    }
+    vector<Coords> searchMoves(Coords coord,Graphe graph, bool camp) override;
 };
 
 class LegalMoveFourmi : public LegalMoveInterface{
