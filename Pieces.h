@@ -9,44 +9,26 @@
 #include <initializer_list>
 #include <array>
 #include <cstdlib>
-
+#include "coords.h"
+using namespace std;
+enum TYPE_PIECE
+{
+    Scarabee,Abeille,Fourmi,Sauterelle,Araignee,Moustique,Coccinelle
+};
 class Piece {
-    int x_position;
-    int y_position;
+    bool camp;
+    TYPE_PIECE type_piece;
     friend class Mouvement;
     friend class Case;
+    friend class GameManager;
 public:
-    int** coupPossibles();
-
+    //Si les pièces sont crées avant d'être mises sur le plateau, elles sont alors toutes placées à un emplacement abérant
+    Piece(TYPE_PIECE type,bool c): camp(c), type_piece(type){}
+    ~Piece()=default;
+    Coords** coupsPossibles();
+    TYPE_PIECE getType() const {return type_piece;}
+    bool getCamp() const { return camp; }
+    std::string strPiece() const;
 };
-
-class Abeille : public Piece{
-
-};
-
-class Fourmi : public Piece{
-
-};
-
-class Scarabee : public Piece{
-
-};
-
-class Sauterelle : public Piece{
-
-};
-
-class Araignee : public Piece{
-
-};
-
-class Moustique : public Piece{
-
-};
-
-class Coccinelle : public Piece{
-
-};
-
 
 #endif //LO21_PIECES_H

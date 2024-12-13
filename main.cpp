@@ -1,6 +1,11 @@
+#include <QApplication>
+#include "MainWindow.h"
 
-#include "Pieces.h"
-int main() {
-    std::cout << "Hello, World!" << std::endl;
-    return 0;
+int main(int argc, char* argv[]) {
+    QApplication app(argc, argv);
+
+    MainWindow mainWindow;
+    mainWindow.show();
+
+    return app.exec();
 }
