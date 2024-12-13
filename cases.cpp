@@ -793,3 +793,23 @@ void Graphe::Iterator::goToCoords(double c, double l) { //coordonnées "réelles
 void Graphe::Iterator::goToCoords(const Coords& c) {
     goToCoords(c.getX(), c.getY());
 }
+
+/*! \brief Pour obtenir toutes les coordonnées où l'on peut placer. Attention à quand même vérifier la règle de la
+ * reine abeille au 4ème coup
+ */
+ std::vector<Coords> Graphe::placableCoords(bool camp) {
+     auto ite=getIterator();
+    vector<Coords> resultat;
+    while  (not ite.atEndColonne()){
+        while (not ite.atEndLigne()){
+            if (canPlace(ite.getCurrent().getCoords(),camp)){
+                resultat.push_back(ite.getCurrent().getCoords());
+            }
+            ite.nextLigne();
+        }
+            ite.nextColonne();
+            ite.firstLigne();
+
+    }
+    return resultat;
+ }

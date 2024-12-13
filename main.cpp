@@ -203,7 +203,7 @@ int main() {
                 for(auto i:coups_test)
                     cout << "\nCoordonnees retournees : " << i.getX() << ":" << i.getY();
             }
-        }*/
+        }
         cout<<"\n######## Test du moustique ########\n\n";
         cout<<g2.hasCase(3,3)<<endl;
         if (not g2.getCase(3,3).empty()) {
@@ -214,8 +214,14 @@ int main() {
                 for(auto i:coups_test)
                     cout << "\nCoordonnees retournees : " << i.getX() << ":" << i.getY();
             }
-        }
+        }*/
 
+        cout<<"\n######## Test des cases libres ########\n\n";
+        vector<Coords> test_cases_libres =g2.placableCoords(1);
+        if (not test_cases_libres.empty()) {
+            for(auto i:test_cases_libres)
+                cout << "\nCoordonnees retournees : " << i.getX() << ":" << i.getY();
+        }
 
     }
 

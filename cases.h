@@ -235,6 +235,8 @@ class Graphe {
         bool wouldHiveBreak(const Coords& c) const;
         bool canSlide(const Coords& c, unsigned int side) const;
         bool canPlace(const Coords& c, bool camp) const;
+        //Pour savoir où placer une pièce
+        std::vector<Coords> placableCoords(bool camp);
 
         // renvoie case non modifiable
         const Case& getCase(double c, double l) const;
