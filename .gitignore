@@ -36,3 +36,4 @@
 /cmake-build-develop
 .DS_Store
 .e4acb90
+build/
