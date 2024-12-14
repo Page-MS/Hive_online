@@ -1,3 +1,4 @@
+#include <bits/stdc++.h>
 #include "joueur.h"
 
 Joueur::Joueur(const std::string& nomJoueur, bool IA) : nom(nomJoueur), isIA(IA) {

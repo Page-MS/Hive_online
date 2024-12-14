@@ -1,5 +1,5 @@
 #include "cases.h"
-
+#include <bits/stdc++.h>
 // AFFICHAGE
 std::ostream& operator<<(std::ostream& flux, const Case& c) { // Affichage d'une case, peut être ajouté au cout<<
 
