@@ -5,7 +5,9 @@
 #include <vector>
 #include <iostream>
 #include <string>
-
+#include <iomanip>
+//Forward definition
+class Piece;
 // CASES
 class Case {
     friend class Graphe;
@@ -234,11 +236,13 @@ class Graphe {
         bool wouldHiveBreak(const Coords& c) const;
         bool canSlide(const Coords& c, unsigned int side) const;
         bool canPlace(const Coords& c, bool camp) const;
+        //Pour savoir où placer une pièce
+        std::vector<Coords> placableCoords(bool camp);
 
         // renvoie case non modifiable
         const Case& getCase(double c, double l) const;
         const Case& getCase(const Coords& c) const { return getCase(c.getX(), c.getY()); } ;
-        
+
         Coords coordsNorth(const Coords& c) const { return Coords(c.getX(), c.getY()-2); }
         Coords coordsNorthEast(const Coords& c) const { return Coords(c.getX()+1, c.getY()-1); }
         Coords coordsSouthEast(const Coords& c) const { return Coords(c.getX()+1, c.getY()+1); }

@@ -9,26 +9,26 @@ class Plateau {
 
     Graphe& getMutableGraphe() { return graphe; }
 
-public :
-    Plateau()=default;
-    ~Plateau()=default;
-    Plateau(const Plateau& p);
-    Plateau& operator=(const Plateau& p);
+    public :
+        Plateau()=default;
+        ~Plateau()=default;
+        Plateau(const Plateau& p);
+        Plateau& operator=(const Plateau& p);
 
-    const Graphe& getGraphe() const { return graphe; }
+        const Graphe& getGraphe() const { return graphe; }
 
     bool inReserve(const Piece& p) const;
     std::vector<const Piece*> piecesReserve(bool joueur) const;
 
-    void addPieceReserve(const Piece& p) { if (!inReserve(p)) reserve.push_back(&p); }
-    void supprPieceReserve(const Piece& p);
-    void movePiece(const Piece& p, const Coords& c);
+        void addPieceReserve(const Piece& p) { if (!inReserve(p)) reserve.push_back(&p); }
+        void supprPieceReserve(const Piece& p);
+        void movePiece(const Piece& p, const Coords& c);
 
-    const Coords* coordsPiece(const Piece& p) const;
-    bool isPieceStuck(const Piece& p) const;
-    bool canPlace(const Piece& p, const Coords& c) const { return getGraphe().canPlace(c, p.getCamp());}
+        const Coords* coordsPiece(const Piece& p) const;
+        bool isPieceStuck(const Piece& p) const;
+        bool canPlace(const Piece& p, const Coords& c) const { return getGraphe().canPlace(c, p.getCamp());}
 
-    void afficher(bool joueur_courant);
+        void afficher(bool joueur_courant);
 
 };
 

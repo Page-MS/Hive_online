@@ -31,6 +31,17 @@
 *.out
 *.app
 
+#Folders
+.idea/
+cmake-build-debug/
+.vscode/
+build/
+
+# Other
+*.ilk
+*.pdb
+*.json
+
 /.idea
 /build
 /cmake-build-develop

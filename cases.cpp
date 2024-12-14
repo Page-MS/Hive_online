@@ -1,5 +1,6 @@
 #include "cases.h"
 #include <bits/stdc++.h>
+#include <stdexcept>
 // AFFICHAGE
 std::ostream& operator<<(std::ostream& flux, const Case& c) { // Affichage d'une case, peut être ajouté au cout<<
 
@@ -155,8 +156,8 @@ bool Case::hasPiece(const Piece& p) const { //renvoie True si pièce est sur la 
 */
 void Case::addPiece(const Piece& p) {
     if (hasPiece(p)) throw runtime_error("ERROR Case::addPiece : Piece deja sur cette case.");
-
     pieces.push_back(&p);
+    //TODO: changer les coords de la piece
 }
 
 /*! \brief [PRIVÉ] Pour supprimer la pièce en haut de la pile de pièces de la case (erreur si case vide).
@@ -418,8 +419,6 @@ bool Graphe::isSurrounded(const Coords& c) const {
 
     return true;
 }
-
-#include <stdexcept>
 
 /*! \brief Renvoie si la ruche serait séparée dans le cas du déplacement d'une pièce depuis des coordonnées précises (erreur si coordonnées pas dans graphe ou case vide).
 */
@@ -792,3 +791,23 @@ void Graphe::Iterator::goToCoords(double c, double l) { //coordonnées "réelles
 void Graphe::Iterator::goToCoords(const Coords& c) {
     goToCoords(c.getX(), c.getY());
 }
+
+/*! \brief Pour obtenir toutes les coordonnées où l'on peut placer. Attention à quand même vérifier la règle de la
+ * reine abeille au 4ème coup
+ */
+ std::vector<Coords> Graphe::placableCoords(bool camp) {
+     auto ite=getIterator();
+    vector<Coords> resultat;
+    while  (not ite.atEndColonne()){
+        while (not ite.atEndLigne()){
+            if (canPlace(ite.getCurrent().getCoords(),camp)){
+                resultat.push_back(ite.getCurrent().getCoords());
+            }
+            ite.nextLigne();
+        }
+            ite.nextColonne();
+            ite.firstLigne();
+
+    }
+    return resultat;
+ }

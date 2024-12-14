@@ -35,6 +35,8 @@ set(PROJECT_SOURCES
         joueur.cpp
         partie.h
         partie.cpp
+        pieces.cpp
+        pieces.h
 
 )
 
