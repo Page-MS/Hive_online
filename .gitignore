@@ -30,3 +30,9 @@
 *.exe
 *.out
 *.app
+
+/.idea
+/build
+/cmake-build-develop
+.DS_Store
+.e4acb90
