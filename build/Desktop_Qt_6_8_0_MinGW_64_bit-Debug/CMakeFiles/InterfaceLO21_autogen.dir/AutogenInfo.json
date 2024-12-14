@@ -266,12 +266,6 @@
 	"HEADERS" : 
 	[
 		[
-			"C:/Users/page/Documents/UTC/A24/LO21/Projet/LO21/Pieces.h",
-			"MU",
-			"EWIEGA46WW/moc_Pieces.cpp",
-			null
-		],
-		[
 			"C:/Users/page/Documents/UTC/A24/LO21/Projet/LO21/cases.h",
 			"MU",
 			"EWIEGA46WW/moc_cases.cpp",
@@ -317,6 +311,18 @@
 			"C:/Users/page/Documents/UTC/A24/LO21/Projet/LO21/partie.h",
 			"MU",
 			"EWIEGA46WW/moc_partie.cpp",
+			null
+		],
+		[
+			"C:/Users/page/Documents/UTC/A24/LO21/Projet/LO21/partie.hpp",
+			"MU",
+			"EWIEGA46WW/moc_partie_hpp.cpp",
+			null
+		],
+		[
+			"C:/Users/page/Documents/UTC/A24/LO21/Projet/LO21/pieces.h",
+			"MU",
+			"EWIEGA46WW/moc_pieces.cpp",
 			null
 		],
 		[
@@ -398,7 +404,7 @@
 	"SOURCES" : 
 	[
 		[
-			"C:/Users/page/Documents/UTC/A24/LO21/Projet/LO21/Pieces.cpp",
+			"C:/Users/page/Documents/UTC/A24/LO21/Projet/LO21/Joueur.cpp",
 			"MU",
 			null
 		],
@@ -423,11 +429,6 @@
 			null
 		],
 		[
-			"C:/Users/page/Documents/UTC/A24/LO21/Projet/LO21/joueur.cpp",
-			"MU",
-			null
-		],
-		[
 			"C:/Users/page/Documents/UTC/A24/LO21/Projet/LO21/legalmoves.cpp",
 			"MU",
 			null
@@ -444,6 +445,11 @@
 		],
 		[
 			"C:/Users/page/Documents/UTC/A24/LO21/Projet/LO21/partie.cpp",
+			"MU",
+			null
+		],
+		[
+			"C:/Users/page/Documents/UTC/A24/LO21/Projet/LO21/pieces.cpp",
 			"MU",
 			null
 		],

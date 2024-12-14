@@ -68,7 +68,7 @@ void MainWindow::handleCaseClick(const Coords& coords) {
             Joueur* joueurCourant = (partie.getEtatActuel().getJoueurCourant() == joueur1) ? joueur1 : joueur2;
 
             // Poser la pièce
-            joueurCourant->jouerCoupCreer(selectedPiece, coords, partie.getEtatActuel().getPlateau());
+            joueurCourant->jouerCoup(selectedPiece, coords, partie.getEtatActuel().getPlateau());
 
             // Réinitialiser la sélection et mettre à jour l'affichage
             selectedPiece = nullptr;

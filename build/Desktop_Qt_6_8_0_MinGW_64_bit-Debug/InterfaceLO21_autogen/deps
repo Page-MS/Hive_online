@@ -586,8 +586,8 @@ InterfaceLO21_autogen/timestamp: \
 	C:/Qt/Tools/mingw1310_64/x86_64-w64-mingw32/include/wchar.h \
 	C:/Qt/Tools/mingw1310_64/x86_64-w64-mingw32/include/wctype.h \
 	C:/Users/page/Documents/UTC/A24/LO21/Projet/LO21/CMakeLists.txt \
-	C:/Users/page/Documents/UTC/A24/LO21/Projet/LO21/Pieces.cpp \
-	C:/Users/page/Documents/UTC/A24/LO21/Projet/LO21/Pieces.h \
+	C:/Users/page/Documents/UTC/A24/LO21/Projet/LO21/Joueur.cpp \
+	C:/Users/page/Documents/UTC/A24/LO21/Projet/LO21/Joueur.h \
 	C:/Users/page/Documents/UTC/A24/LO21/Projet/LO21/build/Desktop_Qt_6_8_0_MinGW_64_bit-Debug/.qtc/package-manager/auto-setup.cmake \
 	C:/Users/page/Documents/UTC/A24/LO21/Projet/LO21/build/Desktop_Qt_6_8_0_MinGW_64_bit-Debug/CMakeFiles/3.29.3/CMakeCXXCompiler.cmake \
 	C:/Users/page/Documents/UTC/A24/LO21/Projet/LO21/build/Desktop_Qt_6_8_0_MinGW_64_bit-Debug/CMakeFiles/3.29.3/CMakeRCCompiler.cmake \
@@ -601,7 +601,6 @@ InterfaceLO21_autogen/timestamp: \
 	C:/Users/page/Documents/UTC/A24/LO21/Projet/LO21/coords.h \
 	C:/Users/page/Documents/UTC/A24/LO21/Projet/LO21/interactivecaseitem.cpp \
 	C:/Users/page/Documents/UTC/A24/LO21/Projet/LO21/interactivecaseitem.h \
-	C:/Users/page/Documents/UTC/A24/LO21/Projet/LO21/joueur.cpp \
 	C:/Users/page/Documents/UTC/A24/LO21/Projet/LO21/joueur.h \
 	C:/Users/page/Documents/UTC/A24/LO21/Projet/LO21/legalmoves.cpp \
 	C:/Users/page/Documents/UTC/A24/LO21/Projet/LO21/legalmoves.h \
@@ -610,6 +609,9 @@ InterfaceLO21_autogen/timestamp: \
 	C:/Users/page/Documents/UTC/A24/LO21/Projet/LO21/mainwindow.h \
 	C:/Users/page/Documents/UTC/A24/LO21/Projet/LO21/partie.cpp \
 	C:/Users/page/Documents/UTC/A24/LO21/Projet/LO21/partie.h \
+	C:/Users/page/Documents/UTC/A24/LO21/Projet/LO21/partie.hpp \
+	C:/Users/page/Documents/UTC/A24/LO21/Projet/LO21/pieces.cpp \
+	C:/Users/page/Documents/UTC/A24/LO21/Projet/LO21/pieces.h \
 	C:/Users/page/Documents/UTC/A24/LO21/Projet/LO21/plateau.cpp \
 	C:/Users/page/Documents/UTC/A24/LO21/Projet/LO21/plateau.h \
 	C:/Qt/Tools/CMake_64/bin/cmake.exe

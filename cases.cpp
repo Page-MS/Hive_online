@@ -1,4 +1,5 @@
 #include "cases.h"
+#include <vector>
 #include <bits/stdc++.h>
 #include <stdexcept>
 // AFFICHAGE
@@ -86,7 +87,7 @@ std::ostream& operator<<(std::ostream& flux, const Graphe& g) {
 /*! \brief Pour affichage du graphe, renvoie un string de frontière de case (plusieurs tirets côte à côte).
 */
 std::string caseBorder() {
-    string str;
+    std::string str;
     for (auto i=0 ; i < 2 + Case::getNameLength() ; i++)
         str = str + "-";
     return str;
@@ -95,7 +96,7 @@ std::string caseBorder() {
 /*! \brief Pour affichage du graphe, renvoie un vide (plusieurs espaces côte à côte).
 */
 std::string caseVoid() {
-    string str;
+    std::string str;
     for (auto i=0 ; i < 3 + Case::getNameLength() ; i++)
         str = str + " ";
     return str;
@@ -104,7 +105,7 @@ std::string caseVoid() {
 /*! \brief Pour affichage du graphe, renvoie un espace (symbolise qu'il n'y a pas de case directement à gauche).
 */
 std::string caseBorderVoid() {
-    string str;
+    std::string str;
     for (auto i=0 ; i < 2 + Case::getNameLength() ; i++)
         str = str + " ";
     return str;
@@ -155,7 +156,7 @@ bool Case::hasPiece(const Piece& p) const { //renvoie True si pièce est sur la 
     Utiliser Case::hasPiece pour savoir si pièce sur la case.
 */
 void Case::addPiece(const Piece& p) {
-    if (hasPiece(p)) throw runtime_error("ERROR Case::addPiece : Piece deja sur cette case.");
+    if (hasPiece(p)) throw std::runtime_error("ERROR Case::addPiece : Piece deja sur cette case.");
     pieces.push_back(&p);
     //TODO: changer les coords de la piece
 }
@@ -164,7 +165,7 @@ void Case::addPiece(const Piece& p) {
     Utiliser Case::empty pour savoir si case vide.
 */
 void Case::supprPiece() { //supprime la pièce la plus haut placée
-    if (empty()) throw runtime_error("ERROR Case::supprPiece : Case non occupee.");
+    if (empty()) throw std::runtime_error("ERROR Case::supprPiece : Case non occupee.");
 
     pieces.pop_back();
 }
@@ -174,7 +175,7 @@ void Case::supprPiece() { //supprime la pièce la plus haut placée
 */
 void Case::clear() { //supprime toutes les pièces
     // erreur si aucune pièce à supprimer sur la case
-    if (empty()) throw runtime_error("ERROR Case::clear : Case deja vide.");
+    if (empty()) throw std::runtime_error("ERROR Case::clear : Case deja vide.");
 
     for (unsigned int i=getNbPieces() ; i>0 ; i--) supprPiece();
 }
@@ -183,7 +184,7 @@ void Case::clear() { //supprime toutes les pièces
     Utiliser Case::empty pour savoir si case vide.
 */
 const Piece& Case::getUpperPiece() const { //erreur si pas de pièce sur la case
-    if (empty()) throw runtime_error("ERROR Case::getUpperPiece : Case vide, aucune piece a recuperer");
+    if (empty()) throw std::runtime_error("ERROR Case::getUpperPiece : Case vide, aucune piece a recuperer");
     auto ite = end()--;
 
     return *ite;
@@ -279,7 +280,7 @@ Case& Graphe::getExistentCase(const Coords& c) const {
 */
 const Case& Graphe::getCase(double c, double l) const { //erreur si case pas dans graphe
     Case* pt = getMutableCase(c, l);
-    if (pt==nullptr) throw runtime_error("ERROR Graphe::getCase : Case n'existe pas.");
+    if (pt==nullptr) throw std::runtime_error("ERROR Graphe::getCase : Case n'existe pas.");
     return *pt;
 }
 
@@ -311,7 +312,7 @@ Coords Graphe::coordsAdjacent(const Coords& c, unsigned int side) const { //renv
     if (side == 3) return coordsSouth(c);
     if (side == 4) return coordsSouthWest(c);
     if (side == 5) return coordsNorthWest(c);
-    throw runtime_error("ERROR Graphe::coordsAdjacent : Cote invalide.");
+    throw std::runtime_error("ERROR Graphe::coordsAdjacent : Cote invalide.");
 }
 
 /*! \brief Renvoie la liste des coordonnées adjacentes à une case.
@@ -379,7 +380,7 @@ const Coords* Graphe::coordsPiecePointer(const Piece& p) const {
 const Coords& Graphe::coordsPiece(const Piece& p) const {
     const Coords* coords = coordsPiecePointer(p);
     
-    if (coords==nullptr) throw runtime_error("ERROR Graphe::coordsPiece : Piece pas dans graphe.");
+    if (coords==nullptr) throw std::runtime_error("ERROR Graphe::coordsPiece : Piece pas dans graphe.");
     
     return *coords;
 }
@@ -463,7 +464,7 @@ bool Graphe::wouldHiveBreak(const Coords& c) const {
 /*! \brief Renvoie si une pièce peut glisser d'une case à sa voisine (ne prend pas en compte la présence ou non de pièce sur la case d'arriver).
 */
 bool Graphe::canSlide(const Coords& c, unsigned int side) const {
-    if (side<0 || side>5) throw runtime_error("ERROR Graphe::canSlide : Cote invalide.");
+    if (side<0 || side>5) throw std::runtime_error("ERROR Graphe::canSlide : Cote invalide.");
 
     auto adjacent = coordsAdjacent(c, (side+5)%6);
     if (!hasCase(adjacent) || getCase(adjacent).empty()) return true;
@@ -526,7 +527,7 @@ void Graphe::updateAttributesSuppr(double c, double l) {
         auto ite = getIterator();
 
         // si la colonne est vide, il y a une erreur dans le vecteur cases
-        if (ite.atEndLigne()) throw runtime_error("ERROR Graphe::updateAttributes : Colonne vide.");
+        if (ite.atEndLigne()) throw std::runtime_error("ERROR Graphe::updateAttributes : Colonne vide.");
         if (ite.getCurrentColonne() > min_x) min_x = ite.getCurrentColonne();
         double min_ligne = max_y, max_ligne = min_y;
 
@@ -540,7 +541,7 @@ void Graphe::updateAttributesSuppr(double c, double l) {
 
             ite.firstLigne();
             ite.nextColonne();
-            if (!ite.atEndColonne() && ite.atEndLigne()) throw runtime_error("ERROR Graphe::updateAttributes : Colonne vide.");
+            if (!ite.atEndColonne() && ite.atEndLigne()) throw std::runtime_error("ERROR Graphe::updateAttributes : Colonne vide.");
         }
         ite.prevColonne();
         if (ite.getCurrentColonne() < max_x) max_x = ite.getCurrentColonne();
@@ -564,7 +565,7 @@ void Graphe::updateAttributes(const Coords& c, size_t modif) {
         return updateAttributesSuppr(c);
     }
     else {
-        throw runtime_error("ERROR updateAttributes : argument de modification invalide, raison inconnue.");
+        throw std::runtime_error("ERROR updateAttributes : argument de modification invalide, raison inconnue.");
     }
 }
 
@@ -624,7 +625,7 @@ Case* Graphe::addCase(const Coords& c) { //erreur si case existe déjà
     }
 
     // si case déjà existante, erreur
-    else if (ite.getCurrent().getCoords()==c) throw runtime_error("ERROR Graphe::addCase : Case existe deja.");
+    else if (ite.getCurrent().getCoords()==c) throw std::runtime_error("ERROR Graphe::addCase : Case existe deja.");
 
     return new_case;
 }
@@ -658,7 +659,7 @@ void Graphe::supprCase(const Case& c) {
 void Graphe::supprCase(const Coords& c) {
 
     const Case* ca = getMutableCase(c);
-    if (ca==nullptr) throw runtime_error("ERROR Graphe::supprCase : Case n'existe pas.");
+    if (ca==nullptr) throw std::runtime_error("ERROR Graphe::supprCase : Case n'existe pas.");
 
     supprCase(*ca);
 }
@@ -686,7 +687,7 @@ void Graphe::addPiece(const Piece& p, Case& c) { //erreur si case inexistante ou
 void Graphe::addPiece(const Piece& p, const Coords& c) { //erreur si case inexistante ou contient déjà la pièce
 
     Case* ca = getMutableCase(c);
-    if (ca==nullptr) throw runtime_error("ERROR Graphe::addPiece : Case non existante.");
+    if (ca==nullptr) throw std::runtime_error("ERROR Graphe::addPiece : Case non existante.");
 
     addPiece(p, *ca);
 }
@@ -720,7 +721,7 @@ void Graphe::supprPiece(Case& c) {
 */
 void Graphe::supprPiece(const Coords& c) {
     Case* ca = getMutableCase(c);
-    if (ca==nullptr) throw runtime_error("ERROR Graphe::supprPiece : Case n'existe pas.");
+    if (ca==nullptr) throw std::runtime_error("ERROR Graphe::supprPiece : Case n'existe pas.");
 
     supprPiece(*ca);
 }
@@ -731,10 +732,10 @@ void Graphe::movePiece(const Piece& p, const Coords& c) {
 
     const Coords& coords = coordsPiece(p);
     Case& ca_from = getExistentCase(coords);
-    if (ca_from.isPieceStuck(p)) throw runtime_error("ERROR Graphe::movePiece : Piece coincee, mouvement impossible.");
+    if (ca_from.isPieceStuck(p)) throw std::runtime_error("ERROR Graphe::movePiece : Piece coincee, mouvement impossible.");
 
     Case* ca_to = getMutableCase(c);
-    if (ca_to==nullptr) throw runtime_error("ERROR Graphe::movePiece : Case de destination inexistante.");
+    if (ca_to==nullptr) throw std::runtime_error("ERROR Graphe::movePiece : Case de destination inexistante.");
 
     supprPiece(ca_from);
     addPiece(p, *ca_to);
@@ -762,7 +763,7 @@ void Graphe::Iterator::goToColonne(double c) { //coordonnées "réelles", erreur
     firstColonne();
 
     while (!this->atEndColonne() && getCurrent().getColonne()<c) nextColonne();
-    if (this->atEndColonne() || getCurrent().getColonne()>c) throw runtime_error("ERROR Graphe::Iterator::goToColonne : Colonne non occupee.");
+    if (this->atEndColonne() || getCurrent().getColonne()>c) throw std::runtime_error("ERROR Graphe::Iterator::goToColonne : Colonne non occupee.");
 }
 
 /*! \brief Pour déplacer l'itérateur sur une ligne précise, en étant déjà sur la bonne colonne (erreur si ligne n'existe pas).
@@ -773,7 +774,7 @@ void Graphe::Iterator::goToLigne(double l) { //coordonnées "réelles", erreur s
     while (!atEndLigne() && getCurrentLigne() < l)
         nextLigne();
     
-    if (atEndLigne() || getCurrentLigne()!=l) throw runtime_error("ERROR Graphe::Iterator::goToLigne : Ligne non occupee dans cette colonne.");
+    if (atEndLigne() || getCurrentLigne()!=l) throw std::runtime_error("ERROR Graphe::Iterator::goToLigne : Ligne non occupee dans cette colonne.");
 }
 
 
@@ -797,7 +798,7 @@ void Graphe::Iterator::goToCoords(const Coords& c) {
  */
  std::vector<Coords> Graphe::placableCoords(bool camp) {
      auto ite=getIterator();
-    vector<Coords> resultat;
+    std::vector<Coords> resultat;
     while  (not ite.atEndColonne()){
         while (not ite.atEndLigne()){
             if (canPlace(ite.getCurrent().getCoords(),camp)){

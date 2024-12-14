@@ -97,9 +97,9 @@ build CMakeFiles/InterfaceLO21.dir/plateau.cpp.obj: CXX_COMPILER__InterfaceLO21_
   OBJECT_DIR = CMakeFiles\InterfaceLO21.dir
   OBJECT_FILE_DIR = CMakeFiles\InterfaceLO21.dir
 
-build CMakeFiles/InterfaceLO21.dir/Pieces.cpp.obj: CXX_COMPILER__InterfaceLO21_unscanned_Debug C$:/Users/page/Documents/UTC/A24/LO21/Projet/LO21/Pieces.cpp || cmake_object_order_depends_target_InterfaceLO21
+build CMakeFiles/InterfaceLO21.dir/pieces.cpp.obj: CXX_COMPILER__InterfaceLO21_unscanned_Debug C$:/Users/page/Documents/UTC/A24/LO21/Projet/LO21/pieces.cpp || cmake_object_order_depends_target_InterfaceLO21
   DEFINES = -DMINGW_HAS_SECURE_API=1 -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NEEDS_QMAIN -DQT_WIDGETS_LIB -DUNICODE -DWIN32 -DWIN64 -D_ENABLE_EXTENDED_ALIGNED_STORAGE -D_UNICODE -D_WIN64
-  DEP_FILE = CMakeFiles\InterfaceLO21.dir\Pieces.cpp.obj.d
+  DEP_FILE = CMakeFiles\InterfaceLO21.dir\pieces.cpp.obj.d
   FLAGS = -DQT_QML_DEBUG -g -std=gnu++20 -fdiagnostics-color=always
   INCLUDES = -IC:/Users/page/Documents/UTC/A24/LO21/Projet/LO21/build/Desktop_Qt_6_8_0_MinGW_64_bit-Debug/InterfaceLO21_autogen/include -isystem C:/Qt/6.8.0/mingw_64/include/QtCore -isystem C:/Qt/6.8.0/mingw_64/include -isystem C:/Qt/6.8.0/mingw_64/mkspecs/win32-g++ -isystem C:/Qt/6.8.0/mingw_64/include/QtWidgets -isystem C:/Qt/6.8.0/mingw_64/include/QtGui
   OBJECT_DIR = CMakeFiles\InterfaceLO21.dir
@@ -121,9 +121,9 @@ build CMakeFiles/InterfaceLO21.dir/legalmoves.cpp.obj: CXX_COMPILER__InterfaceLO
   OBJECT_DIR = CMakeFiles\InterfaceLO21.dir
   OBJECT_FILE_DIR = CMakeFiles\InterfaceLO21.dir
 
-build CMakeFiles/InterfaceLO21.dir/joueur.cpp.obj: CXX_COMPILER__InterfaceLO21_unscanned_Debug C$:/Users/page/Documents/UTC/A24/LO21/Projet/LO21/joueur.cpp || cmake_object_order_depends_target_InterfaceLO21
+build CMakeFiles/InterfaceLO21.dir/Joueur.cpp.obj: CXX_COMPILER__InterfaceLO21_unscanned_Debug C$:/Users/page/Documents/UTC/A24/LO21/Projet/LO21/Joueur.cpp || cmake_object_order_depends_target_InterfaceLO21
   DEFINES = -DMINGW_HAS_SECURE_API=1 -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NEEDS_QMAIN -DQT_WIDGETS_LIB -DUNICODE -DWIN32 -DWIN64 -D_ENABLE_EXTENDED_ALIGNED_STORAGE -D_UNICODE -D_WIN64
-  DEP_FILE = CMakeFiles\InterfaceLO21.dir\joueur.cpp.obj.d
+  DEP_FILE = CMakeFiles\InterfaceLO21.dir\Joueur.cpp.obj.d
   FLAGS = -DQT_QML_DEBUG -g -std=gnu++20 -fdiagnostics-color=always
   INCLUDES = -IC:/Users/page/Documents/UTC/A24/LO21/Projet/LO21/build/Desktop_Qt_6_8_0_MinGW_64_bit-Debug/InterfaceLO21_autogen/include -isystem C:/Qt/6.8.0/mingw_64/include/QtCore -isystem C:/Qt/6.8.0/mingw_64/include -isystem C:/Qt/6.8.0/mingw_64/mkspecs/win32-g++ -isystem C:/Qt/6.8.0/mingw_64/include/QtWidgets -isystem C:/Qt/6.8.0/mingw_64/include/QtGui
   OBJECT_DIR = CMakeFiles\InterfaceLO21.dir
@@ -153,7 +153,7 @@ build CMakeFiles/InterfaceLO21.dir/clickablepieceitem.cpp.obj: CXX_COMPILER__Int
 #############################################
 # Link the executable InterfaceLO21.exe
 
-build InterfaceLO21.exe: CXX_EXECUTABLE_LINKER__InterfaceLO21_Debug CMakeFiles/InterfaceLO21.dir/InterfaceLO21_autogen/mocs_compilation.cpp.obj CMakeFiles/InterfaceLO21.dir/main.cpp.obj CMakeFiles/InterfaceLO21.dir/mainwindow.cpp.obj CMakeFiles/InterfaceLO21.dir/cases.cpp.obj CMakeFiles/InterfaceLO21.dir/coords.cpp.obj CMakeFiles/InterfaceLO21.dir/plateau.cpp.obj CMakeFiles/InterfaceLO21.dir/Pieces.cpp.obj CMakeFiles/InterfaceLO21.dir/interactivecaseitem.cpp.obj CMakeFiles/InterfaceLO21.dir/legalmoves.cpp.obj CMakeFiles/InterfaceLO21.dir/joueur.cpp.obj CMakeFiles/InterfaceLO21.dir/partie.cpp.obj CMakeFiles/InterfaceLO21.dir/clickablepieceitem.cpp.obj | C$:/Qt/6.8.0/mingw_64/lib/libQt6Widgets.a C$:/Qt/6.8.0/mingw_64/lib/libQt6Gui.a C$:/Qt/6.8.0/mingw_64/lib/libQt6Core.a C$:/Qt/6.8.0/mingw_64/lib/libQt6EntryPoint.a || InterfaceLO21_autogen InterfaceLO21_autogen_timestamp_deps
+build InterfaceLO21.exe: CXX_EXECUTABLE_LINKER__InterfaceLO21_Debug CMakeFiles/InterfaceLO21.dir/InterfaceLO21_autogen/mocs_compilation.cpp.obj CMakeFiles/InterfaceLO21.dir/main.cpp.obj CMakeFiles/InterfaceLO21.dir/mainwindow.cpp.obj CMakeFiles/InterfaceLO21.dir/cases.cpp.obj CMakeFiles/InterfaceLO21.dir/coords.cpp.obj CMakeFiles/InterfaceLO21.dir/plateau.cpp.obj CMakeFiles/InterfaceLO21.dir/pieces.cpp.obj CMakeFiles/InterfaceLO21.dir/interactivecaseitem.cpp.obj CMakeFiles/InterfaceLO21.dir/legalmoves.cpp.obj CMakeFiles/InterfaceLO21.dir/Joueur.cpp.obj CMakeFiles/InterfaceLO21.dir/partie.cpp.obj CMakeFiles/InterfaceLO21.dir/clickablepieceitem.cpp.obj | C$:/Qt/6.8.0/mingw_64/lib/libQt6Widgets.a C$:/Qt/6.8.0/mingw_64/lib/libQt6Gui.a C$:/Qt/6.8.0/mingw_64/lib/libQt6Core.a C$:/Qt/6.8.0/mingw_64/lib/libQt6EntryPoint.a || InterfaceLO21_autogen InterfaceLO21_autogen_timestamp_deps
   FLAGS = -DQT_QML_DEBUG -g
   LINK_FLAGS = -mwindows
   LINK_LIBRARIES = C:/Qt/6.8.0/mingw_64/lib/libQt6Widgets.a  C:/Qt/6.8.0/mingw_64/lib/libQt6Gui.a  C:/Qt/6.8.0/mingw_64/lib/libQt6Core.a  -lmpr  -luserenv  -lmingw32  C:/Qt/6.8.0/mingw_64/lib/libQt6EntryPoint.a  -lshell32  -ld3d11  -ldxgi  -ldxguid  -ld3d12  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32

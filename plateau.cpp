@@ -1,5 +1,6 @@
 #include "plateau.h"
 #include <iostream>
+#include "pieces.h"
 
 // METHODES PLATEAU
 Plateau::Plateau(const Plateau& p) {

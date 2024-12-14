@@ -1,6 +1,7 @@
 #ifndef PLATEAU_H
 #define PLATEAU_H
 #include "cases.h"
+#include "pieces.h"
 
 // PLATEAU
 class Plateau {
