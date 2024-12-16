@@ -229,8 +229,8 @@ std::string caseVoid();
 std::string caseBorderVoid();
 
 // renvoie si les coordonnées sont correctes pour une case
-bool isCaseCoords(int c, int l) { return ( (c%2==0 && l%2==0) || (c%2!=0 && l%2!=0) ); }
-bool isCaseCoords(const Coords& c) { return isCaseCoords(c.getX(), c.getY()); }
+bool isCaseCoords(int c, int l);
+bool isCaseCoords(const Coords& c);
 
 std::ostream& operator<<(std::ostream& flux, const Case& c);
 std::ostream& operator<<(std::ostream& flux, const Graphe& g);

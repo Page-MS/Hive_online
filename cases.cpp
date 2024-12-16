@@ -125,7 +125,7 @@ std::string Case::showCase() const {
                 str="Co";
                 break;
             default :
-                throw exception("ERROR Case::showCase : Ce type de pièce n'est pas pris en compte.");
+                throw std::runtime_error("ERROR Case::showCase : Ce type de pièce n'est pas pris en compte.");
         }
     }
 
@@ -146,25 +146,25 @@ bool Case::hasPiece(const Piece* p) const { //renvoie True si pièce est sur la 
 }
 
 void Case::addPiece(const Piece* p) { //erreur si pièce est déjà sur la case
-    if (hasPiece(p)) throw exception("ERROR Case::addPiece : Pièce déjà sur cette case.");
+    if (hasPiece(p)) throw std::runtime_error("ERROR Case::addPiece : Pièce déjà sur cette case.");
     pieces.push_back(p);
 }
 
 void Case::supprPiece() { //supprime la pièce la plus haut placée
     // erreur si aucune pièce à supprimer sur la case
-    if (empty()) throw exception("ERROR Case::supprPiece : Case non occupée.");
+    if (empty()) throw std::runtime_error("ERROR Case::supprPiece : Case non occupée.");
     pieces.pop_back();
 }
 
 void Case::clear() { //supprime toutes les pièces
     // erreur si aucune pièce à supprimer sur la case
-    if (empty()) throw exception("ERROR Case::clear : Case déjà vide.");
+    if (empty()) throw std::runtime_error("ERROR Case::clear : Case déjà vide.");
 
     for (unsigned int i=getNbPieces() ; i>0 ; i--) supprPiece();
 }
 
 const Piece& Case::getUpperPiece() const { //erreur si pas de pièce sur la case
-    if (empty()) throw exception("ERROR Case::getUpperPiece : Case vide, aucune pièce à récupérer");
+    if (empty()) throw std::runtime_error("ERROR Case::getUpperPiece : Case vide, aucune pièce à récupérer");
     auto ite = end()--;
 
     return *(ite.getCurrent());
@@ -239,13 +239,13 @@ Case* Graphe::getMutableCase(const Coords& c) const {
 
 const Case& Graphe::getCase(double c, double l) const { //erreur si case pas dans graphe
     Case* pt = getMutableCase(c, l);
-    if (pt==nullptr) throw exception("ERROR Graphe::getCase : Case n'existe pas.");
+    if (pt==nullptr) throw std::runtime_error("ERROR Graphe::getCase : Case n'existe pas.");
     return *pt;
 }
 
 const Case& Graphe::getCase(const Coords& c) const {
     Case* pt = getMutableCase(c);
-    if (pt==nullptr) throw exception("ERROR Graphe::getCase : Case n'existe pas.");
+    if (pt==nullptr) throw std::runtime_error("ERROR Graphe::getCase : Case n'existe pas.");
     return *pt;
 }
 
@@ -256,7 +256,7 @@ const Coords Graphe::coordsAdjacent(const Coords& c, unsigned int side) const { 
     if (side == 3) return coordsSouth(c);
     if (side == 4) return coordsSouthWest(c);
     if (side == 5) return coordsNorthWest(c);
-    throw exception("ERROR Graphe::coordsAdjacent : Côté invalide.");
+    throw std::runtime_error("ERROR Graphe::coordsAdjacent : Côté invalide.");
 }
 
 void Graphe::updateAttributes(const Coords& c) {
@@ -274,8 +274,8 @@ void Graphe::updateAttributes(const Coords& c) {
 void Graphe::addPiece(const Piece& p, const Coords& c) { //erreur si case inexistante ou contient déjà la pièce
     Case* ca = getMutableCase(c);
 
-    if (ca==nullptr) throw exception("ERROR Graphe::addPiece : Case non existante.");
-    if (ca->hasPiece(&p)) throw exception("ERROR Graphe::addPiece : Case contient déjà la pièce.");
+    if (ca==nullptr) throw std::runtime_error("ERROR Graphe::addPiece : Case non existante.");
+    if (ca->hasPiece(&p)) throw std::runtime_error("ERROR Graphe::addPiece : Case contient déjà la pièce.");
 
     ca->addPiece(&p);
 
@@ -348,7 +348,7 @@ void Graphe::addCase(const Coords& c) { //erreur si case existe déjà
     }
 
     // si case déjà existante, erreur
-    if (ite.getCurrent().getCoords()==c) throw exception("ERROR Graphe::addCase : Case existe déjà.");
+    if (ite.getCurrent().getCoords()==c) throw std::runtime_error("ERROR Graphe::addCase : Case existe déjà.");
 }
 
 
@@ -360,7 +360,7 @@ void Graphe::Iterator::goToColonne(double c) { //coordonnées "réelles", erreur
     firstColonne();
 
     while (*this!=end_ite && getCurrent().getColonne()<c) nextColonne();
-    if (*this==end_ite || getCurrent().getColonne()>c) throw exception("ERROR Graphe::Iterator::goToColonne : Colonne non occupée.");
+    if (*this==end_ite || getCurrent().getColonne()>c) throw std::runtime_error("ERROR Graphe::Iterator::goToColonne : Colonne non occupée.");
 }
 
 void Graphe::Iterator::goToLigne(double l) { //coordonnées "réelles", erreur si ligne n'existe pas dans colonne actuelle
@@ -371,7 +371,7 @@ void Graphe::Iterator::goToLigne(double l) { //coordonnées "réelles", erreur s
     firstLigne();
 
     while (*this!=end_ite && getCurrent().getLigne()<l) nextLigne();
-    if (*this==end_ite || getCurrent().getColonne()>l) throw exception("ERROR Graphe::Iterator::goToLigne : Ligne non occupée dans cette colonne.");
+    if (*this==end_ite || getCurrent().getColonne()>l) throw std::runtime_error("ERROR Graphe::Iterator::goToLigne : Ligne non occupée dans cette colonne.");
 }
 
 
@@ -383,3 +383,6 @@ void Graphe::Iterator::goToCoords(double c, double l) { //coordonnées "réelles
 void Graphe::Iterator::goToCoords(const Coords& c) {
     goToCoords(c.getX(), c.getY());
 }
+
+bool isCaseCoords(int c, int l) { return ( (c%2==0 && l%2==0) || (c%2!=0 && l%2!=0) ); }
+bool isCaseCoords(const Coords& c) { return isCaseCoords(c.getX(), c.getY()); }

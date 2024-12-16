@@ -8,7 +8,7 @@
 #include "plateau.h"
 #include "coords.h"
 #include "cases.h"
-#include "partie.h"
+#include "partie.hpp"
 #include <initializer_list>
 #include <array>
 #include <cstdlib>
