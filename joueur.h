@@ -4,10 +4,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include "pieces.h"
 #include "plateau.h"
-#include "coords.h"
-#include "cases.h"
 #include <initializer_list>
 #include <array>
 #include <cstdlib>

@@ -309,13 +309,16 @@ InterfaceLO21_autogen/timestamp: \
 	C:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeCXXInformation.cmake \
 	C:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeCheckCompilerFlagCommonPatterns.cmake \
 	C:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeCommonLanguageInclude.cmake \
+	C:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeDetermineRCCompiler.cmake \
 	C:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeFindDependencyMacro.cmake \
 	C:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeGenericSystem.cmake \
 	C:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeInitializeConfigs.cmake \
 	C:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeLanguageInformation.cmake \
+	C:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeRCCompiler.cmake.in \
 	C:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeRCInformation.cmake \
 	C:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeSystemSpecificInformation.cmake \
 	C:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeSystemSpecificInitialize.cmake \
+	C:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeTestRCCompiler.cmake \
 	C:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CheckCXXCompilerFlag.cmake \
 	C:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CheckCXXSourceCompiles.cmake \
 	C:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CheckIncludeFileCXX.cmake \
@@ -586,8 +589,6 @@ InterfaceLO21_autogen/timestamp: \
 	C:/Qt/Tools/mingw1310_64/x86_64-w64-mingw32/include/wchar.h \
 	C:/Qt/Tools/mingw1310_64/x86_64-w64-mingw32/include/wctype.h \
 	C:/Users/page/Documents/UTC/A24/LO21/Projet/LO21/CMakeLists.txt \
-	C:/Users/page/Documents/UTC/A24/LO21/Projet/LO21/Joueur.cpp \
-	C:/Users/page/Documents/UTC/A24/LO21/Projet/LO21/Joueur.h \
 	C:/Users/page/Documents/UTC/A24/LO21/Projet/LO21/build/Desktop_Qt_6_8_0_MinGW_64_bit-Debug/.qtc/package-manager/auto-setup.cmake \
 	C:/Users/page/Documents/UTC/A24/LO21/Projet/LO21/build/Desktop_Qt_6_8_0_MinGW_64_bit-Debug/CMakeFiles/3.29.3/CMakeCXXCompiler.cmake \
 	C:/Users/page/Documents/UTC/A24/LO21/Projet/LO21/build/Desktop_Qt_6_8_0_MinGW_64_bit-Debug/CMakeFiles/3.29.3/CMakeRCCompiler.cmake \
@@ -601,6 +602,7 @@ InterfaceLO21_autogen/timestamp: \
 	C:/Users/page/Documents/UTC/A24/LO21/Projet/LO21/coords.h \
 	C:/Users/page/Documents/UTC/A24/LO21/Projet/LO21/interactivecaseitem.cpp \
 	C:/Users/page/Documents/UTC/A24/LO21/Projet/LO21/interactivecaseitem.h \
+	C:/Users/page/Documents/UTC/A24/LO21/Projet/LO21/joueur.cpp \
 	C:/Users/page/Documents/UTC/A24/LO21/Projet/LO21/joueur.h \
 	C:/Users/page/Documents/UTC/A24/LO21/Projet/LO21/legalmoves.cpp \
 	C:/Users/page/Documents/UTC/A24/LO21/Projet/LO21/legalmoves.h \

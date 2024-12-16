@@ -1,12 +1,10 @@
 #ifndef CASES_H
 #define CASES_H
-#include "coords.h"
 #include <vector>
 #include <iostream>
 #include <string>
 #include <iomanip>
-//Forward definition
-class Piece;
+#include "pieces.h"
 // CASES
 
 class Case {
