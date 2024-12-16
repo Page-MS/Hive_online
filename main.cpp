@@ -123,98 +123,19 @@ int main() {
 
     cout<<g2<<endl;
 
-    /*cout<<"\n########Test de la reine abeille########\n\n";
-    cout<<g2.hasCase(0,0)<<endl;
-    if (not g2.getCase(0,0).empty()) {
-        cout << "Type de la piece :" << g2.getCase(0, 6).getUpperPiece().getType() << endl;
-        vector<Coords> coups_test = g2.getCase(0, 6).getUpperPiece().coupsPossibles(plateau.getGraphe(),
-                                                                                   plateau.getGraphe().getCase(0,
-                                                                                                               6).getCoords());
-        if (not coups_test.empty()) {
-            cout << "\nPremieres coordonnees retournees : " << coups_test[0].getX() << ":" << coups_test[0].getY();
-        }
-    }
-    cout<<"\n########Test du scarabee 1########\n\n";
-
-    cout<<g2.hasCase(0,6)<<endl;
-    if (not g2.getCase(0,6).empty()) {
-        cout << "Type de la piece :" << g2.getCase(0, 6).getUpperPiece().getType() << endl;
-        vector<Coords> coups_test = g2.getCase(0, 6).getUpperPiece().coupsPossibles(plateau.getGraphe(),
-                                                                                   plateau.getGraphe().getCase(0,6).getCoords());
-        if (not coups_test.empty()) {
-            cout << "\nPremieres coordonnees retournees : " << coups_test[0].getX() << ":" << coups_test[0].getY();
-        }
-    }
-
-        cout<<"\n########Test du scarabee 2########\n\n";
-        cout<<g2.hasCase(0,8)<<endl;
-        if (not g2.getCase(0,8).empty()) {
-            cout << "Type de la piece :" << g2.getCase(0, 8).getUpperPiece().getType() << endl;
-            vector<Coords> coups_test = g2.getCase(0, 8).getUpperPiece().coupsPossibles(plateau.getGraphe(),
-                                                                                       plateau.getGraphe().getCase(0,8).getCoords());
-            if (not coups_test.empty()) {
-                cout << "\nPremieres coordonnees retournees : " << coups_test[0].getX() << ":" << coups_test[0].getY();
-            }
-        }
-
-        cout<<"\n######## Test de l'araignee ########\n\n";
-        cout<<g2.hasCase(2,2)<<endl;
-        if (not g2.getCase(2,2).empty()) {
-            cout << "Type de la piece :" << g2.getCase(2, 2).getUpperPiece().getType() << endl;
-            vector<Coords> coups_test = g2.getCase(2, 2).getUpperPiece().coupsPossibles(plateau.getGraphe(),
-                                                                                       plateau.getGraphe().getCase(2,2).getCoords());
-            if (not coups_test.empty()) {
-                for(auto i:coups_test)
-                cout << "\nCoordonnees retournees : " << i.getX() << ":" << i.getY();
-            }
-        }
-
-        cout<<"\n######## Test de la fourmi ########\n\n";
-        cout<<g2.hasCase(2,4)<<endl;
-        if (not g2.getCase(2,4).empty()) {
-            cout << "Type de la piece :" << g2.getCase(2, 4).getUpperPiece().getType() << endl;
-            vector<Coords> coups_test = g2.getCase(2, 4).getUpperPiece().coupsPossibles(plateau.getGraphe(),
-                                                                                        plateau.getGraphe().getCase(2,4).getCoords());
-            if (not coups_test.empty()) {
-                for(auto i:coups_test)
-                    cout << "\nCoordonnees retournees : " << i.getX() << ":" << i.getY();
-            }
-        }
-
-        cout<<"\n######## Test de la coccinelle ########\n\n";
-        cout<<g2.hasCase(3,1)<<endl;
-        if (not g2.getCase(3,1).empty()) {
-            cout << "Type de la piece :" << g2.getCase(3, 1).getUpperPiece().getType() << endl;
-            vector<Coords> coups_test = g2.getCase(3, 1).getUpperPiece().coupsPossibles(plateau.getGraphe(),
-                                                                                        plateau.getGraphe().getCase(3,1).getCoords());
-            if (not coups_test.empty()) {
-                for(auto i:coups_test)
-                    cout << "\nCoordonnees retournees : " << i.getX() << ":" << i.getY();
-            }
-        }
-
-        cout<<"\n######## Test de la sauterelle ########\n\n";
-        cout<<g2.hasCase(2,6)<<endl;
-        if (not g2.getCase(2,6).empty()) {
-            cout << "Type de la piece :" << g2.getCase(2, 6).getUpperPiece().getType() << endl;
-            vector<Coords> coups_test = g2.getCase(2, 6).getUpperPiece().coupsPossibles(plateau.getGraphe(),
-                                                                                        plateau.getGraphe().getCase(2,6).getCoords());
-            if (not coups_test.empty()) {
-                for(auto i:coups_test)
-                    cout << "\nCoordonnees retournees : " << i.getX() << ":" << i.getY();
-            }
-        }
+    
         cout<<"\n######## Test du moustique ########\n\n";
         cout<<g2.hasCase(3,3)<<endl;
         if (not g2.getCase(3,3).empty()) {
             cout << "Type de la piece :" << g2.getCase(3, 3).getUpperPiece().getType() << endl;
-            vector<Coords> coups_test = g2.getCase(3, 3).getUpperPiece().coupsPossibles(plateau.getGraphe(),
+            Graphe copygraphe=plateau.getGraphe();
+            vector<Coords> coups_test = g2.getCase(3, 3).getUpperPiece().coupsPossibles(&copygraphe,
                                                                                         plateau.getGraphe().getCase(3,3).getCoords());
             if (not coups_test.empty()) {
                 for(auto i:coups_test)
                     cout << "\nCoordonnees retournees : " << i.getX() << ":" << i.getY();
             }
-        }*/
+        }
 
         cout<<"\n######## Test des cases libres ########\n\n";
         vector<Coords> test_cases_libres =g2.placableCoords(1);

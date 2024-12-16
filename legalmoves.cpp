@@ -3,6 +3,7 @@
 //
 
 #include "legalmoves.h"
+#include "cases.h"
 
 void LegalMoveContext::changeStrategy(TYPE_PIECE typePiece) {
     //si la strategie à appliquer est la même, on ne la change pas
@@ -38,8 +39,8 @@ void LegalMoveContext::changeStrategy(TYPE_PIECE typePiece) {
 
 
 
-vector<Coords > LegalMoveContext::searchLegalMoves(Coords coord, Graphe graph, bool camp) {
-    changeStrategy(graph.getCase(coord).getUpperPiece().getType());
+vector<Coords > LegalMoveContext::searchLegalMoves(Coords coord, Graphe* graph, bool camp) {
+    changeStrategy(graph->getCase(coord).getUpperPiece().getType());
     vector<Coords> result=strategy->searchMoves(coord,graph,camp);
     if (result.empty()){
         cout<<"\n pas de resultat\n";
@@ -47,17 +48,17 @@ vector<Coords > LegalMoveContext::searchLegalMoves(Coords coord, Graphe graph, b
     return result;
 }
 
-vector<Coords> LegalMoveAbeille::searchMoves(Coords coord,Graphe graph, bool camp) {
+vector<Coords> LegalMoveAbeille::searchMoves(Coords coord,Graphe* graph, bool camp) {
     graphe_a_manipuler=graph;
     vector<Coords> resultat;
-    if(graphe_a_manipuler.wouldHiveBreak(coord)){
+    if(graphe_a_manipuler->wouldHiveBreak(coord)){
         cout<<"\nNe peut pas bouger sans casser la hive";
         return resultat;
     }
-    vector<Coords> voisins=graphe_a_manipuler.coordsExistentAdjacents(coord);
+    vector<Coords> voisins=graphe_a_manipuler->coordsExistentAdjacents(coord);
     int cote_voisin=0;
     for(auto i:voisins){
-        if (graphe_a_manipuler.getCase(i).empty() and graphe_a_manipuler.canSlide(coord,cote_voisin)){
+        if (graphe_a_manipuler->getCase(i).empty() and graphe_a_manipuler->canSlide(coord,cote_voisin)){
             resultat.push_back(i);
             cout<<"\n On ajoute :"<<i.getX()<<":"<<i.getY();
             cote_voisin++;
@@ -66,17 +67,17 @@ vector<Coords> LegalMoveAbeille::searchMoves(Coords coord,Graphe graph, bool cam
     return resultat;
 }
 
-vector<Coords> LegalMoveScarabee::searchMoves(Coords coord,Graphe graph, bool campvector){
+vector<Coords> LegalMoveScarabee::searchMoves(Coords coord,Graphe* graph, bool campvector){
         graphe_avant_coup=graph;
         graphe_a_manipuler=graph;
         vector<Coords> resultat;
-        if(graphe_a_manipuler.getCase(coord).getNbPieces()<=1){
-            if(graphe_a_manipuler.wouldHiveBreak(coord)){
+        if(graphe_a_manipuler->getCase(coord).getNbPieces()<=1){
+            if(graphe_a_manipuler->wouldHiveBreak(coord)){
                 cout<<"\nNe peut pas bouger sans casser la hive";
                 return resultat;
             }
         }
-        vector<Coords> voisins=graphe_a_manipuler.coordsExistentAdjacents(coord);
+        vector<Coords> voisins=graphe_a_manipuler->coordsExistentAdjacents(coord);
         for(auto i:voisins){
                 resultat.push_back(i);
                 cout<<"\n On ajoute :"<<i.getX()<<":"<<i.getY();
@@ -86,10 +87,10 @@ vector<Coords> LegalMoveScarabee::searchMoves(Coords coord,Graphe graph, bool ca
     }
 
 
-vector<Coords> LegalMoveAraignee::searchMoves(Coords coord,Graphe graph, bool camp){
+vector<Coords> LegalMoveAraignee::searchMoves(Coords coord,Graphe* graph, bool camp){
     graphe_a_manipuler=graph;
     vector<Coords> resultat;
-    if(graphe_a_manipuler.wouldHiveBreak(coord)){
+    if(graphe_a_manipuler->wouldHiveBreak(coord)){
         cout<<"\nNe peut pas bouger sans casser la hive";
         return resultat;
     }
@@ -99,14 +100,14 @@ vector<Coords> LegalMoveAraignee::searchMoves(Coords coord,Graphe graph, bool ca
 
 }
 
-vector<Coords> LegalMoveAraignee::rechercheDansVoisins(Coords coord, Graphe graph, bool camp,unsigned int profondeur) const {
+vector<Coords> LegalMoveAraignee::rechercheDansVoisins(Coords coord, Graphe* graph, bool camp,unsigned int profondeur) const {
     vector<Coords> resultat;
-    vector<Coords> voisins=graphe_a_manipuler.coordsExistentAdjacents(coord);
+    vector<Coords> voisins=graphe_a_manipuler->coordsExistentAdjacents(coord);
     profondeur++;
     unsigned int cote_voisin=0;
     if (profondeur<3){
     for(auto i:voisins) {
-        if (graphe_a_manipuler.getCase(i).empty() and graphe_a_manipuler.canSlide(coord, cote_voisin) and (not graphe_a_manipuler.coordsInhabitedAdjacents(i).empty()) ) {
+        if (graphe_a_manipuler->getCase(i).empty() and graphe_a_manipuler->canSlide(coord, cote_voisin) and (not graphe_a_manipuler->coordsInhabitedAdjacents(i).empty()) ) {
             vector<Coords> resultat_voisin = rechercheDansVoisins(i, graph, camp, profondeur);
             for(auto resultat_potentiel:resultat_voisin){
                 if (find(resultat.begin(), resultat.end(), resultat_potentiel) == resultat.end()) {
@@ -120,7 +121,7 @@ vector<Coords> LegalMoveAraignee::rechercheDansVoisins(Coords coord, Graphe grap
     }
     }else if (profondeur==3){
         for(auto j:voisins)
-            if (graphe_a_manipuler.getCase(j).empty() and graphe_a_manipuler.canSlide(coord, cote_voisin)and (not graphe_a_manipuler.coordsInhabitedAdjacents(j).empty()) ) {
+            if (graphe_a_manipuler->getCase(j).empty() and graphe_a_manipuler->canSlide(coord, cote_voisin)and (not graphe_a_manipuler->coordsInhabitedAdjacents(j).empty()) ) {
                 resultat.push_back(j);
 
             }
@@ -131,11 +132,11 @@ vector<Coords> LegalMoveAraignee::rechercheDansVoisins(Coords coord, Graphe grap
 
         }
 
-    vector<Coords> LegalMoveFourmi::searchMoves(Coords coord, Graphe graph, bool camp) {
+    vector<Coords> LegalMoveFourmi::searchMoves(Coords coord, Graphe* graph, bool camp) {
         graphe_avant_coup=graph;
         graphe_a_manipuler=graph;
         vector<Coords> resultat;
-        if(graphe_a_manipuler.wouldHiveBreak(coord)){
+        if(graphe_a_manipuler->wouldHiveBreak(coord)){
             cout<<"\nNe peut pas bouger sans casser la hive";
             return resultat;
         }
@@ -146,12 +147,12 @@ vector<Coords> LegalMoveAraignee::rechercheDansVoisins(Coords coord, Graphe grap
         return resultat;
 }
 
-vector<Coords> LegalMoveFourmi::rechercheDansVoisins(Coords coord, Graphe graph, bool camp, vector<Coords>& voisins_traites) const {
-    vector<Coords> voisins = graphe_a_manipuler.coordsExistentAdjacents(coord);
+vector<Coords> LegalMoveFourmi::rechercheDansVoisins(Coords coord, Graphe* graph, bool camp, vector<Coords>& voisins_traites) const {
+    vector<Coords> voisins = graphe_a_manipuler->coordsExistentAdjacents(coord);
     unsigned int cote_voisin = 0;
     for (auto i: voisins) {
-        if (graphe_a_manipuler.getCase(i).empty() and graphe_a_manipuler.canSlide(coord, cote_voisin) and
-            (not graphe_a_manipuler.coordsInhabitedAdjacents(i).empty()) and (find(voisins_traites.begin(), voisins_traites.end(), i) == voisins_traites.end())) {
+        if (graphe_a_manipuler->getCase(i).empty() and graphe_a_manipuler->canSlide(coord, cote_voisin) and
+            (not graphe_a_manipuler->coordsInhabitedAdjacents(i).empty()) and (find(voisins_traites.begin(), voisins_traites.end(), i) == voisins_traites.end())) {
             voisins_traites.push_back(i);
             vector<Coords> resultat_voisin = rechercheDansVoisins(i, graph, camp, voisins_traites);
             for (auto resultat_potentiel: resultat_voisin) {
@@ -166,10 +167,10 @@ vector<Coords> LegalMoveFourmi::rechercheDansVoisins(Coords coord, Graphe graph,
 
 }
 
-vector<Coords> LegalMoveCoccinelle::searchMoves(Coords coord, Graphe graph, bool camp) {
+vector<Coords> LegalMoveCoccinelle::searchMoves(Coords coord, Graphe* graph, bool camp) {
     graphe_a_manipuler=graph;
     vector<Coords> resultat;
-    if(graphe_a_manipuler.wouldHiveBreak(coord)){
+    if(graphe_a_manipuler->wouldHiveBreak(coord)){
         cout<<"\nNe peut pas bouger sans casser la hive";
         return resultat;
     }
@@ -178,14 +179,14 @@ vector<Coords> LegalMoveCoccinelle::searchMoves(Coords coord, Graphe graph, bool
     return resultat;
 }
 
-vector<Coords> LegalMoveCoccinelle::rechercheDansVoisins(Coords coord, Graphe graph, bool camp,unsigned int profondeur) const {
+vector<Coords> LegalMoveCoccinelle::rechercheDansVoisins(Coords coord, Graphe* graph, bool camp,unsigned int profondeur) const {
     vector<Coords> resultat;
-    vector<Coords> voisins=graphe_a_manipuler.coordsExistentAdjacents(coord);
+    vector<Coords> voisins=graphe_a_manipuler->coordsExistentAdjacents(coord);
     profondeur++;
     unsigned int cote_voisin=0;
     if (profondeur<3){
         for(auto i:voisins) {
-            if ( (not graphe_a_manipuler.getCase(i).empty()) and (not graphe_a_manipuler.coordsInhabitedAdjacents(i).empty()) ) {
+            if ( (not graphe_a_manipuler->getCase(i).empty()) and (not graphe_a_manipuler->coordsInhabitedAdjacents(i).empty()) ) {
                 vector<Coords> resultat_voisin = rechercheDansVoisins(i, graph, camp, profondeur);
                 for(auto resultat_potentiel:resultat_voisin){
                     if (find(resultat.begin(), resultat.end(), resultat_potentiel) == resultat.end()) {
@@ -199,7 +200,7 @@ vector<Coords> LegalMoveCoccinelle::rechercheDansVoisins(Coords coord, Graphe gr
         }
     }else if (profondeur==3){
         for(auto j:voisins)
-            if (graphe_a_manipuler.getCase(j).empty() and (not graphe_a_manipuler.coordsInhabitedAdjacents(j).empty()) ) {
+            if (graphe_a_manipuler->getCase(j).empty() and (not graphe_a_manipuler->coordsInhabitedAdjacents(j).empty()) ) {
                 resultat.push_back(j);
 
             }
@@ -210,22 +211,22 @@ vector<Coords> LegalMoveCoccinelle::rechercheDansVoisins(Coords coord, Graphe gr
 
 }
 
-vector<Coords> LegalMoveSauterelle::searchMoves(Coords coord,Graphe graph, bool camp){
+vector<Coords> LegalMoveSauterelle::searchMoves(Coords coord,Graphe* graph, bool camp){
     graphe_a_manipuler=graph;
     vector<Coords> resultat;
-    if(graphe_a_manipuler.wouldHiveBreak(coord)){
+    if(graphe_a_manipuler->wouldHiveBreak(coord)){
         cout<<"\nNe peut pas bouger sans casser la hive";
         return resultat;
     }
-    vector<Coords> voisins=graphe_a_manipuler.coordsExistentAdjacents(coord);
+    vector<Coords> voisins=graphe_a_manipuler->coordsExistentAdjacents(coord);
     int cote_voisin=0;
     for(auto i:voisins){
-        if ( not graphe_a_manipuler.getCase(i).empty() ){
-            Coords case_voisine= graphe_a_manipuler.coordsAdjacent(i,cote_voisin);
-            bool voisin_is_not_empty=(not graphe_a_manipuler.getCase(case_voisine).empty());
+        if ( not graphe_a_manipuler->getCase(i).empty() ){
+            Coords case_voisine= graphe_a_manipuler->coordsAdjacent(i,cote_voisin);
+            bool voisin_is_not_empty=(not graphe_a_manipuler->getCase(case_voisine).empty());
             while(voisin_is_not_empty){
-                case_voisine= graphe_a_manipuler.coordsAdjacent(case_voisine,cote_voisin);
-                voisin_is_not_empty=(not graphe_a_manipuler.getCase(case_voisine).empty());
+                case_voisine= graphe_a_manipuler->coordsAdjacent(case_voisine,cote_voisin);
+                voisin_is_not_empty=(not graphe_a_manipuler->getCase(case_voisine).empty());
             }
             resultat.push_back(case_voisine);
             cote_voisin++;
@@ -234,7 +235,7 @@ vector<Coords> LegalMoveSauterelle::searchMoves(Coords coord,Graphe graph, bool 
         }
     return resultat;
 }
-vector<Coords> LegalMoveContext::searchNeighbourMosquito(Coords coord, Graphe graph,bool camp) {
+vector<Coords> LegalMoveContext::searchNeighbourMosquito(Coords coord, Graphe* graph,bool camp) {
     vector<Coords> result=strategy->searchMoves(coord,graph,camp);
     if (result.empty()){
         cout<<"\n pas de resultat\n";
@@ -242,18 +243,18 @@ vector<Coords> LegalMoveContext::searchNeighbourMosquito(Coords coord, Graphe gr
     return result;
 
 }
-vector<Coords> LegalMoveMoustique::searchMoves(Coords coord,Graphe graph, bool camp){
+vector<Coords> LegalMoveMoustique::searchMoves(Coords coord,Graphe* graph, bool camp){
     graphe_a_manipuler=graph;
     vector<Coords> resultat;
     TYPE_PIECE type_voisin;
     vector<TYPE_PIECE> types_pieces_voisines;
-    if(graphe_a_manipuler.wouldHiveBreak(coord)){
+    if(graphe_a_manipuler->wouldHiveBreak(coord)){
         cout<<"\nNe peut pas bouger sans casser la hive";
         return resultat;
     }
-    vector<Coords> voisins=graphe_a_manipuler.coordsInhabitedAdjacents(coord);
+    vector<Coords> voisins=graphe_a_manipuler->coordsInhabitedAdjacents(coord);
     for (auto i:voisins){
-        type_voisin=graphe_a_manipuler.getCase(i).getUpperPiece().getType();
+        type_voisin=graphe_a_manipuler->getCase(i).getUpperPiece().getType();
         if (find(types_pieces_voisines.begin(), types_pieces_voisines.end(), type_voisin) == types_pieces_voisines.end()) {
             types_pieces_voisines.push_back(type_voisin);
         }

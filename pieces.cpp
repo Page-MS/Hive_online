@@ -33,7 +33,7 @@ std::string Piece::strPiece() const {
     return str;
 }
 
-vector<Coords> Piece::coupsPossibles(Graphe graph, Coords coord) const {
+vector<Coords> Piece::coupsPossibles(Graphe* graph, Coords coord) const {
     LegalMoveContext* legalmove=&LegalMoveContext::getInstance();
     vector<Coords> b =legalmove->searchLegalMoves(coord,graph,getCamp());
     return b;
