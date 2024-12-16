@@ -151,5 +151,6 @@ int main() {
     }
 
     cout<<"\n\nTout nickel !"<<endl;
+    cout<<"\nVraiment nickel";
     return 0;
 }
