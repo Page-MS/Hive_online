@@ -128,30 +128,6 @@ LO21/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\LO21.dir\build.make CMakeFiles/LO21.dir/build
 .PHONY : LO21/fast
 
-Joueur.obj: Joueur.cpp.obj
-.PHONY : Joueur.obj
-
-# target to build an object file
-Joueur.cpp.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\LO21.dir\build.make CMakeFiles/LO21.dir/Joueur.cpp.obj
-.PHONY : Joueur.cpp.obj
-
-Joueur.i: Joueur.cpp.i
-.PHONY : Joueur.i
-
-# target to preprocess a source file
-Joueur.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\LO21.dir\build.make CMakeFiles/LO21.dir/Joueur.cpp.i
-.PHONY : Joueur.cpp.i
-
-Joueur.s: Joueur.cpp.s
-.PHONY : Joueur.s
-
-# target to generate assembly for a file
-Joueur.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\LO21.dir\build.make CMakeFiles/LO21.dir/Joueur.cpp.s
-.PHONY : Joueur.cpp.s
-
 cases.obj: cases.cpp.obj
 .PHONY : cases.obj
 
@@ -329,9 +305,6 @@ help:
 	@echo ... edit_cache
 	@echo ... rebuild_cache
 	@echo ... LO21
-	@echo ... Joueur.obj
-	@echo ... Joueur.i
-	@echo ... Joueur.s
 	@echo ... cases.obj
 	@echo ... cases.i
 	@echo ... cases.s

@@ -123,7 +123,7 @@ int main() {
 
     cout<<g2<<endl;
 
-    
+
         cout<<"\n######## Test du moustique ########\n\n";
         cout<<g2.hasCase(3,3)<<endl;
         if (not g2.getCase(3,3).empty()) {
