@@ -5,7 +5,9 @@
 
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent),
+//display le plateau
     view(new QGraphicsView(this)),
+//display les éléments
     scene(new QGraphicsScene(this)),
     player1PiecesView(new QGraphicsView(this)),
     player2PiecesView(new QGraphicsView(this)),
@@ -31,6 +33,7 @@ MainWindow::MainWindow(QWidget* parent)
     player2PiecesView->setScene(player2Scene);
     player2PiecesView->setGeometry(720, 220, 250, 200);
 
+    //affichage
     drawBoard();
     drawPlayerPieces();
 }
@@ -38,9 +41,10 @@ MainWindow::MainWindow(QWidget* parent)
 MainWindow::~MainWindow() {}
 
 void MainWindow::drawBoard() {
+    //TODO: passer par le graphe du vrai plateau
     double hexWidth = 50;
     double hexHeight = hexWidth * 0.866;
-
+    //generation des cases
     for (int row = 0; row < 10; ++row) {
         for (int col = 0; col < 10; ++col) {
             double x = col * hexWidth * 0.75;
@@ -49,11 +53,11 @@ void MainWindow::drawBoard() {
             if (col % 2 != 0) {
                 y += hexHeight / 2;
             }
-
+            //creation d'une case
             Coords coords(col, row);
             InteractiveCaseItem* hexItem = new InteractiveCaseItem(coords);
             hexItem->setPos(x, y);
-
+            //connecte le signal de la case vers le slot du mainWindow
             connect(hexItem, &InteractiveCaseItem::caseClicked, this, &MainWindow::handleCaseClick);
 
             scene->addItem(hexItem);

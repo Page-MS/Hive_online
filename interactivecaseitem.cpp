@@ -9,6 +9,7 @@ InteractiveCaseItem::InteractiveCaseItem(const Coords& coords, QGraphicsItem* pa
     : QGraphicsObject(parent), coords(coords), fillColor(Qt::lightGray), selected(false) {
     setAcceptHoverEvents(true); // Active les événements de survol
     double radius = 25;
+    //boucle de creation de l'hexagone
     for (int i = 0; i < 6; ++i) {
         double angle = M_PI / 3 * i;
         hexagon << QPointF(radius * cos(angle), radius * sin(angle));
@@ -38,15 +39,17 @@ QRectF InteractiveCaseItem::boundingRect() const {
 void InteractiveCaseItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) {
     Q_UNUSED(option);
     Q_UNUSED(widget);
-
+    //set les options du painter
     painter->setBrush(fillColor);
     painter->setPen(Qt::black);
+    //dessine a partir des options precedentes
     painter->drawPolygon(hexagon);
 }
 
 void InteractiveCaseItem::setFillColor(const QColor& color) {
     fillColor = color;
     update();
+    //verifie que la scene est update
     if (scene()) {
         scene()->invalidate(boundingRect());
     }

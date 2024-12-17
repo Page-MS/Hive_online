@@ -13,12 +13,14 @@ class MainWindow : public QMainWindow {
 public:
     explicit MainWindow(QWidget* parent = nullptr);
     ~MainWindow();
-
+//un slot est unne fonction executée en réponse à l'envoi d'un signal
 private slots:
     void handleCaseClick(const Coords& coords);
 
 private:
+    //afiche la vue principale du plateau
     QGraphicsView* view;
+    //garde la manière dont sont ordonnées tout les éléments de la vue
     QGraphicsScene* scene;
     Partie partie;
 
@@ -35,7 +37,7 @@ private:
     void drawPlayerPieces(); // Dessiner les pièces disponibles
     void updatePieceSelection(Piece* piece); // Mettre à jour la sélection de pièce
 
-    void drawBoard();
+    void drawBoard();//dessiner le plateau
 };
 
 #endif // MAINWINDOW_H

@@ -24,7 +24,7 @@ ClickablePieceItem::ClickablePieceItem(Piece* piece, QGraphicsItem* parent)
     case Coccinelle: symbol = "Co"; break;
     case Abeille: symbol = "Ab"; break;
     }
-
+    //configuration du texte dans la case
     textItem->setPlainText(symbol);
     textItem->setDefaultTextColor(Qt::black);
     textItem->setFont(QFont("Arial", 10, QFont::Bold));
