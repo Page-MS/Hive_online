@@ -2,7 +2,7 @@
 #include <unordered_set>
 #include <algorithm>
 
-Joueur::Joueur(const std::string& nomJoueur, bool IA) : nom(nomJoueur), isIA(IA) {
+joueur::joueur(const std::string& nomJoueur,bool Camp, bool IA) : nom(nomJoueur), isIA(IA), camp(Camp) {
     map<TYPE_PIECE, int> piecesNecessaires = {
         {Araignee, 2},
         {Sauterelle, 3},
@@ -18,12 +18,12 @@ Joueur::Joueur(const std::string& nomJoueur, bool IA) : nom(nomJoueur), isIA(IA)
         int nombre = typeDePiecce.second;
 
         for (int i = 0; i < nombre; ++i) {
-            pieces.push_back(new Piece(modele, IA));
+            pieces.push_back(new Piece(modele, camp));
         }
     }
 }
 
-Joueur& Joueur::operator=(const Joueur& autre) {
+joueur& joueur::operator=(const joueur& autre) {
     if (this != &autre) { // évite la copie de soi-même
         nom = autre.nom;
         // libere les pieces
@@ -36,7 +36,7 @@ Joueur& Joueur::operator=(const Joueur& autre) {
     return *this;
 }
 
-void Joueur::jouerCoupCreer(Piece* pieceChoisie, const Coords& destination, Plateau& plateau) {
+void joueur::jouerCoupCreer(Piece* pieceChoisie, const Coords& destination, Plateau& plateau) {
     if (!plateau.inReserve(*pieceChoisie)) {
         throw std::invalid_argument("La pièce choisie n'est pas dans la réserve.");
     }
@@ -60,7 +60,7 @@ void Joueur::jouerCoupCreer(Piece* pieceChoisie, const Coords& destination, Plat
     plateau.movePiece(*pieceChoisie, destination);
 }
 
-void Joueur::jouerCoupDeplacer(Piece* pieceChoisie, const Coords& destination, Plateau& plateau){
+void joueur::jouerCoupDeplacer(Piece* pieceChoisie, const Coords& destination, Plateau& plateau){
     if (plateau.inReserve(*pieceChoisie)) {
         throw std::invalid_argument("La pièce choisie est dans la réserve.");
     }
@@ -88,8 +88,8 @@ void Joueur::jouerCoupDeplacer(Piece* pieceChoisie, const Coords& destination, P
 
     plateau.movePiece(*pieceChoisie, destination);
 }
-
-vector<Coords> Joueur::getPlacementPossibilities(const Plateau& plateau)const{
+//TODO: À supprimer, l'algo est foireux
+vector<Coords> joueur::getPlacementPossibilities(const Plateau& plateau)const{
     vector<Coords> valid_pos;
     for (const Piece* piece : pieces) {
         const Coords* c = plateau.coordsPiece(*piece);
@@ -100,19 +100,32 @@ vector<Coords> Joueur::getPlacementPossibilities(const Plateau& plateau)const{
     return vector<Coords>(valid_pos.begin(), valid_pos.end());
 }
 
-void Mouvement::ExecuterMvt(){
+/*void Mouvement::ExecuterMvt(){
 
 }
 
 void Mouvement::AnnulerMvt(){
 
+}*/
+
+
+
+
+
+
+/*! \brief Retourne le choix de l'IA sur où poser sa pièce
+*/
+void IAJoueur::jouerCoupCreer(Piece *pieceChoisie, const Coords &destination, Plateau &plateau) {
+    vector<Coords> resultat=plateau.getGraphe().placableCoords(camp);
+    auto range = resultat.size();
+    int num_choisi = rand() % range ;
+    plateau.movePiece(*pieceChoisie,resultat[num_choisi]) ;
+
 }
-
-void IAJoueur::prendreDecision(EtatDuJeu& etat){
-
-}
-
-int IAJoueur::evaluerSituation(const EtatDuJeu& etat) const{
+/*! \brief Effectue le deplacement de l'IA
+*/
+void IAJoueur::jouerCoupDeplacer(Piece *pieceChoisie, const Coords &destination, Plateau &plateau) {
+    plateau.movePiece(*pieceChoisie,destination) ;
 
 }
 

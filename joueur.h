@@ -18,30 +18,31 @@ using namespace std;
 
 class EtatDuJeu;
 
-class Joueur {
+class joueur {
 protected:
     string nom;
     vector<Piece*> pieces; // pieces du joueur
     bool isIA;
+    bool camp;
 
 public:
-    Joueur(const std::string& nomJoueur, bool IA=false);
-    Joueur(){}
-    Joueur(const Joueur& autre) : nom(autre.nom) {
+    joueur(const std::string& nomJoueur,bool Camp, bool IA=false);
+    joueur(){}
+    joueur(const joueur& autre) : nom(autre.nom) {
         for (Piece* piece : autre.pieces) {
             pieces.push_back(new Piece(*piece)); // copie chaque pièce
         }
     }
-    Joueur& operator=(const Joueur& autre);
-    ~Joueur() {
+    joueur& operator=(const joueur& autre);
+    ~joueur() {
         for (Piece* piece : pieces) {
             delete piece; // libère chaque pièce
         }
     }
 
-    void jouerCoupCreer(Piece* pieceChoisie, const Coords& destination, Plateau& plateau);
+    virtual void jouerCoupCreer(Piece* pieceChoisie, const Coords& destination, Plateau& plateau);
 
-    void jouerCoupDeplacer(Piece* pieceChoisie, const Coords& destination, Plateau& plateau);
+    virtual void jouerCoupDeplacer(Piece* pieceChoisie, const Coords& destination, Plateau& plateau);
 
 
     vector<Piece*> getPieces(){ return pieces; }
@@ -72,16 +73,18 @@ public:
     void AnnulerMvt();   // annule le déplacement
 };
 
-class IAJoueur : public Joueur {
+class IAJoueur : public joueur {
 private:
     int difficulte; // niveau de l'ia
 
 public:
-    IAJoueur(const std::string& nomJoueur, int niveauDifficulte):Joueur(nomJoueur, true), difficulte(niveauDifficulte) {}
+    IAJoueur(const std::string& nomJoueur, int niveauDifficulte): joueur(nomJoueur, true), difficulte(niveauDifficulte) {}
 
-    void prendreDecision(EtatDuJeu& etat);  // décide quoi jouer
+    void jouerCoupCreer(Piece* pieceChoisie, const Coords& destination, Plateau& plateau) override;
 
-    int evaluerSituation(const EtatDuJeu& etat) const;  // évalue l'état du jeu
+    void jouerCoupDeplacer(Piece* pieceChoisie, const Coords& destination, Plateau& plateau)override;
+
+    
 };
 
 

@@ -2,31 +2,31 @@
 #define PARTIE_HPP
 
 #include <iostream>
-#include "Joueur.h"
+#include "joueur.h"
 
 using namespace std;
-class Joueur;
+class joueur;
 class Mouvement;
 
 class EtatDuJeu {
     private:
         Plateau plateau;               // plateau avec les pièces
         vector<Mouvement> historique;  // liste des coups
-        Joueur* joueurs[2];             // liste des joueurs
+        joueur* joueurs[2];             // liste des joueurs
         int numero_tour;
-        Joueur* joueur_courant;
+        joueur* joueur_courant;
         friend class Partie;
     public:
-        EtatDuJeu(int num_tour, const Plateau& p,  Joueur* j1, Joueur* j2, Joueur* jc);
+        EtatDuJeu(int num_tour, const Plateau& p, joueur* j1, joueur* j2, joueur* jc);
         EtatDuJeu(); //Pour initialiser historique_etats dans Partie
         EtatDuJeu(const EtatDuJeu& other);
         EtatDuJeu& operator=(const EtatDuJeu& jeu);
-        const vector<Mouvement> coupPossibles(Joueur* j) const;  // coups possibles
+        const vector<Mouvement> coupPossibles(joueur* j) const;  // coups possibles
         bool coupGagnant() const; // vérifie si le jeu est fini
         void ajouterMouvement(const Mouvement& mvt) {historique.push_back(mvt);} // ajoute un coup à l'historique
         Plateau& getPlateau() {return plateau;} // accès au plateau
-        Joueur** getJoueurs() {return joueurs;}
-        Joueur* getJoueurCourant() {return joueur_courant;}
+        joueur** getJoueurs() {return joueurs;}
+        joueur* getJoueurCourant() {return joueur_courant;}
         const int getNumTour() const {return numero_tour;}
         vector<Mouvement>& getHistorique() {return historique;}
 };

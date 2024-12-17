@@ -13,9 +13,9 @@ void Partie::setStartJoueurId(){
 
 void Partie::commencerPartie(string pseudo1, string pseudo2, bool IA1, bool IA2){
     Plateau game_plateau = Plateau();
-    Joueur* jc = nullptr;
-    Joueur* j1 = nullptr;
-    Joueur* j2 = nullptr;
+    joueur* jc = nullptr;
+    joueur* j1 = nullptr;
+    joueur* j2 = nullptr;
     if(IA1 && IA2){ // 2 joueurs IA
         int niv_ia1;
         cout << "Entrez le niveau de difficulté pour " << pseudo1 << " : " << endl;
@@ -30,17 +30,17 @@ void Partie::commencerPartie(string pseudo1, string pseudo2, bool IA1, bool IA2)
         cout << "Entrez le niveau de difficulté pour " << pseudo1 << " : " << endl;
         cin >> niv_ia;
         j1 = new IAJoueur(pseudo1, niv_ia);
-        j2 = new Joueur(pseudo2);
+        j2 = new joueur(pseudo2);
     }else if(IA2){ // Une IA et un humain
         int niv_ia;
         cout << "Entrez le niveau de difficulté pour " << pseudo2 << " : " << endl;
         cin >> niv_ia;
-        j1 = new Joueur(pseudo1);
+        j1 = new joueur(pseudo1);
         j2 = new IAJoueur(pseudo2, niv_ia);
         jc = j1;
     }else{ // 2 joueurs huamins
-        j1 = new Joueur(pseudo1);
-        j2 = new Joueur(pseudo2);
+        j1 = new joueur(pseudo1);
+        j2 = new joueur(pseudo2);
     }
     setStartJoueurId();
     jc = (start_joueur_id == 0) ? j1 : j2; //On determine qui commence la partie
@@ -263,7 +263,7 @@ void Partie::jouer(){
     
 }
 
-EtatDuJeu::EtatDuJeu(int num_tour, const Plateau& p,  Joueur* j1, Joueur* j2, Joueur* jc){
+EtatDuJeu::EtatDuJeu(int num_tour, const Plateau& p, joueur* j1, joueur* j2, joueur* jc){
     numero_tour = num_tour;
     plateau = p;
     joueurs[0] = j1;
@@ -286,8 +286,8 @@ void Partie::sauvegarderPartie() {
 EtatDuJeu::EtatDuJeu(){
     numero_tour = 0;
     plateau = Plateau();
-    joueurs[0] = new Joueur;
-    joueurs[1] = new Joueur;
+    joueurs[0] = new joueur;
+    joueurs[1] = new joueur;
     joueur_courant = nullptr;
 }
 
@@ -314,7 +314,7 @@ EtatDuJeu& EtatDuJeu::operator=(const EtatDuJeu& jeu){
     return *this;
 }
 
-const vector<Mouvement> EtatDuJeu::coupPossibles(Joueur* j) const {
+const vector<Mouvement> EtatDuJeu::coupPossibles(joueur* j) const {
     vector<Mouvement> mvt;
     vector<Piece*> pj = j->getPieces();
     for (Piece* piece : pj) {
