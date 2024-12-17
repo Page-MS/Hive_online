@@ -9,69 +9,63 @@
 class LegalMoveInterface{
 public:
     virtual ~LegalMoveInterface()=default;
-    virtual Coords** searchMoves(int x, int y, bool camp) const = 0;
+    virtual vector<Coords> searchMoves(Coords coord,Graphe* graph, bool camp) = 0;
+    //Pour calculer sur le graph
+    Graphe* graphe_avant_coup;
+    Graphe* graphe_a_manipuler;
 };
-
+class LegalMoveAbeille : public LegalMoveInterface {
+    vector<Coords> searchMoves(Coords coord, Graphe* graph, bool camp) override;
+};
 class LegalMoveContext{
 private:
-    LegalMoveContext(): strategy(nullptr){};
+    LegalMoveContext(): strategy(new LegalMoveAbeille){};
     //on supprime l'affectation et la copie
     LegalMoveContext(const LegalMoveContext&) = delete;
     LegalMoveContext& operator=(const LegalMoveContext&) = delete;
     ~LegalMoveContext(){delete strategy;}
+    //La strategie actuelle pour traiter le cas en cours
     LegalMoveInterface* strategy;
     TYPE_PIECE current_strategy;
 public:
     //usage de singleton pour obtenir l'unique instance du legalMoveContext
     static LegalMoveContext& getInstance(){
-        LegalMoveContext instance;
+        static LegalMoveContext instance;
         return instance;
     }
-    Coords** searchLegalMoves(TYPE_PIECE typePiece,int x, int y, bool camp);
+    vector<Coords> searchLegalMoves(Coords coord,Graphe* graph, bool camp);
+    vector<Coords> searchNeighbourMosquito(Coords coord,Graphe* graph,bool camp);
     void changeStrategy(TYPE_PIECE typePiece);
 
 };
 
 
 class LegalMoveMoustique : public LegalMoveInterface{
-    Coords** searchMoves(int x, int y, bool camp) const override{
-        return 0;
-    }
+    vector<Coords> searchMoves(Coords coord,Graphe* graph, bool camp) override;
 };
 
 class LegalMoveFourmi : public LegalMoveInterface{
-    Coords** searchMoves(int x, int y, bool camp) const override{
-        return 0;
-    }
+    vector<Coords> searchMoves(Coords coord,Graphe* graph, bool campvector) override;
+    vector<Coords> rechercheDansVoisins(Coords coord, Graphe* graph, bool camp, vector<Coords>& voisins_traites) const;
 };
 
 class LegalMoveScarabee : public LegalMoveInterface{
-    Coords** searchMoves(int x, int y, bool camp) const override{
-        return 0;
-    }
+    vector<Coords> searchMoves(Coords coord,Graphe* graph, bool campvector) override;
 };
 
 class LegalMoveCoccinelle : public LegalMoveInterface{
-    Coords** searchMoves(int x, int y, bool camp) const override{
-        return 0;
-    }
+    vector<Coords> searchMoves(Coords coord,Graphe* graph, bool camp) override;
+    vector<Coords> rechercheDansVoisins(Coords coord, Graphe* graph, bool camp,unsigned int profondeur) const;
 };
 
-class LegalMoveAbeille : public LegalMoveInterface{
-    Coords** searchMoves(int x, int y, bool camp) const override{
-        return 0;
-    }
-};
+
 class LegalMoveSauterelle : public LegalMoveInterface{
-    Coords** searchMoves(int x, int y, bool camp) const override{
-        return 0;
-    }
+    vector<Coords> searchMoves(Coords coord,Graphe* graph, bool camp) override;
 };
 
 class LegalMoveAraignee : public LegalMoveInterface{
-    Coords** searchMoves(int x, int y, bool camp) const override{
-        return 0;
-    }
+    vector<Coords> searchMoves(Coords coord,Graphe* graph, bool camp) override;
+    vector<Coords> rechercheDansVoisins(Coords coord,Graphe* graph, bool camp,unsigned int profondeur) const;
 };
 
 

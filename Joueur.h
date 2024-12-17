@@ -4,16 +4,19 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <map>
 #include "pieces.h"
 #include "plateau.h"
-#include "coords.h"
-#include "cases.h"
-#include "partie.hpp"
+#include "legalmoves.h"
+
+
 #include <initializer_list>
 #include <array>
 #include <cstdlib>
 
 using namespace std;
+
+class EtatDuJeu;
 
 class Joueur {
 protected:
@@ -22,21 +25,27 @@ protected:
     bool isIA;
 
 public:
-    Joueur(const std::string& nomJoueur, bool IA=false) : nom(nomJoueur), isIA(IA) {}
+    Joueur(const std::string& nomJoueur, bool IA=false);
     Joueur(){}
     Joueur(const Joueur& autre) : nom(autre.nom) {
         for (Piece* piece : autre.pieces) {
             pieces.push_back(new Piece(*piece)); // copie chaque pièce
         }
     }
-    Joueur& operator=(const Joueur& autre);*
+    Joueur& operator=(const Joueur& autre);
     ~Joueur() {
         for (Piece* piece : pieces) {
             delete piece; // libère chaque pièce
         }
     }
 
-    void jouerCoup(Piece* pieceChoisie, const Coords& destination, Plateau& plateau); // joueur joue un coup
+    void jouerCoupCreer(Piece* pieceChoisie, const Coords& destination, Plateau& plateau);
+
+    void jouerCoupDeplacer(Piece* pieceChoisie, const Coords& destination, Plateau& plateau);
+
+
+    vector<Piece*> getPieces(){ return pieces; }
+    vector<Coords> getPlacementPossibilities(const Plateau& plateau) const;
 
     string getNom() const { return nom; }
 

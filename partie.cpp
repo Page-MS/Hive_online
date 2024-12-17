@@ -278,7 +278,10 @@ EtatDuJeu::EtatDuJeu(int num_tour, const Plateau& p,  Joueur* j1, Joueur* j2, Jo
     }
 }
 
-void sauvegarderPartie();
+void Partie::sauvegarderPartie() {
+    //Sauvegarder la partie dans un fichier binaire
+    cout<<"La partie a ete sauvegarde une partie"<<endl;
+}
 
 EtatDuJeu::EtatDuJeu(){
     numero_tour = 0;
@@ -314,11 +317,12 @@ EtatDuJeu& EtatDuJeu::operator=(const EtatDuJeu& jeu){
 const vector<Mouvement> EtatDuJeu::coupPossibles(Joueur* j) const {
     vector<Mouvement> mvt;
     vector<Piece*> pj = j->getPieces();
-    for (const Piece* piece : pj) {
+    for (Piece* piece : pj) {
         if (!plateau.isPieceStuck(*piece)) {
             const Coords* c = plateau.coordsPiece(*piece);
             if (c != nullptr) {
-                const vector<Coords> prochains = piece->coupsPossibles(plateau.getGraphe(), *c);
+                Graphe copygraphe = plateau.getGraphe();
+                const vector<Coords> prochains = piece->coupsPossibles(&copygraphe, *c);
                 for (const Coords &coup : prochains) { // Assurez-vous que 'coup' est du type Coords
                     mvt.emplace_back(piece, *c, coup);
                 }
