@@ -4,6 +4,7 @@
 
 #include "legalmoves.h"
 #include "cases.h"
+#include <algorithm>
 
 void LegalMoveContext::changeStrategy(TYPE_PIECE typePiece) {
     //si la strategie à appliquer est la même, on ne la change pas

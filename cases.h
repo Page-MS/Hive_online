@@ -276,8 +276,8 @@ std::string caseBorderVoid();
 bool onStraightLine(const Coords& c1, const Coords& c2);
 
 // renvoie si les coordonnées sont correctes pour une case
-inline bool isCaseCoords(int c, int l) { return ( (c%2==0 && l%2==0) || (c%2!=0 && l%2!=0) ); }
-inline bool isCaseCoords(const Coords& c) { return isCaseCoords(c.getX(), c.getY()); }
+bool isCaseCoords(int c, int l);
+bool isCaseCoords(const Coords& c);
 
 std::ostream& operator<<(std::ostream& flux, const Case& c);
 std::ostream& operator<<(std::ostream& flux, const Graphe& g);
