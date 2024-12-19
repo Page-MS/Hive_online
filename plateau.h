@@ -28,7 +28,6 @@ class Plateau {
         bool canPlace(const Piece& p, const Coords& c) const { return getGraphe().canPlace(c, p.getCamp());}
 
         void afficher(bool joueur_courant);
-
 };
 
 
