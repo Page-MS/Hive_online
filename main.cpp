@@ -4,10 +4,11 @@
 #include "cases.cpp"
 #include "coords.cpp"
 //#include <windows.h>
-//#include "Joueur.cpp"
+//#include "Joueur.h"
 //#include "partie.cpp"
 //#include "legalmoves.cpp"
 //#include "gamemanager.cpp"
+using namespace std;
 
 
 int main() {
@@ -46,7 +47,6 @@ int main() {
     //GameManager game_manager;
     //game_manager.afficher_menu();
 
-    try {
     Plateau plateau;
 
     Piece abeille(TYPE_PIECE::Abeille, false);
@@ -113,10 +113,6 @@ int main() {
 
     cout<<"Cases habitees = "<<plateau.getGraphe().getNbInhabitedCases()<<endl;
     cout<<"Ruche brisee si bouge a "<<Coords(0, 0)<<" : "<<plateau.getGraphe().wouldHiveBreak(Coords(0, 0))<<endl;
-    
-    } catch (const exception& e) {
-        cout<<e.what()<<endl;
-    }
 
     cout<<"\n\nTout nickel !"<<endl;
     return 0;

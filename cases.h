@@ -70,6 +70,8 @@ class Case {
         void supprPiece();
         void clear();
 
+        void changePiece(const Piece* new_piece, const Piece* old_piece);
+
     public:
         // longueur du nom de case lors de l'affichage console
         static size_t getNameLength() { return name_length; }
@@ -85,7 +87,8 @@ class Case {
         // vrai si aucune pièce sur la case
         bool empty() const { return (getNbPieces()==0); }
         // vrai si pièce est placée sur la case
-        bool hasPiece(const Piece& p) const;
+        bool hasPiece(const Piece* p) const;
+        bool hasPiece(const Piece& p) const { return hasPiece(&p); }
         // renvoie la pièce sur le dessus de la pile
         const Piece& getUpperPiece() const;
         // renvoie si la pièce est bloquée
@@ -201,7 +204,8 @@ class Graphe {
         bool isIsland(const Case& c) const { return isIsland(c.getCoords()); }
         bool isDeletable(const Case& c) const { return (c.empty() && isIsland(c.getCoords())); }
 
-        const Coords* coordsPiecePointer(const Piece& p) const;
+        const Coords* coordsPiecePointer(const Piece* p) const;
+        const Coords* coordsPiecePointer(const Piece& p) const { return coordsPiecePointer(&p); }
 
     public:
         // constructeur/destructeur
@@ -224,8 +228,10 @@ class Graphe {
         bool hasCase(const Coords& c) const { return hasCase(c.getX(), c.getY()); }
 
         // renvoie si graphe contient pièce, et coordonnées pièce
-        bool hasPiece(const Piece& p) const { return coordsPiecePointer(p)!=nullptr; };
-        const Coords& coordsPiece(const Piece& p) const;
+        bool hasPiece(const Piece* p) const { return coordsPiecePointer(p)!=nullptr; };
+        bool hasPiece(const Piece& p) const { return hasPiece(&p); };
+        const Coords& coordsPiece(const Piece* p) const;
+        const Coords& coordsPiece(const Piece& p) const { return coordsPiece(&p); }
         bool isPieceStuck(const Piece& p) const;
         // renvoie si une pièce est entourée d'autres pièces (pour la reine)
         bool isSurrounded(const Coords& c) const;
@@ -259,6 +265,15 @@ class Graphe {
         Iterator getIterator() const { Iterator ite = Iterator(cases); return ite; }
         Iterator findCasePlace(double c, double l) const;
         Iterator findCasePlace(const Coords& c) const { return findCasePlace(c.getX(), c.getY()); }
+
+        void changePiece(const Coords& c, const Piece* new_piece, const Piece* old_piece);
+        void changePiece(const Piece* new_piece, const Piece* old_piece);
+
+        std::vector<Coords>placableCoords(bool camp) const;
+
+        std::string toStr() const;
+        std::string toStr(const Coords& selected) const;
+        std::string toStr(const Coords& selected1, const Coords& selected2) const;
 };
 
 // AFFICHAGE
@@ -272,8 +287,8 @@ std::string caseBorderVoid();
 bool onStraightLine(const Coords& c1, const Coords& c2);
 
 // renvoie si les coordonnées sont correctes pour une case
-inline bool isCaseCoords(int c, int l) { return ( (c%2==0 && l%2==0) || (c%2!=0 && l%2!=0) ); }
-inline bool isCaseCoords(const Coords& c) { return isCaseCoords(c.getX(), c.getY()); }
+bool isCaseCoords(int c, int l);
+bool isCaseCoords(const Coords& c);
 
 std::ostream& operator<<(std::ostream& flux, const Case& c);
 std::ostream& operator<<(std::ostream& flux, const Graphe& g);
