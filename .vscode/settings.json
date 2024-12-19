@@ -59,6 +59,7 @@
         "xtree": "cpp",
         "algorithm": "cpp",
         "map": "cpp",
-        "optional": "cpp"
+        "optional": "cpp",
+        "fstream": "cpp"
     }
 }

@@ -1,6 +1,6 @@
 
 #include "pieces.h"
-
+#include "legalmoves.h"
 
 std::string Piece::strPiece() const {
     std::string str("");
@@ -31,4 +31,10 @@ std::string Piece::strPiece() const {
     }
 
     return str;
+}
+
+vector<Coords> Piece::coupsPossibles(Graphe* graph, Coords coord) const {
+    LegalMoveContext* legalmove=&LegalMoveContext::getInstance();
+    vector<Coords> b =legalmove->searchLegalMoves(coord,graph,getCamp());
+    return b;
 }
