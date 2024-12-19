@@ -36,13 +36,15 @@ Joueur& Joueur::operator=(const Joueur& autre) {
     return *this;
 }
 
-void Joueur::jouerCoupCreer(Piece* pieceChoisie, const Coords& destination, Plateau& plateau) {
+bool Joueur::jouerCoupCreer(Piece* pieceChoisie, const Coords& destination, Plateau& plateau) {
     if (!plateau.inReserve(*pieceChoisie)) {
-        throw std::invalid_argument("La pièce choisie n'est pas dans la réserve.");
+        cout<<"La pièce choisie n'est pas dans la réserve.\n";
+        return false;
     }
 
     if (!plateau.canPlace(*pieceChoisie, destination)) {
-        throw std::invalid_argument("La position cible est invalide ou occupée.");
+        cout<<"La position cible est invalide ou occupée.\n";
+        return false;
     }
 
     // Obtenir les mouvements légaux de la pièce
@@ -54,23 +56,28 @@ void Joueur::jouerCoupCreer(Piece* pieceChoisie, const Coords& destination, Plat
     //parcours les legalmoves pour verifier que destination en fait bien partie
     auto it = std::find(legalMoves.begin(), legalMoves.end(), destination);
     if (it == legalMoves.end()) {
-        throw std::invalid_argument("La destination n'est pas un mouvement légal pour cette pièce.");
+        cout<<"La destination n'est pas un mouvement légal pour cette pièce.\n";
+        return false;
     }
 
     plateau.movePiece(*pieceChoisie, destination);
+    return true;
 }
 
-void Joueur::jouerCoupDeplacer(Piece* pieceChoisie, const Coords& destination, Plateau& plateau){
+bool Joueur::jouerCoupDeplacer(Piece* pieceChoisie, const Coords& destination, Plateau& plateau){
     if (plateau.inReserve(*pieceChoisie)) {
-        throw std::invalid_argument("La pièce choisie est dans la réserve.");
+        cout<<"La pièce choisie n'est pas dans la réserve.\n";
+        return false;
     }
 
     if (plateau.isPieceStuck(*pieceChoisie)){
-        throw std::invalid_argument("La pièce choisie est bloqué sous une autre pièce.");
+        cout<<"La pièce choisie est bloqué sous une autre pièce.\n";
+        return false;
     }
 
     if (!plateau.canPlace(*pieceChoisie, destination)) {
-        throw std::invalid_argument("La position cible est invalide ou occupée.");
+        cout<<"La position cible est invalide ou occupée.\n";
+        return false;
     }
 
 
@@ -83,21 +90,12 @@ void Joueur::jouerCoupDeplacer(Piece* pieceChoisie, const Coords& destination, P
     //parcours les legalmoves pour verifier que destination en fait bien partie
     auto it = std::find(legalMoves.begin(), legalMoves.end(), destination);
     if (it == legalMoves.end()) {
-        throw std::invalid_argument("La destination n'est pas un mouvement légal pour cette pièce.");
+        cout<<"La destination n'est pas un mouvement légal pour cette pièce.\n";
+        return false;
     }
 
     plateau.movePiece(*pieceChoisie, destination);
-}
-
-vector<Coords> Joueur::getPlacementPossibilities(const Plateau& plateau)const{
-    vector<Coords> valid_pos;
-    for (const Piece* piece : pieces) {
-        const Coords* c = plateau.coordsPiece(*piece);
-        if (c != nullptr){
-            if(plateau.getGraphe().canPlace(*c, piece->getCamp())) valid_pos.push_back(*c);
-        }
-    }
-    return vector<Coords>(valid_pos.begin(), valid_pos.end());
+    return true;
 }
 
 void Mouvement::ExecuterMvt(){
@@ -124,3 +122,9 @@ int EvalMouvement::evalCoup(const Mouvement& mvt, const EtatDuJeu& etat){
 Mouvement EvalMouvement::comparerCoups(const std::vector<Mouvement>& coups, const EtatDuJeu& etat){
 
 }
+
+
+
+
+
+

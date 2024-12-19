@@ -21,14 +21,14 @@ class EtatDuJeu {
         EtatDuJeu(); //Pour initialiser historique_etats dans Partie
         EtatDuJeu(const EtatDuJeu& other);
         EtatDuJeu& operator=(const EtatDuJeu& jeu);
-        const vector<Mouvement> coupPossibles(Joueur* j) const;  // coups possibles
-        bool coupGagnant() const; // vérifie si le jeu est fini
+        const vector<Mouvement> coupsPossibles(Joueur* j) const;  // coups possibles
         void ajouterMouvement(const Mouvement& mvt) {historique.push_back(mvt);} // ajoute un coup à l'historique
         Plateau& getPlateau() {return plateau;} // accès au plateau
         Joueur** getJoueurs() {return joueurs;}
         Joueur* getJoueurCourant() {return joueur_courant;}
         const int getNumTour() const {return numero_tour;}
         vector<Mouvement>& getHistorique() {return historique;}
+        const vector<Piece*> reserveJoueur(Joueur* j) const;  //Retourne les pieces de la reserve d'un joueur
 };
 
 class Partie{
@@ -45,16 +45,16 @@ class Partie{
     public:
         Partie() : nb_retour_arriere(0), start_joueur_id(0) {}
         EtatDuJeu& getEtatActuel(){return historique_etats[0];}
-        void setStartJoueurId();//méthode qui détermine qui commence la partie
-        void commencerPartie(string pseudo1, string pseudo2, bool IA1=false, bool IA2=false);
-        void jouerTour();
-        EtatDuJeu sauvegarderEtat();
-        void terminerPartie();
+        void setStartJoueurId();//Méthode qui détermine qui commence la partie
+        void commencerPartie(); //Gere les initialisations
+        void jouerTour(); //Gere le deroulement d'un tour
         void restaurerEtat(const EtatDuJeu &etat);
-        void annulerDernierMouvement(); // annule le dernier coup
+        void annulerDernierMouvement(); // Annule le dernier coup
         void sauvegarderPartie();
-        bool finPartie()const;
-        void jouer();
+        void lancerPartie(); //Gere le deroulement de la partie
+        bool finPartie()const; //Verifie si des conditions d'arret de la partie sont remplies
+        //void saveToFile(ofstream& outFile) const;
+        //void loadFromFile(ifstream& inFile);
 };
 
 class GameManager{
@@ -64,6 +64,7 @@ class GameManager{
     
     public:
         void afficher_menu();
+        void loadGame(); //Appelée pour charger une partie a partir d'un fichier
 };
 
 #endif

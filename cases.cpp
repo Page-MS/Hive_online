@@ -797,7 +797,7 @@ void Graphe::Iterator::goToCoords(const Coords& c) {
 /*! \brief Pour obtenir toutes les coordonnées où l'on peut placer. Attention à quand même vérifier la règle de la
  * reine abeille au 4ème coup
  */
- std::vector<Coords> Graphe::placableCoords(bool camp) {
+ std::vector<Coords> Graphe::placableCoords(bool camp) const{
      auto ite=getIterator();
     vector<Coords> resultat;
     while  (not ite.atEndColonne()){

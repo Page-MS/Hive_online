@@ -9,7 +9,6 @@
 #include "plateau.h"
 #include "legalmoves.h"
 
-
 #include <initializer_list>
 #include <array>
 #include <cstdlib>
@@ -23,6 +22,7 @@ protected:
     string nom;
     vector<Piece*> pieces; // pieces du joueur
     bool isIA;
+    bool camp;
 
 public:
     Joueur(const std::string& nomJoueur, bool IA=false);
@@ -39,19 +39,20 @@ public:
         }
     }
 
-    void jouerCoupCreer(Piece* pieceChoisie, const Coords& destination, Plateau& plateau);
+    bool jouerCoupCreer(Piece* pieceChoisie, const Coords& destination, Plateau& plateau);
 
-    void jouerCoupDeplacer(Piece* pieceChoisie, const Coords& destination, Plateau& plateau);
-
+    bool jouerCoupDeplacer(Piece* pieceChoisie, const Coords& destination, Plateau& plateau);
 
     vector<Piece*> getPieces(){ return pieces; }
-    vector<Coords> getPlacementPossibilities(const Plateau& plateau) const;
 
     string getNom() const { return nom; }
 
     void ajouterPiece(Piece* piece) { pieces.push_back(piece); } // ajoute une piece
 
     bool getIsIA() { return isIA; }
+
+    void setCamp(bool newCamp) { camp = newCamp; }
+    bool getCamp() { return camp; }
 };
 
 
@@ -73,11 +74,8 @@ public:
 };
 
 class IAJoueur : public Joueur {
-private:
-    int difficulte; // niveau de l'ia
-
 public:
-    IAJoueur(const std::string& nomJoueur, int niveauDifficulte):Joueur(nomJoueur, true), difficulte(niveauDifficulte) {}
+    IAJoueur(const std::string& nomJoueur):Joueur(nomJoueur, true) {}
 
     void prendreDecision(EtatDuJeu& etat);  // décide quoi jouer
 

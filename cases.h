@@ -236,7 +236,7 @@ class Graphe {
         bool canSlide(const Coords& c, unsigned int side) const;
         bool canPlace(const Coords& c, bool camp) const;
         //Pour savoir où placer une pièce
-        std::vector<Coords> placableCoords(bool camp);
+        std::vector<Coords> placableCoords(bool camp) const;
 
         // renvoie case non modifiable
         const Case& getCase(double c, double l) const;
