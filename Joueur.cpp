@@ -108,7 +108,7 @@ void Joueur::save(const std::string& fichier, Plateau& plateau) const {
     }
 
     // Écrire le camp du joueur
-    file << "Camp: " << (isIA ? "IA" : "Humain") << "\n";
+    file << "Camp: " << camp << "\n";
 
     // Compter et écrire le nombre de pièces de chaque type sur le plateau
     std::map<TYPE_PIECE, int> piecesCount;
