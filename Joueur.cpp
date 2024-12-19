@@ -122,6 +122,8 @@ void Joueur::save(const std::string& fichier, Plateau& plateau) const {
         file << "Type: " << entry.first << ", Nombre: " << entry.second << "\n";
     }
 
+    file << "FIN_JOUEUR\n";
+
     file.close();
 }
 
