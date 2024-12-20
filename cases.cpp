@@ -962,8 +962,16 @@ void Graphe::Iterator::goToCoords(const Coords& c) {
  * reine abeille au 4ème coup
  */
  std::vector<Coords> Graphe::placableCoords(bool camp) const {
-     auto ite=getIterator();
+    auto ite=getIterator();
     vector<Coords> resultat;
+    if (getNbInhabitedCases()==0) {
+        resultat.push_back(Coords(0, 0));
+        return resultat;
+    }
+    if (getNbInhabitedCases()==1) {
+        return coordsAllAdjacents(Coords(0, 0));
+    }
+
     while  (!ite.atEndColonne()){
         while (!ite.atEndLigne()){
             if (canPlace(ite.getCurrent().getCoords(),camp)){
