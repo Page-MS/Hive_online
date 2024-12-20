@@ -1,6 +1,7 @@
 #include "joueur.h"
 #include <unordered_set>
 #include <algorithm>
+#include <fstream>
 
 Joueur::Joueur(const std::string& nomJoueur, bool IA) : nom(nomJoueur), isIA(IA) {
     map<TYPE_PIECE, int> piecesNecessaires = {
@@ -18,7 +19,7 @@ Joueur::Joueur(const std::string& nomJoueur, bool IA) : nom(nomJoueur), isIA(IA)
         int nombre = typeDePiecce.second;
 
         for (int i = 0; i < nombre; ++i) {
-            pieces.push_back(new Piece(modele, IA));
+            pieces.emplace_back(modele, IA);
         }
     }
 }
@@ -96,6 +97,34 @@ bool Joueur::jouerCoupDeplacer(Piece* pieceChoisie, const Coords& destination, P
 
     plateau.movePiece(*pieceChoisie, destination);
     return true;
+}
+
+
+
+void Joueur::save(const std::string& fichier, Plateau& plateau) const {
+    std::ofstream file(fichier);
+    if (!file.is_open()) {
+        throw std::runtime_error("Unable to open file");
+    }
+
+    // Écrire le camp du joueur
+    file << "Camp: " << camp << "\n";
+
+    // Compter et écrire le nombre de pièces de chaque type sur le plateau
+    std::map<TYPE_PIECE, int> piecesCount;
+    for (auto piece : pieces) {
+        if (!plateau.inReserve(*piece)) {
+            piecesCount[piece->getType()]++;
+        }
+    }
+
+    for (const auto& entry : piecesCount) {
+        file << "Type: " << entry.first << ", Nombre: " << entry.second << "\n";
+    }
+
+    file << "FIN_JOUEUR\n";
+
+    file.close();
 }
 
 void Mouvement::ExecuterMvt(){
