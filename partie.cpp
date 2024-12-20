@@ -2,6 +2,80 @@
 #include <fstream>
 #include <cstdlib>
 
+EtatDuJeu::EtatDuJeu(int num_tour, Plateau p,  Joueur* j1, Joueur* j2, Joueur* jc){
+    numero_tour = num_tour;
+    plateau = p;
+    joueurs[0] = j1;
+    joueurs[1] = j2;
+    joueur_courant = nullptr;
+    if(jc == j1) {
+        joueur_courant = joueurs[0];
+    }else if(jc == j2) {
+        joueur_courant = joueurs[1];
+    }else{
+        joueur_courant = nullptr; // Au cas où `joueurCourant` est nul dans `partie`
+    }
+}
+
+EtatDuJeu::~EtatDuJeu() {
+    //Destruction des joueurs
+    for (const auto joueur : joueurs) {
+        delete joueur;
+    }
+    joueur_courant = nullptr;
+}
+
+EtatDuJeu::EtatDuJeu(){
+    numero_tour = 0;
+    plateau = Plateau();
+    joueurs[0] = new Joueur;
+    joueurs[1] = new Joueur;
+    joueur_courant = nullptr;
+}
+
+EtatDuJeu::EtatDuJeu(const EtatDuJeu& other){
+    numero_tour = other.numero_tour;
+    plateau = other.plateau; //nécessite un constructeur de recopie de Plateau
+    joueurs[0] = other.joueurs[0];
+    joueurs[1] = other.joueurs[1];
+    if(other.joueur_courant == other.joueurs[0]) joueur_courant = joueurs[0];
+    else if(other.joueur_courant == other.joueurs[1]) joueur_courant = joueurs[1];
+    else joueur_courant = nullptr; // Au cas où `joueurCourant` est nul dans le jeu que l'on recopie
+}
+
+EtatDuJeu& EtatDuJeu::operator=(const EtatDuJeu& jeu){
+    if(this != &jeu){
+        numero_tour = jeu.numero_tour;
+        plateau = jeu.plateau;
+        joueurs[0] = jeu.joueurs[0];
+        joueurs[1] = jeu.joueurs[1];
+        historique = jeu.historique;
+        plateau.piecesCoherence(joueurs[0]->getPieces(), joueurs[1]->getPieces());
+        if(jeu.joueur_courant == jeu.joueurs[0]) joueur_courant = joueurs[0];
+        else if(jeu.joueur_courant == jeu.joueurs[1]) joueur_courant = joueurs[1];
+        else joueur_courant = nullptr; // Au cas où joueur_courant est nul dans le jeu que l'on recopie
+    }
+    return *this;
+}
+
+const vector<Mouvement> EtatDuJeu::coupsPossibles(Joueur* j) const {
+    vector<Mouvement> mvt;
+    vector<Piece*> pj = j->getPieces();
+    for (Piece* piece : pj) {
+        if (!plateau.isPieceStuck(*piece)) {
+            const Coords* c = plateau.coordsPiece(*piece);
+            if (c != nullptr) {
+                Graphe copygraphe = plateau.getGraphe();
+                const vector<Coords> prochains = piece->coupsPossibles(&copygraphe, *c);
+                for (const Coords &coup : prochains) { // Assurez-vous que 'coup' est du type Coords
+                    mvt.emplace_back(piece, *c, coup);
+                }
+            }
+        }
+    }
+    return mvt;
+}
+
 //Méthode qui détermine qui commence la partie
 void Partie::setStartJoueurId(){
     if (historique_etats[0].joueurs[0]->getIsIA() && !(historique_etats[0].joueurs[1]->getIsIA())){
@@ -48,23 +122,29 @@ void Partie::commencerPartie(){
     }
     ia2 = (choix == 0) ? false : true;
     if(ia1 && ia2){ // 2 joueurs IA
-        j2 = new IAJoueur(pseudo1);
-        j2 = new IAJoueur(pseudo2);
+        historique_etats[0].joueurs[0] = new IAJoueur(pseudo1);
+        historique_etats[0].joueurs[1] = new IAJoueur(pseudo2);
     }else if(ia1){ // Une IA et un humain
-        j1 = new IAJoueur(pseudo1);
-        j2 = new Joueur(pseudo2);
+        historique_etats[0].joueurs[0] = new IAJoueur(pseudo1);
+        historique_etats[0].joueurs[1] = new Joueur(pseudo2);
     }else if(ia2){ // Une IA et un humain
-        j1 = new Joueur(pseudo1);
-        j2 = new IAJoueur(pseudo2);
+        historique_etats[0].joueurs[0] = new Joueur(pseudo1);
+        historique_etats[0].joueurs[1] = new IAJoueur(pseudo2);
     }else{ // 2 joueurs huamins
-        j1 = new Joueur(pseudo1);
-        j2 = new Joueur(pseudo2);
+        historique_etats[0].joueurs[0] = new Joueur(pseudo1);
+        historique_etats[0].joueurs[1] = new Joueur(pseudo2);
+    }
+    for (Joueur* joueur : historique_etats[0].joueurs) {
+        for (const Piece* piece : joueur->getPieces()){
+            historique_etats[0].plateau.addPieceReserve(*piece);
+        }
     }
 
     setStartJoueurId();
-    jc = (start_joueur_id == 0) ? j1 : j2; //On determine qui commence la partie
-    EtatDuJeu first_etat(0, game_plateau, j1, j2, jc);
-    historique_etats[0] = first_etat;
+    historique_etats[0].plateau = Plateau();
+    historique_etats[0].joueur_courant = (start_joueur_id == 0) ? historique_etats[0].joueurs[0] : historique_etats[0].joueurs[1]; //On determine qui commence la partie
+    historique_etats[0].numero_tour = 0;
+
     for(int i = 1; i < 4; i++){
         historique_etats[i] = historique_etats[0]; //convention : on initialise les 3 autres états avec le même état initial
     }
@@ -73,24 +153,6 @@ void Partie::commencerPartie(){
         cin>>nb_retour_arriere;
     }while(nb_retour_arriere < 0 || nb_retour_arriere > 3);
     cout << "Debut de la partie" << endl;
-}
-
-void Partie::restaurerEtat(const EtatDuJeu& etat){
-    /*Deux solutions : soit on fait 2 getters pour chaque attributs (exemple avec getNumTour ci dessous, le getter a gauche du = est le getter non const,
-     et celui à droite du = est le getter const, soit on met friend class Partie dans EtatDuJeu.
-     Friend class est plus simple */
-    historique_etats[0].numero_tour = etat.numero_tour;
-    historique_etats[0].historique = etat.historique;
-    historique_etats[0].plateau = etat.plateau;
-    historique_etats[0].joueurs[0] = etat.joueurs[0];
-    historique_etats[0].joueurs[1] = etat.joueurs[1];
-    if(etat.joueur_courant == etat.joueurs[0]) {
-        historique_etats[0].joueur_courant = historique_etats[0].joueurs[0];
-    }else if(etat.joueur_courant == etat.joueurs[1]) {
-        historique_etats[0].joueur_courant = historique_etats[0].joueurs[1];
-    }else{
-        historique_etats[0].joueur_courant = nullptr; // Au cas où `joueurCourant` est nul dans `etat`
-    }
 }
 
 const vector<Piece*> EtatDuJeu::reserveJoueur(Joueur* j) const{
@@ -104,13 +166,20 @@ const vector<Piece*> EtatDuJeu::reserveJoueur(Joueur* j) const{
     return reserve;
 }
 
+void Partie::annulerDernierMouvement(){ //On remonte au tour précédent de chacun des joueurs
+    historique_etats[0] = historique_etats[2]; //tour précédent du joueur courant
+    historique_etats[1] = historique_etats[3]; //tour précédent de l'autre joueur
+    nb_retour_arriere --;
+}
+
 void Partie::jouerTour(){
     bool tour_fini = false;
     historique_etats[3] = historique_etats[2];
     historique_etats[2] = historique_etats[1];
-    historique_etats[1] = historique_etats[0]; //on sauvegarde l'état actuel avant de lancer le tour suivant
+    historique_etats[1] = historique_etats[0]; //on sauvegarde l'etat actuel avant de lancer le tour suivant
     historique_etats[0].numero_tour++;
     cout << "Tour " << historique_etats[0].numero_tour << endl;
+    cout << "C'est au joueur " << historique_etats[0].joueur_courant->getNom() << " de jouer." << endl;
 
     //Si il n'y a plus de piece en reserve, ni de coups possible : on passe le tour
     vector <Piece*> reserve = historique_etats[0].reserveJoueur(historique_etats[0].joueur_courant);
@@ -204,7 +273,6 @@ void Partie::jouerTour(){
                     //vérifier si il reste des retours en arriere pour cette partie
                     if(nb_retour_arriere > 0){
                         annulerDernierMouvement();
-                        historique_etats[0].numero_tour = historique_etats[0].numero_tour - 2;
                         cout<<"Voici le nouvel etat du plateau : \n";
                         historique_etats[0].plateau.afficher(historique_etats[0].joueur_courant);
                     }
@@ -217,7 +285,7 @@ void Partie::jouerTour(){
                 }
             }
             case 4: {
-                sauvegarderPartie();
+                //appel à sauvegarder partie
                 cout<<"Votre partie a ete sauvegardee, au revoir ! \n";
                 return;
             }
@@ -229,9 +297,14 @@ void Partie::jouerTour(){
 
 bool Partie::finPartie()const{
     //Si l'abeille est entouree
+    cout<<"premier coucou";
+    vector<Piece*> pieces = historique_etats[0].reserveJoueur(historique_etats[0].joueurs[0]);
+    for (const Piece* piece : pieces) {
+        cout<<piece->getType()<<endl;
+    }
     for(const auto joueur : historique_etats[0].joueurs){
         for(const auto piece : joueur->getPieces()){
-            if(piece->getType() == 1){
+            if(piece->getType() == 1 && !(historique_etats[0].plateau.inReserve(piece))){
                 const Coords* c = historique_etats[0].plateau.coordsPiece(*piece);
                 if (c != nullptr) {
                     if(historique_etats[0].plateau.getGraphe().isSurrounded(*c)) {
@@ -242,15 +315,15 @@ bool Partie::finPartie()const{
         }
     }
     //Si les deux joueurs n'ont plus de coups possibles et de pièce en réserve
-    if(historique_etats[0].coupsPossibles(historique_etats[0].joueurs[0]).empty() && historique_etats[0].coupsPossibles(historique_etats[0].joueurs[0]).empty()) {
-        if(historique_etats[0].reserveJoueur(historique_etats[0].joueurs[0]).empty() && historique_etats[0].reserveJoueur(historique_etats[0].joueurs[0]).empty()) {
+    if(historique_etats[0].reserveJoueur(historique_etats[0].joueurs[0]).empty() && historique_etats[0].reserveJoueur(historique_etats[0].joueurs[0]).empty()) {
+        if(historique_etats[0].coupsPossibles(historique_etats[0].joueurs[0]).empty() && historique_etats[0].coupsPossibles(historique_etats[0].joueurs[0]).empty()) {
             return true;
         }
     }
     return false;
 }
 
-void Partie::lancerPartie(){
+void Partie::lancerPartie() {
     commencerPartie();
     // Si aucune condition d'arret de partie n'est verifiee, on joue le tour et passe au joueur suivant
     while(!finPartie()){
@@ -262,13 +335,13 @@ void Partie::lancerPartie(){
         }
     }
 
+    cout << "Fin de la partie : " << endl; //On est sorti de la boucle while : une condition d'arret est verifiee
+
     //On cherche a determiner quelle condition d'arret de la partie a ete remplie
     //Cas 1 : les joueurs n'ont plus de coup possible et plus de piece en reserve : egalite
     if(historique_etats[0].coupsPossibles(historique_etats[0].joueurs[0]).empty() && historique_etats[0].coupsPossibles(historique_etats[0].joueurs[0]).empty()) {
         if(historique_etats[0].reserveJoueur(historique_etats[0].joueurs[0]).empty() && historique_etats[0].reserveJoueur(historique_etats[0].joueurs[0]).empty()){
-            cout << "Fin de la partie : " << endl;
             cout<<"Egalite !"<<endl;
-            cout<<"Merci d'avoir joue a Hive !"<<endl;
         }
     }
     //Cas 2 : une abeille est entouree
@@ -279,97 +352,17 @@ void Partie::lancerPartie(){
                 if (c != nullptr) {
                     if(historique_etats[0].plateau.getGraphe().isSurrounded(*c)){
                         if(joueur == historique_etats[0].joueurs[0]){
-                            cout << "Fin de la partie : " << endl;
                             cout<<"Le joueur "<<historique_etats[0].joueurs[1]->getNom()<<" a gagne !"<<endl;
-                            cout<<"Merci d'avoir joue a Hive !"<<endl;
                         }
                         if(joueur == historique_etats[0].joueurs[1]){
-                            cout << "Fin de la partie : " << endl;
                             cout<<"Le joueur "<<historique_etats[0].joueurs[0]->getNom()<<" a gagne !"<<endl;
-                            cout<<"Merci d'avoir joue a Hive !"<<endl;
                         }
                     }
                 }
             }
         }
     }
-    //libérer
-    //revenir au menu
-}
-
-EtatDuJeu::EtatDuJeu(int num_tour, const Plateau& p,  Joueur* j1, Joueur* j2, Joueur* jc){
-    numero_tour = num_tour;
-    plateau = p;
-    joueurs[0] = j1;
-    joueurs[1] = j2;
-    joueur_courant = nullptr;
-    if(jc == j1) {
-        joueur_courant = joueurs[0];
-    }else if(jc == j2) {
-        joueur_courant = joueurs[1];
-    }else{
-        joueur_courant = nullptr; // Au cas où `joueurCourant` est nul dans `partie`
-    }
-}
-
-void Partie::sauvegarderPartie() {
-    //Sauvegarder la partie dans un fichier binaire
-    cout<<"La partie a ete sauvegarde une partie"<<endl;
-}
-
-EtatDuJeu::EtatDuJeu(){
-    numero_tour = 0;
-    plateau = Plateau();
-    joueurs[0] = new Joueur;
-    joueurs[1] = new Joueur;
-    joueur_courant = nullptr;
-}
-
-EtatDuJeu::EtatDuJeu(const EtatDuJeu& other){
-    numero_tour = other.numero_tour;
-    plateau = other.plateau; //nécessite un constructeur de recopie de Plateau
-    joueurs[0] = other.joueurs[0];
-    joueurs[1] = other.joueurs[1];
-    if(other.joueur_courant == other.joueurs[0]) joueur_courant = joueurs[0];
-    else if(other.joueur_courant == other.joueurs[1]) joueur_courant = joueurs[1];
-    else joueur_courant = nullptr; // Au cas où `joueurCourant` est nul dans le jeu que l'on recopie
-}
-
-EtatDuJeu& EtatDuJeu::operator=(const EtatDuJeu& jeu){
-    if(this != &jeu){
-        numero_tour = jeu.numero_tour;
-        plateau = jeu.plateau; //necessite un constructeur de recopie de Plateau
-        joueurs[0] = jeu.joueurs[0];
-        joueurs[1] = jeu.joueurs[1];
-        if(jeu.joueur_courant == jeu.joueurs[0]) joueur_courant = joueurs[0];
-        else if(jeu.joueur_courant == jeu.joueurs[1]) joueur_courant = joueurs[1];
-        else joueur_courant = nullptr; // Au cas où `joueurCourant` est nul dans le jeu que l'on recopie
-    }
-    return *this;
-}
-
-const vector<Mouvement> EtatDuJeu::coupsPossibles(Joueur* j) const {
-    vector<Mouvement> mvt;
-    vector<Piece*> pj = j->getPieces();
-    for (Piece* piece : pj) {
-        if (!plateau.isPieceStuck(*piece)) {
-            const Coords* c = plateau.coordsPiece(*piece);
-            if (c != nullptr) {
-                Graphe copygraphe = plateau.getGraphe();
-                const vector<Coords> prochains = piece->coupsPossibles(&copygraphe, *c);
-                for (const Coords &coup : prochains) { // Assurez-vous que 'coup' est du type Coords
-                    mvt.emplace_back(piece, *c, coup);
-                }
-            }
-        }
-    }
-    return mvt;
-}
-
-void Partie::annulerDernierMouvement(){ //On remonte au tour précédent de chacun des joueurs
-    historique_etats[0] = historique_etats[2]; //tour précédent du joueur courant
-    historique_etats[1] = historique_etats[3]; //tour précédnt de l'autre joueur
-    nb_retour_arriere --;
+    cout<<"Merci d'avoir joue a Hive !"<<endl;
 }
 
 void GameManager::afficher_menu() {
@@ -377,18 +370,21 @@ void GameManager::afficher_menu() {
     //sert à gérer le switch
     int choice =0;
     while (choice != 3) {
-        cout<<"\n\n ----------------------------------\n\n"<<"Bienvenue dans Hive, le jeu iconique enfin sous forme virtuelle !\n"
+        cout<<"\n\n ----------------------------------\n\n"<<"Bienvenue dans Hive, le jeu iconique, enfin sous forme virtuelle !\n"
                                                              "Que souhaitez vous faire ?\n"
-                                                             "Pour lancer une partie tapez 1\n "
-                                                             "Pour quitter, tappez \n"
+                                                             "1. Lancer une nouvelle partie\n "
+                                                             "2. Restaurer la partie sauvegardee\n"
+                                                             "3. Quitter le jeu\n "
                                                              "Votre choix :";
         cin >> choice;
         switch (choice) {
             case 1:
-                cout << "\n Lancer une nouvelle partie\n";
+                cout << "\n Vous avez lancé une nouvelle partie\n";
+                partie_active.lancerPartie();
                 break;
             case 2:
-                cout << "\n Reprendre la partie sauvegardee\n";
+                cout << "\n Vous avez repris votre partie\n";
+                //chargerPartie()
             break;
             case 3:
                 cout << "\n Au revoir ! \n";
@@ -400,7 +396,7 @@ void GameManager::afficher_menu() {
 }
 
 /*
-void GameManager::loadGame() {
+void GameManager::chargerJeu() {
     basic_ifstream<char> loadFile("sauvegarde.txt");
     if (!loadFile.is_open()) { // Verifie si le fichier existe et est ouvert
         cout << "Impossible de trouver le fichier de sauvegarde de la partie. \n" << endl;
@@ -417,7 +413,7 @@ void GameManager::loadGame() {
     partie_active.lancerPartie();
 }
 
-void Partie::saveToFile(ofstream& outFile) const {
+void Partie::sauvegarderPartie(ofstream& outFile) const {
     if (!outFile) {
         cerr << "Erreur lors de l'ouverture du fichier pour la sauvegarde. \n" << endl;
         return;
@@ -431,7 +427,7 @@ void Partie::saveToFile(ofstream& outFile) const {
     outFile << historique_etats[0].numero_tour << "\n";
 }
 
-void Partie::loadFromFile(ifstream& inFile) {
+void Partie::restaurerPartie(ifstream& inFile) {
     if (!inFile) {
         cerr << "Erreur d'ouverture du fichier lors du chargement.\n" << endl;
         return;

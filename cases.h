@@ -5,9 +5,7 @@
 #include <vector>
 #include <iostream>
 #include <string>
-#include <iomanip>
-//Forward definition
-class Piece;
+
 // CASES
 class Case {
     friend class Graphe;
@@ -72,6 +70,8 @@ class Case {
         void supprPiece();
         void clear();
 
+        void changePiece(const Piece* new_piece, const Piece* old_piece);
+
     public:
         // longueur du nom de case lors de l'affichage console
         static size_t getNameLength() { return name_length; }
@@ -87,7 +87,8 @@ class Case {
         // vrai si aucune pièce sur la case
         bool empty() const { return (getNbPieces()==0); }
         // vrai si pièce est placée sur la case
-        bool hasPiece(const Piece& p) const;
+        bool hasPiece(const Piece* p) const;
+        bool hasPiece(const Piece& p) const { return hasPiece(&p); }
         // renvoie la pièce sur le dessus de la pile
         const Piece& getUpperPiece() const;
         // renvoie si la pièce est bloquée
@@ -142,7 +143,7 @@ class Graphe {
                 // renvoie si itérateurs au même endroit
                 bool onSameColonne(const Iterator& ite) const { return colonne==ite.colonne; }
                 bool onSameLigne(const Iterator& ite) const { return ligne==ite.ligne; }
-                
+
                 // début/fin, avant/arrière, et vers colonne précise (selon coordonnées "réelles" dans la ruche)
                 void firstColonne() { colonne=0; }
                 void endColonne() { colonne = vect.size(); }
@@ -203,7 +204,8 @@ class Graphe {
         bool isIsland(const Case& c) const { return isIsland(c.getCoords()); }
         bool isDeletable(const Case& c) const { return (c.empty() && isIsland(c.getCoords())); }
 
-        const Coords* coordsPiecePointer(const Piece& p) const;
+        const Coords* coordsPiecePointer(const Piece* p) const;
+        const Coords* coordsPiecePointer(const Piece& p) const { return coordsPiecePointer(&p); }
 
     public:
         // constructeur/destructeur
@@ -226,8 +228,10 @@ class Graphe {
         bool hasCase(const Coords& c) const { return hasCase(c.getX(), c.getY()); }
 
         // renvoie si graphe contient pièce, et coordonnées pièce
-        bool hasPiece(const Piece& p) const { return coordsPiecePointer(p)!=nullptr; };
-        const Coords& coordsPiece(const Piece& p) const;
+        bool hasPiece(const Piece* p) const { return coordsPiecePointer(p)!=nullptr; };
+        bool hasPiece(const Piece& p) const { return hasPiece(&p); };
+        const Coords& coordsPiece(const Piece* p) const;
+        const Coords& coordsPiece(const Piece& p) const { return coordsPiece(&p); }
         bool isPieceStuck(const Piece& p) const;
         // renvoie si une pièce est entourée d'autres pièces (pour la reine)
         bool isSurrounded(const Coords& c) const;
@@ -235,8 +239,6 @@ class Graphe {
         bool wouldHiveBreak(const Coords& c) const;
         bool canSlide(const Coords& c, unsigned int side) const;
         bool canPlace(const Coords& c, bool camp) const;
-        //Pour savoir où placer une pièce
-        std::vector<Coords> placableCoords(bool camp) const;
 
         // renvoie case non modifiable
         const Case& getCase(double c, double l) const;
@@ -263,6 +265,15 @@ class Graphe {
         Iterator getIterator() const { Iterator ite = Iterator(cases); return ite; }
         Iterator findCasePlace(double c, double l) const;
         Iterator findCasePlace(const Coords& c) const { return findCasePlace(c.getX(), c.getY()); }
+
+        void changePiece(const Coords& c, const Piece* new_piece, const Piece* old_piece);
+        void changePiece(const Piece* new_piece, const Piece* old_piece);
+
+        std::vector<Coords>placableCoords(bool camp) const;
+
+        std::string toStr() const;
+        std::string toStr(const Coords& selected) const;
+        std::string toStr(const Coords& selected1, const Coords& selected2) const;
 };
 
 // AFFICHAGE

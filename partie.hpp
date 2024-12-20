@@ -17,18 +17,19 @@ class EtatDuJeu {
         Joueur* joueur_courant;
         friend class Partie;
     public:
-        EtatDuJeu(int num_tour, const Plateau& p,  Joueur* j1, Joueur* j2, Joueur* jc);
+        EtatDuJeu(int num_tour, Plateau p,  Joueur* j1, Joueur* j2, Joueur* jc);
         EtatDuJeu(); //Pour initialiser historique_etats dans Partie
         EtatDuJeu(const EtatDuJeu& other);
+        ~EtatDuJeu();
         EtatDuJeu& operator=(const EtatDuJeu& jeu);
         const vector<Mouvement> coupsPossibles(Joueur* j) const;  // coups possibles
         void ajouterMouvement(const Mouvement& mvt) {historique.push_back(mvt);} // ajoute un coup à l'historique
-        Plateau& getPlateau() {return plateau;} // accès au plateau
+        Plateau getPlateau() {return plateau;} // accès au plateau
         Joueur** getJoueurs() {return joueurs;}
         Joueur* getJoueurCourant() {return joueur_courant;}
         const int getNumTour() const {return numero_tour;}
         vector<Mouvement>& getHistorique() {return historique;}
-        const vector<Piece*> reserveJoueur(Joueur* j) const;  //Retourne les pieces de la reserve d'un joueur
+        const vector<Piece*> reserveJoueur(Joueur* j) const;//Retourne les pieces de la reserve d'un joueur
 };
 
 class Partie{
@@ -47,24 +48,21 @@ class Partie{
         EtatDuJeu& getEtatActuel(){return historique_etats[0];}
         void setStartJoueurId();//Méthode qui détermine qui commence la partie
         void commencerPartie(); //Gere les initialisations
+        void annulerDernierMouvement();
         void jouerTour(); //Gere le deroulement d'un tour
-        void restaurerEtat(const EtatDuJeu &etat);
-        void annulerDernierMouvement(); // Annule le dernier coup
-        void sauvegarderPartie();
         void lancerPartie(); //Gere le deroulement de la partie
         bool finPartie()const; //Verifie si des conditions d'arret de la partie sont remplies
-        //void saveToFile(ofstream& outFile) const;
-        //void loadFromFile(ifstream& inFile);
+        //void sauvegarderPartie(ofstream& outFile) const;
+        //void restaurerPartie(ifstream& inFile);
 };
 
 class GameManager{
     Partie partie_active;
-    EtatDuJeu** sauvegardes;
     static GameManager* instance;
     
     public:
         void afficher_menu();
-        void loadGame(); //Appelée pour charger une partie a partir d'un fichier
+        //void chargerJeu(); //Appelee pour charger une partie a partir d'un fichier
 };
 
 #endif

@@ -1,8 +1,18 @@
 #include "plateau.h"
 #include "legalmoves.h"
+#include "Partie.hpp"
 
 
 int main() {
+
+    //GameManager game;
+    //game.afficher_menu();
+    Partie partie()
+    return 0;
+
+
+
+    /*
     std::cout << "          _____                    _____                    _____                    _____          \n"
                  "         /\\    \\                  /\\    \\                  /\\    \\                  /\\    \\         \n"
                  "        /::\\____\\                /::\\    \\                /::\\____\\                /::\\    \\        \n"
@@ -145,4 +155,5 @@ int main() {
     cout<<"\n\nTout nickel !"<<endl;
     cout<<"\nVraiment nickel";
     return 0;
+    */
 }
