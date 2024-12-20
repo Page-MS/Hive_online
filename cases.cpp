@@ -629,6 +629,7 @@ bool Graphe::canSlide(const Coords& c, unsigned int side) const {
 */
 bool Graphe::canPlace(const Coords& c, bool camp) const {
     if (!hasCase(c) || !getCase(c).empty()) return false;
+    if (getNbInhabitedCases()<=1) return true;
 
     bool amie=false;
     Case* adjacent;
