@@ -19,7 +19,7 @@ Joueur::Joueur(const std::string& nomJoueur, bool IA) : nom(nomJoueur), isIA(IA)
         int nombre = typeDePiecce.second;
 
         for (int i = 0; i < nombre; ++i) {
-            pieces.push_back(new Piece(modele, IA));
+            pieces.emplace_back(modele, IA);
         }
     }
 }
