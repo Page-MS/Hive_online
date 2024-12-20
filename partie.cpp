@@ -97,11 +97,6 @@ void Partie::setStartJoueurId(){
 }
 
 void Partie::commencerPartie(){
-    Plateau game_plateau = Plateau();
-    Joueur* jc = nullptr;
-    Joueur* j1 = nullptr;
-    Joueur* j2 = nullptr;
-
     string pseudo1, pseudo2;
     cout<<"Entrez le pseudo du premier joueur :"<<endl;
     cin>>pseudo1;
@@ -134,16 +129,19 @@ void Partie::commencerPartie(){
         historique_etats[0].joueurs[0] = new Joueur(pseudo1);
         historique_etats[0].joueurs[1] = new Joueur(pseudo2);
     }
-    for (Joueur* joueur : historique_etats[0].joueurs) {
-        for (const Piece* piece : joueur->getPieces()){
-            historique_etats[0].plateau.addPieceReserve(*piece);
-        }
-    }
 
     setStartJoueurId();
     historique_etats[0].plateau = Plateau();
     historique_etats[0].joueur_courant = (start_joueur_id == 0) ? historique_etats[0].joueurs[0] : historique_etats[0].joueurs[1]; //On determine qui commence la partie
     historique_etats[0].numero_tour = 0;
+    for (Joueur* joueur : historique_etats[0].joueurs) {
+        cout<<"aaaaaaaaa";
+        for (auto* piece:joueur->getPieces()) {
+            cout<<"B";
+            historique_etats[0].plateau.addPieceReserve(piece);
+            cout<<historique_etats[0].reserveJoueur(joueur).size()<<endl;
+        }
+    }
 
     for(int i = 1; i < 4; i++){
         historique_etats[i] = historique_etats[0]; //convention : on initialise les 3 autres états avec le même état initial
@@ -160,7 +158,7 @@ const vector<Piece*> EtatDuJeu::reserveJoueur(Joueur* j) const{
     vector<Piece*> reserve;
     for (const auto piece : pieces) {
         if (plateau.inReserve(*piece)) {
-            reserve.push_back(const_cast<Piece*>(piece));
+            reserve.push_back(piece);
         }
     }
     return reserve;
@@ -179,6 +177,10 @@ void Partie::jouerTour(){
     historique_etats[1] = historique_etats[0]; //on sauvegarde l'etat actuel avant de lancer le tour suivant
     historique_etats[0].numero_tour++;
     cout << "Tour " << historique_etats[0].numero_tour << endl;
+    if (historique_etats[0].numero_tour > 1) {
+        cout <<"Etat actuel du plateau : " << endl;
+        historique_etats[0].plateau.afficher(historique_etats[0].joueur_courant);
+    }
     cout << "C'est au joueur " << historique_etats[0].joueur_courant->getNom() << " de jouer." << endl;
 
     //Si il n'y a plus de piece en reserve, ni de coups possible : on passe le tour
@@ -214,6 +216,9 @@ void Partie::jouerTour(){
         cout<< "3 - Annuler le coup precedant " << endl;
         cout<< "4 - Sauvegarder et arreter la partie " << endl;
         cin >> menu;
+        if ((menu == 2 || menu == 3) && (historique_etats[0].getNumTour() == 1 || historique_etats[0].getNumTour() == 2)) {
+            cout<<"Vous ne pouvez pas faire cette action durant votre premier tour !"<<endl;
+        }
         switch (menu) {
             case 1: { //Ajout d'une piece de la reserve sur le plateau
                 if (reserve.size() == 0) {
@@ -325,6 +330,8 @@ bool Partie::finPartie()const{
 
 void Partie::lancerPartie() {
     commencerPartie();
+    vector<const Piece*> vec = historique_etats[0].plateau.piecesReserve(historique_etats[0].joueurs[0]);
+    cout<<vec.size()<<endl;
     // Si aucune condition d'arret de partie n'est verifiee, on joue le tour et passe au joueur suivant
     while(!finPartie()){
         jouerTour();

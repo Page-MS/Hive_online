@@ -5,9 +5,9 @@
 
 int main() {
 
-    //GameManager game;
-    //game.afficher_menu();
-    Partie partie()
+    GameManager game;
+    game.afficher_menu();
+
     return 0;
 
 

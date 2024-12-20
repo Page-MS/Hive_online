@@ -46,7 +46,7 @@ class Plateau {
         bool inReserve(const Piece& p) const { return inReserve(&p); }
 
         void fillReserve(const std::vector<Piece*>& pieces);
-        void addPieceReserve(const Piece& p);
+        void addPieceReserve(const Piece* p);
         void supprPieceReserve(const Piece& p);
         void movePiece(const Piece& p, const Coords& c);
 

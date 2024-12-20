@@ -629,6 +629,7 @@ bool Graphe::canSlide(const Coords& c, unsigned int side) const {
 */
 bool Graphe::canPlace(const Coords& c, bool camp) const {
     if (!hasCase(c) || !getCase(c).empty()) return false;
+    if (getNbInhabitedCases()<=1) return true;
 
     bool amie=false;
     Case* adjacent;
@@ -961,9 +962,17 @@ void Graphe::Iterator::goToCoords(const Coords& c) {
 /*! \brief Pour obtenir toutes les coordonnées où l'on peut placer. Attention à quand même vérifier la règle de la
  * reine abeille au 4ème coup
  */
- std::vector<Coords> Graphe::placableCoords(bool camp) const {
-     auto ite=getIterator();
+std::vector<Coords> Graphe::placableCoords(bool camp) const {
+    auto ite=getIterator();
     vector<Coords> resultat;
+    if (getNbInhabitedCases()==0) {
+        resultat.push_back(Coords(0, 0));
+        return resultat;
+    }
+    if (getNbInhabitedCases()==1) {
+        return coordsAllAdjacents(Coords(0, 0));
+    }
+
     while  (!ite.atEndColonne()){
         while (!ite.atEndLigne()){
             if (canPlace(ite.getCurrent().getCoords(),camp)){
@@ -971,12 +980,12 @@ void Graphe::Iterator::goToCoords(const Coords& c) {
             }
             ite.nextLigne();
         }
-            ite.nextColonne();
-            ite.firstLigne();
+        ite.nextColonne();
+        ite.firstLigne();
 
     }
     return resultat;
- }
+}
 
 bool isCaseCoords(int c, int l) { return ( (c%2==0 && l%2==0) || (c%2!=0 && l%2!=0) ); }
 bool isCaseCoords(const Coords& c) { return isCaseCoords(c.getX(), c.getY()); }

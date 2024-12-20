@@ -183,9 +183,11 @@ void Plateau::afficher(const Piece& p) const {
 */
 bool Plateau::inReserve(const Piece* p) const {
 	auto i = 0;
+
 	while (i < reserve.size() && reserve.at(i) != p) i++;
 
 	return i < reserve.size();
+
 }
 
 /*! \brief Renvoie la liste des pièces du joueur pas déjà dans la ruche.
@@ -204,16 +206,16 @@ std::vector<const Piece*> Plateau::piecesReserve(bool joueur) const {
 */
 void Plateau::fillReserve(const std::vector<Piece*>& pieces) {
 	for (auto piece:pieces) {
-		addPieceReserve(*piece);
+		addPieceReserve(piece);
 	}
 }
 
 /*! \brief Ajoute une pièce à la réserve
 */
-void Plateau::addPieceReserve(const Piece& p) {
+void Plateau::addPieceReserve(const Piece* p) {
 	if (!inReserve(p)) {
-		reserve.push_back(&p);
-		memoire.push_back(ReminderPiece(p));
+		reserve.push_back(p);
+		memoire.push_back(ReminderPiece(*p));
 	}
 }
 
@@ -247,7 +249,7 @@ const Coords* Plateau::coordsPiece(const Piece* p) const {
 	// renvoie nullptr si pièce dans réserve
 	if (inReserve(p)) return nullptr;
 	// erreur si pièce pas sur le plateau
-	if (!getGraphe().hasPiece(p)) throw runtime_error("ERROR Plateau::coordsPiece : Piece inexistante.");
+	if (!getGraphe().hasPiece(p)) cout<<"ERROR Plateau::coordsPiece : Piece inexistante."; return nullptr;;
 	// renvoie coordonnées de la pièce si dans graphe
 	return &getGraphe().coordsPiece(p);
 }
