@@ -1,7 +1,8 @@
 #include "partie.hpp"
 #include <fstream>
 #include <cstdlib>
-#include <ctime> 
+#include <ctime>
+#include <limits>
 
 EtatDuJeu::EtatDuJeu(int num_tour, Plateau p,  Joueur* j1, Joueur* j2, Joueur* jc){
     numero_tour = num_tour;
@@ -236,6 +237,13 @@ void Partie::jouerTour(){
         cout<< "3 - Annuler le coup precedant " << endl;
         cout<< "4 - Sauvegarder et arreter la partie " << endl;
         cin >> menu;
+        if (cin.fail()) {
+            cin.clear(); // Clear the error state of cin
+            cin.ignore(std::numeric_limits<std::streamsize>::max(),
+                       '\n'); // Remove invalid input from buffer
+            cout << "\nValeur invalide, reessayez\n";
+            continue; // Restart the loop
+        }
 
         switch (menu) {
             case 1: { //Ajout d'une piece de la reserve sur le plateau
@@ -257,6 +265,13 @@ void Partie::jouerTour(){
                 while (choix1 <0 || choix1>reserve.size()) {
                     cout << "Quelle piece voulez vous placer ? \n";
                     cin>>choix1;
+                    if (cin.fail()) {
+                        cin.clear(); // Clear the error state of cin
+                        cin.ignore(std::numeric_limits<std::streamsize>::max(),
+                                   '\n'); // Remove invalid input from buffer
+                        cout << "\nValeur invalide, reessayez\n";
+                        continue; // Restart the loop
+                    }
                 }
                 cout << "Voici vos placements possibles : \n";
                 int j = 0;
@@ -269,6 +284,13 @@ void Partie::jouerTour(){
                 while (choix2 <0 || choix2>liste_pos.size()) {
                     cout << "Ou souhaitez vous placer votre piece ? \n";
                     cin>>choix2;
+                    if (cin.fail()) {
+                        cin.clear(); // Clear the error state of cin
+                        cin.ignore(std::numeric_limits<std::streamsize>::max(),
+                                   '\n'); // Remove invalid input from buffer
+                        cout << "\nValeur invalide, reessayez\n";
+                        continue; // Restart the loop
+                    }
                 }
                 tour_fini = historique_etats[0].joueur_courant->jouerCoupCreer(reserve[choix1], liste_pos[choix2], historique_etats[0].plateau);
                 break;
@@ -408,6 +430,7 @@ void GameManager::afficher_menu() {
     //sert à gérer le switch
     int choice =0;
     while (choice != 3) {
+
         cout<<"\n\n ----------------------------------\n\n"<<"Bienvenue dans Hive, le jeu iconique, enfin sous forme virtuelle !\n"
                                                              "Que souhaitez vous faire ?\n"
                                                              "1. Lancer une nouvelle partie\n "
@@ -415,7 +438,13 @@ void GameManager::afficher_menu() {
                                                              "3. Quitter le jeu\n "
                                                              "Votre choix :";
         cin >> choice;
-        //TODO si on rentre une valeur autre par exemple une lettre, le menu tourne en boucle
+        // Handle invalid input
+        if (cin.fail()) {
+            cin.clear(); // Clear the error state of cin
+            cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Remove invalid input from buffer
+            cout << "\nValeur invalide, reessayez\n";
+            continue; // Restart the loop
+        }
         switch (choice) {
             case 1:
                 cout << "\n Vous avez lance une nouvelle partie\n";
@@ -431,7 +460,8 @@ void GameManager::afficher_menu() {
             default:
                 cout<<"\nValeur invalide, reessayez\n";
         }
-    }
+        }
+
 }
 
 /*
