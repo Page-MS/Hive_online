@@ -44,6 +44,7 @@ EtatDuJeu::EtatDuJeu(const EtatDuJeu& other){
     else joueur_courant = nullptr; // Au cas où `joueurCourant` est nul dans le jeu que l'on recopie
 }
 
+
 EtatDuJeu& EtatDuJeu::operator=(const EtatDuJeu& jeu){
     if(this != &jeu){
         numero_tour = jeu.numero_tour;
