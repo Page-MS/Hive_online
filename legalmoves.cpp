@@ -41,19 +41,24 @@ void LegalMoveContext::changeStrategy(TYPE_PIECE typePiece) {
 
 
 vector<Coords > LegalMoveContext::searchLegalMoves(Coords coord, Graphe* graph, bool camp) {
-    changeStrategy(graph->getCase(coord).getUpperPiece().getType());
+    bool piece_vide=graph->getCase(coord).empty();
+    if(!piece_vide) {
+        changeStrategy(graph->getCase(coord).getUpperPiece().getType());
+
+    }else {
+        //TODO comprendre pourquoi on appelle des legalmoves sur une case vide
+        cout<<"\n coord : "<<coord.getX()<<":"<<coord.getY()<<" camp : "<<camp<<"\n";
+        throw std::runtime_error("LegalMoveContext::searchLegalMoves Appel des legalmove d'une piece vide");
+    }
     vector<Coords> result=strategy->searchMoves(coord,graph,camp);
-    if (result.empty()){
-        cout<<"\n pas de resultat\n";
-        }
     return result;
+
 }
 
 vector<Coords> LegalMoveAbeille::searchMoves(Coords coord,Graphe* graph, bool camp) {
     graphe_a_manipuler=graph;
     vector<Coords> resultat;
     if(graphe_a_manipuler->wouldHiveBreak(coord)){
-        cout<<"\nNe peut pas bouger sans casser la hive";
         return resultat;
     }
     vector<Coords> voisins=graphe_a_manipuler->coordsExistentAdjacents(coord);
@@ -74,7 +79,6 @@ vector<Coords> LegalMoveScarabee::searchMoves(Coords coord,Graphe* graph, bool c
         vector<Coords> resultat;
         if(graphe_a_manipuler->getCase(coord).getNbPieces()<=1){
             if(graphe_a_manipuler->wouldHiveBreak(coord)){
-                cout<<"\nNe peut pas bouger sans casser la hive";
                 return resultat;
             }
         }
@@ -91,7 +95,6 @@ vector<Coords> LegalMoveAraignee::searchMoves(Coords coord,Graphe* graph, bool c
     graphe_a_manipuler=graph;
     vector<Coords> resultat;
     if(graphe_a_manipuler->wouldHiveBreak(coord)){
-        cout<<"\nNe peut pas bouger sans casser la hive";
         return resultat;
     }
     resultat= rechercheDansVoisins(coord,graph,camp,0);
@@ -138,7 +141,6 @@ vector<Coords> LegalMoveFourmi::searchMoves(Coords coord, Graphe* graph, bool ca
     graphe_a_manipuler=graph;
     vector<Coords> resultat;
     if(graphe_a_manipuler->wouldHiveBreak(coord)){
-        cout<<"\nNe peut pas bouger sans casser la hive";
         return resultat;
     }
     vector<Coords> voisins_traites;
@@ -172,7 +174,6 @@ vector<Coords> LegalMoveCoccinelle::searchMoves(Coords coord, Graphe* graph, boo
     graphe_a_manipuler=graph;
     vector<Coords> resultat;
     if(graphe_a_manipuler->wouldHiveBreak(coord)){
-        cout<<"\nNe peut pas bouger sans casser la hive";
         return resultat;
     }
     resultat= rechercheDansVoisins(coord,graph,camp,0);
@@ -216,7 +217,6 @@ vector<Coords> LegalMoveSauterelle::searchMoves(Coords coord,Graphe* graph, bool
     graphe_a_manipuler=graph;
     vector<Coords> resultat;
     if(graphe_a_manipuler->wouldHiveBreak(coord)){
-        cout<<"\nNe peut pas bouger sans casser la hive";
         return resultat;
     }
     vector<Coords> voisins=graphe_a_manipuler->coordsExistentAdjacents(coord);
@@ -238,9 +238,6 @@ vector<Coords> LegalMoveSauterelle::searchMoves(Coords coord,Graphe* graph, bool
 }
 vector<Coords> LegalMoveContext::searchNeighbourMosquito(Coords coord, Graphe* graph,bool camp) {
     vector<Coords> result=strategy->searchMoves(coord,graph,camp);
-    if (result.empty()){
-        cout<<"\n pas de resultat\n";
-    }
     return result;
 
 }
@@ -250,12 +247,13 @@ vector<Coords> LegalMoveMoustique::searchMoves(Coords coord,Graphe* graph, bool 
     TYPE_PIECE type_voisin;
     vector<TYPE_PIECE> types_pieces_voisines;
     if(graphe_a_manipuler->wouldHiveBreak(coord)){
-        cout<<"\nNe peut pas bouger sans casser la hive";
         return resultat;
     }
     vector<Coords> voisins=graphe_a_manipuler->coordsInhabitedAdjacents(coord);
     for (auto i:voisins){
-        type_voisin=graphe_a_manipuler->getCase(i).getUpperPiece().getType();
+        bool piece_vide=graphe_a_manipuler->getCase(i).empty();
+        if(!piece_vide){
+        type_voisin=graphe_a_manipuler->getCase(i).getUpperPiece().getType();}
         if (find(types_pieces_voisines.begin(), types_pieces_voisines.end(), type_voisin) == types_pieces_voisines.end()) {
             types_pieces_voisines.push_back(type_voisin);
         }
