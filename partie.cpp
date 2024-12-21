@@ -117,15 +117,37 @@ void Partie::commencerPartie(){
 
     bool ia1, ia2;
     int choix = -1;
-    while(choix != 0 && choix != 1){
-        cout<<"Le joueur 1 est il une IA ? (1 : oui, 0 : non)"<<endl;
-        cin>>choix;
+    while (true) {
+        cout << "Le joueur 1 est il une IA ? (1 : oui, 0 : non)" << endl;
+        cin >> choix;
+        if (cin.fail()) {
+            cin.clear(); // Clear the error state of cin
+            cin.ignore(std::numeric_limits<std::streamsize>::max(),
+                       '\n'); // Remove invalid input from buffer
+            cout << "\nValeur invalide, reessayez\n";
+            continue; // Restart the loop
+        }
+        if (choix == 0 || choix == 1) {
+            // Valid choice
+            break;
+        }
     }
     ia1 = (choix == 0) ? false : true;
     choix = -1;
-    while(choix != 0 && choix != 1){
+    while (true) {
         cout<<"Le joueur 2 est il une IA ? (1 : oui, 0 : non)"<<endl;
         cin>>choix;
+        if (cin.fail()) {
+            cin.clear(); // Clear the error state of cin
+            cin.ignore(std::numeric_limits<std::streamsize>::max(),
+                       '\n'); // Remove invalid input from buffer
+            cout << "\nValeur invalide, reessayez\n";
+            continue; // Restart the loop
+        }
+        if (choix == 0 || choix == 1) {
+            // Valid choice
+            break;
+        }
     }
     ia2 = (choix == 0) ? false : true;
     if(ia1 && ia2){ // 2 joueurs IA
@@ -161,8 +183,24 @@ void Partie::commencerPartie(){
         historique_etats[i] = historique_etats[0]; //convention : on initialise les 3 autres états avec le même état initial
     }
     do{
-        cout<<"Entrez le nombre de retours en arriere possibles : (Entre 0 et 3)"<<endl;
-        cin>>nb_retour_arriere;
+
+        nb_retour_arriere=4;
+        while (true) {
+            cout<<"Entrez le nombre de retours en arriere possibles : (Entre 0 et 3)"<<endl;
+            cin>>nb_retour_arriere;
+            if (cin.fail()) {
+                cin.clear(); // Clear the error state of cin
+                cin.ignore(std::numeric_limits<std::streamsize>::max(),
+                           '\n'); // Remove invalid input from buffer
+                cout << "\nValeur invalide, reessayez\n";
+                continue; // Restart the loop
+            }
+            if ((nb_retour_arriere <3) && (nb_retour_arriere >0)) {
+                // Valid choice
+                break;
+            }
+        }
+
     }while(nb_retour_arriere < 0 || nb_retour_arriere > 3);
     cout << "Debut de la partie" << endl;
 }
