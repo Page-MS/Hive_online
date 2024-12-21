@@ -231,7 +231,7 @@ void Partie::jouerTour(){
     //Menu d'actions possible pour que le joueur humain joue le prochain tour
     cout << "Que souhaitez-vous faire ? \n";
     int menu = 0;
-    while (!tour_fini) {
+    while ((!tour_fini) || (menu<1) || (menu>4)) {
         cout<< "1 - Ajouter une piece " << endl;
         cout<< "2 - Deplacer une piece " << endl;
         cout<< "3 - Annuler le coup precedant " << endl;
