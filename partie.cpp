@@ -21,7 +21,9 @@ EtatDuJeu::EtatDuJeu(int num_tour, Plateau p,  Joueur* j1, Joueur* j2, Joueur* j
 EtatDuJeu::~EtatDuJeu() {
     //Destruction des joueurs
     for (const auto joueur : joueurs) {
-        delete joueur;
+        if(joueur) {
+            delete joueur;
+        }
     }
     joueur_courant = nullptr;
 }
