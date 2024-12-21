@@ -48,19 +48,6 @@ bool Joueur::jouerCoupCreer(Piece* pieceChoisie, const Coords& destination, Plat
         return false;
     }
 
-    // Obtenir les mouvements légaux de la pièce
-    LegalMoveContext& moveContext = LegalMoveContext::getInstance();
-    moveContext.changeStrategy(pieceChoisie->getType());
-    Graphe copygraphe = plateau.getGraphe();
-    vector<Coords> legalMoves = moveContext.searchLegalMoves(destination, &copygraphe, pieceChoisie->getCamp());
-
-    //parcours les legalmoves pour verifier que destination en fait bien partie
-    auto it = std::find(legalMoves.begin(), legalMoves.end(), destination);
-    if (it == legalMoves.end()) {
-        cout<<"La destination n'est pas un mouvement légal pour cette pièce.\n";
-        return false;
-    }
-
     plateau.movePiece(*pieceChoisie, destination);
     return true;
 }
