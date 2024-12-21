@@ -196,7 +196,7 @@ void Partie::commencerPartie() {
                 cout << "\nValeur invalide, reessayez\n";
                 continue; // Restart the loop
             }
-            if ((nb_retour_arriere < 4) && (nb_retour_arriere >= 0)) {
+            if ((nb_retour_arriere <3) && (nb_retour_arriere >0)) {
                 // Valid choice
                 break;
             }
@@ -207,17 +207,6 @@ void Partie::commencerPartie() {
         cout << "Debut de la partie" << endl;
     }
 }
-
-/*const vector<Piece*> EtatDuJeu::reserveJoueur(Joueur* j) const{
-    vector<Piece*> pieces = j->getPieces();
-    vector<Piece*> reserve;
-    for (const auto piece : pieces) {
-        if (plateau.inReserve(*piece)) {
-            reserve.push_back(piece);
-        }
-    }
-    return reserve;
-}*/
 
 const vector<const Piece*> EtatDuJeu::reserveJoueur(Joueur* j) const{
     return plateau.piecesReserve(j->getCamp());
@@ -306,7 +295,7 @@ void Partie::jouerTour(){
                 }
                 int choix1 = -1;
                 while (choix1 <0 || choix1>reserve.size()) {
-                    cout << "Quelle piece voulez vous placer ? \n";
+                    cout << "Quelle piece voulez vous placer ? (Entrez son indice) \n";
                     cin>>choix1;
                     if (cin.fail()) {
                         cin.clear(); // Clear the error state of cin
@@ -506,53 +495,3 @@ void GameManager::afficher_menu() {
         }
 
 }
-
-/*
-void GameManager::chargerJeu() {
-    basic_ifstream<char> loadFile("sauvegarde.txt");
-    if (!loadFile.is_open()) { // Verifie si le fichier existe et est ouvert
-        cout << "Impossible de trouver le fichier de sauvegarde de la partie. \n" << endl;
-        cout << "Retour au menu principal ! \n" << endl;
-        return;
-    }
-    Plateau plateau;
-    Joueur j1;
-    Joueur j2;
-    Partie partie_active;
-    partie_active.loadFromFile(loadFile); // Charger la partie depuis le fichier "sauvegarde.txt"
-    loadFile.close();
-    // Commencer la partie chargée
-    partie_active.lancerPartie();
-}
-
-void Partie::sauvegarderPartie(ofstream& outFile) const {
-    if (!outFile) {
-        cerr << "Erreur lors de l'ouverture du fichier pour la sauvegarde. \n" << endl;
-        return;
-    }
-    historique_etats[0].plateau.save(outFile);
-    for (const auto& joueur : historique_etats[0].joueurs) {
-        joueur->save(outFile);
-    }
-    int nb_joueur_courant = (historique_etats[0].joueur_courant == historique_etats[0].joueurs[0]) ? 0 : 1;
-    outFile << nb_joueur_courant <<"\n";
-    outFile << historique_etats[0].numero_tour << "\n";
-}
-
-void Partie::restaurerPartie(ifstream& inFile) {
-    if (!inFile) {
-        cerr << "Erreur d'ouverture du fichier lors du chargement.\n" << endl;
-        return;
-    }
-    historique_etats[0].plateau.load(inFile);
-    for (auto& joueur : historique_etats[0].joueurs) {
-        joueur->load(inFile, historique_etats[0].plateau);
-    }
-    int nb_joueur_courant;
-    inFile >> nb_joueur_courant;
-    historique_etats[0].joueur_courant = historique_etats[0].joueurs[nb_joueur_courant];
-    if (!(inFile >> historique_etats[0].numero_tour)) {
-        throw runtime_error("Erreur de lecture du tour actuel dans le fichier. \n");
-    }
-}
-*/
