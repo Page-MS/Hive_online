@@ -117,17 +117,17 @@ void Partie::commencerPartie(){
     }
     ia2 = (choix == 0) ? false : true;
     if(ia1 && ia2){ // 2 joueurs IA
-        historique_etats[0].joueurs[0] = new IAJoueur(pseudo1);
-        historique_etats[0].joueurs[1] = new IAJoueur(pseudo2);
+        historique_etats[0].joueurs[0] = new IAJoueur(pseudo1, true);
+        historique_etats[0].joueurs[1] = new IAJoueur(pseudo2, false);
     }else if(ia1){ // Une IA et un humain
-        historique_etats[0].joueurs[0] = new IAJoueur(pseudo1);
-        historique_etats[0].joueurs[1] = new Joueur(pseudo2);
+        historique_etats[0].joueurs[0] = new IAJoueur(pseudo1, true);
+        historique_etats[0].joueurs[1] = new Joueur(pseudo2, false);
     }else if(ia2){ // Une IA et un humain
-        historique_etats[0].joueurs[0] = new Joueur(pseudo1);
-        historique_etats[0].joueurs[1] = new IAJoueur(pseudo2);
+        historique_etats[0].joueurs[0] = new Joueur(pseudo1, true);
+        historique_etats[0].joueurs[1] = new IAJoueur(pseudo2, false);
     }else{ // 2 joueurs huamins
-        historique_etats[0].joueurs[0] = new Joueur(pseudo1);
-        historique_etats[0].joueurs[1] = new Joueur(pseudo2);
+        historique_etats[0].joueurs[0] = new Joueur(pseudo1, true);
+        historique_etats[0].joueurs[1] = new Joueur(pseudo2, false);
     }
 
     setStartJoueurId();
@@ -140,7 +140,7 @@ void Partie::commencerPartie(){
         //cout<<"aaaaaaaaa";
         for (auto* piece:joueur->getPieces()) {
             //cout<<"B";
-            historique_etats[0].plateau.addPieceReserve(piece);
+            historique_etats[0].plateau.addPieceReserve(*piece);
             //cout<<historique_etats[0].reserveJoueur(joueur).size()<<endl;
         }
     }
@@ -214,7 +214,7 @@ void Partie::jouerTour(){
     int menu = 0;
     while (!tour_fini) {
         cout<< "1 - Ajouter une piece " << endl;
-        cout<< "2 - Déplacer une piece " << endl;
+        cout<< "2 - Deplacer une piece " << endl;
         cout<< "3 - Annuler le coup precedant " << endl;
         cout<< "4 - Sauvegarder et arreter la partie " << endl;
         cin >> menu;
@@ -342,6 +342,7 @@ bool Partie::finPartie()const{
 
 void Partie::lancerPartie() {
     commencerPartie();
+
     // Si aucune condition d'arret de partie n'est verifiee, on joue le tour et passe au joueur suivant
     while(!finPartie()){
         jouerTour();
@@ -396,7 +397,7 @@ void GameManager::afficher_menu() {
         cin >> choice;
         switch (choice) {
             case 1:
-                cout << "\n Vous avez lancé une nouvelle partie\n";
+                cout << "\n Vous avez lance une nouvelle partie\n";
                 partie_active.lancerPartie();
                 break;
             case 2:

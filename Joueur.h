@@ -25,7 +25,7 @@ protected:
     bool camp;
 
 public:
-    Joueur(const std::string& nomJoueur, bool IA=false);
+    Joueur(const std::string& nom_joueur, bool camp_joueur, bool IA=false);
     Joueur(){}
     Joueur(const Joueur& autre) : nom(autre.nom) {
         for (Piece* piece : autre.pieces) {
@@ -33,7 +33,7 @@ public:
         }
     }
     Joueur& operator=(const Joueur& autre);
-    ~Joueur() {
+    virtual ~Joueur() {
         for (Piece* piece : pieces) {
             delete piece; // libère chaque pièce
         }
@@ -76,7 +76,7 @@ public:
 
 class IAJoueur : public Joueur {
 public:
-    IAJoueur(const std::string& nomJoueur):Joueur(nomJoueur, true) {}
+    IAJoueur(const std::string& nom_joueur, bool camp_joueur):Joueur(nom_joueur, camp_joueur, true) {}
 
     void prendreDecision(EtatDuJeu& etat);  // décide quoi jouer
 
