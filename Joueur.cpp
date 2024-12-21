@@ -46,6 +46,7 @@ bool Joueur::jouerCoupCreer(Piece* pieceChoisie, const Coords& destination, Plat
         cout<<"La position cible est invalide ou occupée.\n";
         return false;
     }
+
     plateau.movePiece(*pieceChoisie, destination);
     return true;
 }
