@@ -127,6 +127,7 @@ void Case::changePiece(const Piece* new_piece, const Piece* old_piece) {
     Utiliser Case::empty pour savoir si case vide.
 */
 const Piece& Case::getUpperPiece() const { //erreur si pas de pièce sur la case
+
     if (empty()) throw runtime_error("ERROR Case::getUpperPiece : Case vide, aucune piece a recuperer");
     auto ite = end()--;
 
@@ -136,6 +137,7 @@ const Piece& Case::getUpperPiece() const { //erreur si pas de pièce sur la case
 /*! \brief Pour savoir si une pièce peut effectuer une action depuis cette case (pièce coincée si pas sur cette case).
 */
 bool Case::isPieceStuck(const Piece& p) const {
+
     return (empty() || &getUpperPiece()!=&p);
 }
 
@@ -638,7 +640,7 @@ bool Graphe::canPlace(const Coords& c, bool camp) const {
 
         if (adjacent!=nullptr && !adjacent->empty()) {
             if (adjacent->getUpperPiece().getCamp()!=camp) return false;
-            else amie=true;
+            amie=true;
         }
     }
 

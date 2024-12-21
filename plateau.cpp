@@ -192,6 +192,7 @@ bool Plateau::inReserve(const Piece* p) const {
 
 /*! \brief Renvoie la liste des pièces du joueur pas déjà dans la ruche.
 */
+
 std::vector<const Piece*> Plateau::piecesReserve(bool joueur) const {
 	std::vector<const Piece*> pieces_joueur;
 
