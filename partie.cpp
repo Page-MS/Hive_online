@@ -196,7 +196,7 @@ void Partie::commencerPartie() {
                 cout << "\nValeur invalide, reessayez\n";
                 continue; // Restart the loop
             }
-            if ((nb_retour_arriere <3) && (nb_retour_arriere >0)) {
+            if (nb_retour_arriere <= 3 && nb_retour_arriere >= 0) {
                 // Valid choice
                 break;
             }
@@ -349,6 +349,7 @@ void Partie::jouerTour(){
                 }
                 Mouvement coupChoisi = liste_coups.at(choix);
                 tour_fini = historique_etats[0].joueur_courant->jouerCoupDeplacer(coupChoisi.getPiece(), coupChoisi.getPosFinal(), historique_etats[0].plateau);
+                break;
             }
             case 3: {
                 if ((historique_etats[0].getNumTour() == 1 || historique_etats[0].getNumTour() == 2)) {
@@ -365,10 +366,12 @@ void Partie::jouerTour(){
                     }
                     else {
                         cout<<"Il n'y a pas ou plus de retour en arriere possible pour cette partie ! \n";
+                        break;
                     }
                 }
                 else{
                     cout<<"Il faut qu'au moins chaque joueur ait joue un tour pour revenir en arriere ! \n";
+                    break;
                 }
             }
             case 4: {
