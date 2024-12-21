@@ -21,9 +21,10 @@ EtatDuJeu::EtatDuJeu(int num_tour, Plateau p,  Joueur* j1, Joueur* j2, Joueur* j
 EtatDuJeu::~EtatDuJeu() {
     //Destruction des joueurs
     //TODO resoudre le segmentation fault causé ici, peut être que les pointeurs ont déjà été supprimés par la suppression d'un autre été du jeu
-    for (const auto joueur : joueurs) {
+    for (auto joueur : joueurs) {
         if(joueur) {
             delete joueur;
+            joueur= nullptr;
         }
     }
     joueur_courant = nullptr;
@@ -414,6 +415,7 @@ void GameManager::afficher_menu() {
                                                              "3. Quitter le jeu\n "
                                                              "Votre choix :";
         cin >> choice;
+        //TODO si on rentre une valeur autre par exemple une lettre, le menu tourne en boucle
         switch (choice) {
             case 1:
                 cout << "\n Vous avez lance une nouvelle partie\n";
