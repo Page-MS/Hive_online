@@ -1,6 +1,7 @@
 #include "partie.hpp"
 #include <fstream>
 #include <cstdlib>
+#include <ctime> 
 
 EtatDuJeu::EtatDuJeu(int num_tour, Plateau p,  Joueur* j1, Joueur* j2, Joueur* jc){
     numero_tour = num_tour;
@@ -173,6 +174,8 @@ void Partie::annulerDernierMouvement(){ //On remonte au tour précédent de chac
 }
 
 void Partie::jouerTour(){
+    historique_etats[0].plateau.afficher(historique_etats[0].joueur_courant->getCamp());
+
     bool tour_fini = false;
     historique_etats[3] = historique_etats[2];
     historique_etats[2] = historique_etats[1];
@@ -230,7 +233,7 @@ void Partie::jouerTour(){
                     break;
                 }
                 int i = 0;
-                cout<<"Liste des pieces disponibles : ";
+                cout<<"Liste des pieces disponibles : "<<endl;
                 for (const auto piece : reserve) {
                     cout << i << ". " << piece->strPiece() << "\n";
                     i++;
@@ -253,6 +256,7 @@ void Partie::jouerTour(){
                     cin>>choix2;
                 }
                 tour_fini = historique_etats[0].joueur_courant->jouerCoupCreer(reserve[choix1], liste_pos[choix2], historique_etats[0].plateau);
+                break;
             }
             case 2: { //Deplacement d'une piece du plateau
                 if ((historique_etats[0].getNumTour() == 1 || historique_etats[0].getNumTour() == 2)) {
@@ -345,6 +349,7 @@ void Partie::lancerPartie() {
     // Si aucune condition d'arret de partie n'est verifiee, on joue le tour et passe au joueur suivant
     while(!finPartie()){
         jouerTour();
+        cout<<"Fin du tour"<<endl;
         if(historique_etats[0].joueur_courant == historique_etats[0].joueurs[0]){
             historique_etats[0].joueur_courant = historique_etats[0].joueurs[1];
         }else{

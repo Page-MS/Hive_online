@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include "Joueur.h"
+#include "Joueur.cpp"
 
 using namespace std;
 class Joueur;

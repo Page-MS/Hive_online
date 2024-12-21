@@ -1,6 +1,9 @@
-#include "plateau.h"
-#include "legalmoves.h"
-#include "Partie.hpp"
+#include "plateau.cpp"
+#include "legalmoves.cpp"
+#include "partie.cpp"
+#include "cases.cpp"
+#include "pieces.cpp"
+
 
 
 int main() {
