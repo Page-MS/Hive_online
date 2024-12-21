@@ -22,13 +22,13 @@ EtatDuJeu::EtatDuJeu(int num_tour, Plateau p,  Joueur* j1, Joueur* j2, Joueur* j
 EtatDuJeu::~EtatDuJeu() {
     //Destruction des joueurs
     //TODO resoudre le segmentation fault causé ici, peut être que les pointeurs ont déjà été supprimés par la suppression d'un autre été du jeu
-    for (auto joueur : joueurs) {
+    /*for (auto joueur : joueurs) {
         if(joueur) {
             delete joueur;
             joueur= nullptr;
         }
     }
-    joueur_courant = nullptr;
+    joueur_courant = nullptr;*/
 }
 
 EtatDuJeu::EtatDuJeu(){
@@ -108,12 +108,12 @@ void Partie::setStartJoueurId(){
     }
 }
 
-void Partie::commencerPartie(){
+void Partie::commencerPartie() {
     string pseudo1, pseudo2;
-    cout<<"Entrez le pseudo du premier joueur :"<<endl;
-    cin>>pseudo1;
-    cout<<"Entrez le pseudo du deuxieme joueur :"<<endl;
-    cin>>pseudo2;
+    cout << "Entrez le pseudo du premier joueur :" << endl;
+    cin >> pseudo1;
+    cout << "Entrez le pseudo du deuxieme joueur :" << endl;
+    cin >> pseudo2;
 
     bool ia1, ia2;
     int choix = -1;
@@ -135,8 +135,8 @@ void Partie::commencerPartie(){
     ia1 = (choix == 0) ? false : true;
     choix = -1;
     while (true) {
-        cout<<"Le joueur 2 est il une IA ? (1 : oui, 0 : non)"<<endl;
-        cin>>choix;
+        cout << "Le joueur 2 est il une IA ? (1 : oui, 0 : non)" << endl;
+        cin >> choix;
         if (cin.fail()) {
             cin.clear(); // Clear the error state of cin
             cin.ignore(std::numeric_limits<std::streamsize>::max(),
@@ -150,44 +150,45 @@ void Partie::commencerPartie(){
         }
     }
     ia2 = (choix == 0) ? false : true;
-    if(ia1 && ia2){ // 2 joueurs IA
+    if (ia1 && ia2) { // 2 joueurs IA
         historique_etats[0].joueurs[0] = new IAJoueur(pseudo1, true);
         historique_etats[0].joueurs[1] = new IAJoueur(pseudo2, false);
-    }else if(ia1){ // Une IA et un humain
+    } else if (ia1) { // Une IA et un humain
         historique_etats[0].joueurs[0] = new IAJoueur(pseudo1, true);
         historique_etats[0].joueurs[1] = new Joueur(pseudo2, false);
-    }else if(ia2){ // Une IA et un humain
+    } else if (ia2) { // Une IA et un humain
         historique_etats[0].joueurs[0] = new Joueur(pseudo1, true);
         historique_etats[0].joueurs[1] = new IAJoueur(pseudo2, false);
-    }else{ // 2 joueurs huamins
+    } else { // 2 joueurs huamins
         historique_etats[0].joueurs[0] = new Joueur(pseudo1, true);
         historique_etats[0].joueurs[1] = new Joueur(pseudo2, false);
     }
 
     setStartJoueurId();
     historique_etats[0].plateau = Plateau();
-    historique_etats[0].joueur_courant = (start_joueur_id == 0) ? historique_etats[0].joueurs[0] : historique_etats[0].joueurs[1]; //On determine qui commence la partie
+    historique_etats[0].joueur_courant = (start_joueur_id == 0) ? historique_etats[0].joueurs[0]
+                                                                : historique_etats[0].joueurs[1]; //On determine qui commence la partie
     historique_etats[0].numero_tour = 0;
 
     //Debug commenté
-    for (Joueur* joueur : historique_etats[0].joueurs) {
+    for (Joueur *joueur: historique_etats[0].joueurs) {
         //cout<<"aaaaaaaaa";
-        for (auto* piece:joueur->getPieces()) {
+        for (auto *piece: joueur->getPieces()) {
             //cout<<"B";
             historique_etats[0].plateau.addPieceReserve(*piece);
             //cout<<historique_etats[0].reserveJoueur(joueur).size()<<endl;
         }
     }
 
-    for(int i = 1; i < 4; i++){
+    for (int i = 1; i < 4; i++) {
         historique_etats[i] = historique_etats[0]; //convention : on initialise les 3 autres états avec le même état initial
     }
-    do{
+    do {
 
-        nb_retour_arriere=4;
+        nb_retour_arriere = 4;
         while (true) {
-            cout<<"Entrez le nombre de retours en arriere possibles : (Entre 0 et 3)"<<endl;
-            cin>>nb_retour_arriere;
+            cout << "Entrez le nombre de retours en arriere possibles : (Entre 0 et 3)" << endl;
+            cin >> nb_retour_arriere;
             if (cin.fail()) {
                 cin.clear(); // Clear the error state of cin
                 cin.ignore(std::numeric_limits<std::streamsize>::max(),
@@ -195,14 +196,16 @@ void Partie::commencerPartie(){
                 cout << "\nValeur invalide, reessayez\n";
                 continue; // Restart the loop
             }
-            if ((nb_retour_arriere <3) && (nb_retour_arriere >0)) {
+            if ((nb_retour_arriere < 4) && (nb_retour_arriere >= 0)) {
                 // Valid choice
                 break;
             }
         }
 
-    }while(nb_retour_arriere < 0 || nb_retour_arriere > 3);
-    cout << "Debut de la partie" << endl;
+    } while (nb_retour_arriere < 0 || nb_retour_arriere > 3);
+    {
+        cout << "Debut de la partie" << endl;
+    }
 }
 
 /*const vector<Piece*> EtatDuJeu::reserveJoueur(Joueur* j) const{
