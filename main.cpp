@@ -1,16 +1,17 @@
-#include "plateau.cpp"
-#include "legalmoves.cpp"
-#include "partie.cpp"
-#include "cases.cpp"
-#include "pieces.cpp"
-
+#include "plateau.h"
+#include "legalmoves.h"
+#include "partie.hpp"
 
 
 int main() {
 
-    GameManager game;
-    game.afficher_menu();
-
+    try {
+        GameManager game;
+        game.afficher_menu();
+    } catch (const exception& e) {
+        cout<<e.what()<<endl;
+    }
+    cout<<"Tout nickel !"<<endl;
     return 0;
 
 

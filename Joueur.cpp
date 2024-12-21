@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <fstream>
 
-Joueur::Joueur(const std::string& nomJoueur, bool IA) : nom(nomJoueur), isIA(IA) {
+Joueur::Joueur(const std::string& nom_joueur, bool camp_joueur, bool IA) : nom(nom_joueur), camp(camp_joueur), isIA(IA) {
     map<TYPE_PIECE, int> piecesNecessaires = {
         {Araignee, 2},
         {Sauterelle, 3},
@@ -14,12 +14,12 @@ Joueur::Joueur(const std::string& nomJoueur, bool IA) : nom(nomJoueur), isIA(IA)
         {Abeille, 1}
     };
 
-    for (const auto& typeDePiecce : piecesNecessaires) {
-        TYPE_PIECE modele = typeDePiecce.first;
-        int nombre = typeDePiecce.second;
+    for (const auto& typeDePiece : piecesNecessaires) {
+        TYPE_PIECE modele = typeDePiece.first;
+        int nombre = typeDePiece.second;
 
         for (int i = 0; i < nombre; ++i) {
-            pieces.emplace_back(new Piece(modele, IA));
+            pieces.emplace_back(new Piece(modele, camp));
         }
     }
 }
@@ -27,6 +27,8 @@ Joueur::Joueur(const std::string& nomJoueur, bool IA) : nom(nomJoueur), isIA(IA)
 Joueur& Joueur::operator=(const Joueur& autre) {
     if (this != &autre) { // évite la copie de soi-même
         nom = autre.nom;
+        camp = autre.camp;
+        isIA = autre.isIA;
         // libere les pieces
         for (Piece* piece : pieces) {delete piece;}
         pieces.clear();
@@ -126,16 +128,16 @@ void IAJoueur::prendreDecision(EtatDuJeu& etat){
 }
 
 int IAJoueur::evaluerSituation(const EtatDuJeu& etat) const{
-
+return 0;
 }
 
 
 int EvalMouvement::evalCoup(const Mouvement& mvt, const EtatDuJeu& etat){
-
+return 0;
 }
 
 Mouvement EvalMouvement::comparerCoups(const std::vector<Mouvement>& coups, const EtatDuJeu& etat){
-
+return Mouvement(new Piece(TYPE_PIECE::Sauterelle, true), Coords(0, 0), Coords(0, 0));
 }
 
 

@@ -7,7 +7,7 @@
 std::ostream& operator<<(std::ostream& flux, const Case& c) { // Affichage d'une case, peut être ajouté au cout<<
 
     flux<<c.strCase();
-
+    
     return flux;
 }
 
@@ -128,7 +128,6 @@ void Case::changePiece(const Piece* new_piece, const Piece* old_piece) {
     Utiliser Case::empty pour savoir si case vide.
 */
 const Piece& Case::getUpperPiece() const { //erreur si pas de pièce sur la case
-
     if (empty()) throw runtime_error("ERROR Case::getUpperPiece : Case vide, aucune piece a recuperer");
     auto ite = end()--;
 
@@ -138,7 +137,6 @@ const Piece& Case::getUpperPiece() const { //erreur si pas de pièce sur la case
 /*! \brief Pour savoir si une pièce peut effectuer une action depuis cette case (pièce coincée si pas sur cette case).
 */
 bool Case::isPieceStuck(const Piece& p) const {
-
     return (empty() || &getUpperPiece()!=&p);
 }
 
@@ -178,7 +176,7 @@ Graphe& Graphe::operator=(const Graphe& g) {
     while (!ite.atEndColonne()) {
         while (!ite.atEndLigne()) {
             c = addCase(ite.getCurrent().getCoords());
-
+            
             for (auto i=ite.getCurrent().begin(); i!=ite.getCurrent().end(); i++) {
                 c->addPiece(*i);
                 nb_inhabited_cases++;
@@ -243,7 +241,7 @@ std::string Graphe::toStr() const {
                     str.at(i_vect) += caseBorder();
                 else str.at(i_vect) += caseBorderVoid();
             }
-
+            
             coords.addY(1);
             i_vect++;
         }
@@ -252,7 +250,7 @@ std::string Graphe::toStr() const {
         coords.setY(getMinY());
         i_vect=0;
     }
-
+    
     for (i_vect=0; i_vect<str.size(); i_vect++)
         str_graphe += str.at(i_vect) + "\n";
 
@@ -312,7 +310,7 @@ std::string Graphe::toStr(const Coords& selected) const {
                     str.at(i_vect) += caseBorder();
                 else str.at(i_vect) += caseBorderVoid();
             }
-
+            
             coords.addY(1);
             i_vect++;
         }
@@ -321,7 +319,7 @@ std::string Graphe::toStr(const Coords& selected) const {
         coords.setY(getMinY());
         i_vect=0;
     }
-
+    
     for (i_vect=0; i_vect<str.size(); i_vect++)
         str_graphe += str.at(i_vect) + "\n";
 
@@ -383,7 +381,7 @@ std::string Graphe::toStr(const Coords& selected1, const Coords& selected2) cons
                     str.at(i_vect) += caseBorder();
                 else str.at(i_vect) += caseBorderVoid();
             }
-
+            
             coords.addY(1);
             i_vect++;
         }
@@ -392,7 +390,7 @@ std::string Graphe::toStr(const Coords& selected1, const Coords& selected2) cons
         coords.setY(getMinY());
         i_vect=0;
     }
-
+    
     for (i_vect=0; i_vect<str.size(); i_vect++)
         str_graphe += str.at(i_vect) + "\n";
 
@@ -404,13 +402,13 @@ std::string Graphe::toStr(const Coords& selected1, const Coords& selected2) cons
 /*! \brief [PRIVÉ] Pour récupérer une case modifiable en fonction de ses coordonnées.
 */
 Case* Graphe::getMutableCase(double c, double l) const { //renvoie pointeur nul si case n'existe pas
-
+    
     //création de l'itérateur
     auto ite = getIterator();
 
     // parcourt les colonnes jusqu'à arriver à la fin ou trouver celle qui contient peut-être la case
     while (!ite.atEndColonne() && ite.getCurrent().getColonne()<c ) ite.nextColonne();
-
+    
     // renvoie pointeur nul si tout parcouru sans succès
     if (ite.atEndColonne() || ite.getCurrent().getColonne()>c ) return nullptr;
 
@@ -451,7 +449,7 @@ Graphe::Iterator Graphe::findCasePlace(double c, double l) const { //renvoie it�
     //si colonne déjà occupée
     if (!ite.atEndColonne() && ite.getCurrent().getColonne()==c)
         while (!ite.atEndLigne() && ite.getCurrent().getLigne()<l) ite.nextLigne();
-
+    
     return ite;
 }
 
@@ -521,11 +519,11 @@ const Coords* Graphe::coordsPiecePointer(const Piece* p) const {
             if (ite.getCurrent().hasPiece(p)) return &ite.getCurrent().getCoords();
             ite.nextLigne();
         }
-
+        
         ite.nextColonne();
         ite.firstLigne();
     }
-
+    
     return nullptr;
 }
 
@@ -533,9 +531,9 @@ const Coords* Graphe::coordsPiecePointer(const Piece* p) const {
 */
 const Coords& Graphe::coordsPiece(const Piece* p) const {
     const Coords* coords = coordsPiecePointer(p);
-
+    
     if (coords==nullptr) throw runtime_error("ERROR Graphe::coordsPiece : Piece pas dans graphe.");
-
+    
     return *coords;
 }
 
@@ -567,7 +565,7 @@ bool Graphe::isSurrounded(const Coords& c) const {
 
     // on s'arrête quand tous les adjacents ont été parcourus, ou quand une case vide a été trouvée.
     for (unsigned int i=0; i<=5; i++) {
-
+        
         ca = getMutableCase(coordsAdjacent(c, i));
         if (ca==nullptr || ca->empty()) return false;
     }
@@ -579,8 +577,8 @@ bool Graphe::isSurrounded(const Coords& c) const {
 */
 bool Graphe::wouldHiveBreak(const Coords& c) const {
     const Case* ca = getMutableCase(c);
-    if (ca==nullptr) throw runtime_error("ERROR Graphe::wouldHiveBreak : Case inexistante.");
-    if (ca->empty()) throw runtime_error("ERROR Graphe::wouldHiveBreak : Case vide.");
+    if (ca==nullptr) throw exception("ERROR Graphe::wouldHiveBreak : Case inexistante.");
+    if (ca->empty()) throw exception("ERROR Graphe::wouldHiveBreak : Case vide.");
 
     // ruche intacte si case contient plus d'une pièce
     if (ca->getNbPieces()>1) return false;
@@ -595,7 +593,7 @@ bool Graphe::wouldHiveBreak(const Coords& c) const {
 
     size_t to_search = 0;
     std::vector<Coords> adjacents;
-
+    
     // on explore autant que possible jusqu'à atteindre la fin du vecteur (donc aucun nouvel adjacent à explorer)
     while (to_search<coords_list.size()) {
         adjacents = coordsExistentAdjacents(coords_list[to_search]);
@@ -641,7 +639,7 @@ bool Graphe::canPlace(const Coords& c, bool camp) const {
 
         if (adjacent!=nullptr && !adjacent->empty()) {
             if (adjacent->getUpperPiece().getCamp()!=camp) return false;
-            amie=true;
+            else amie=true;
         }
     }
 
@@ -676,7 +674,7 @@ void Graphe::updateAttributesSuppr(double c, double l) {
         min_y=0;
         return;
     }
-
+    
     // on ne recherche de nouvelles extrémités que si les anciennes étaient elles-mêmes aux extrémités
     if (c==max_x || c==min_x || l==max_y || l==min_y) {
         auto ite = getIterator();
@@ -688,7 +686,7 @@ void Graphe::updateAttributesSuppr(double c, double l) {
 
         while (!ite.atEndColonne()) {
             if (ite.getCurrentLigne() < min_ligne) min_ligne = ite.getCurrentLigne();
-
+                
             ite.endLigne();
             ite.prevLigne();
 
@@ -763,7 +761,7 @@ Case* Graphe::addCase(const Coords& c) { //erreur si case existe déjà
         new_case = new Case(c);
 
         cases[ite.getVectorColonne()].push_back( new_case );
-
+        
         updateAttributes(c, 1);
     }
 
@@ -942,7 +940,7 @@ void Graphe::Iterator::goToLigne(double l) { //coordonnées "réelles", erreur s
     firstLigne();
     while (!atEndLigne() && getCurrentLigne() < l)
         nextLigne();
-
+    
     if (atEndLigne() || getCurrentLigne()!=l) throw runtime_error("ERROR Graphe::Iterator::goToLigne : Ligne non occupee dans cette colonne.");
 }
 
@@ -965,7 +963,7 @@ void Graphe::Iterator::goToCoords(const Coords& c) {
 /*! \brief Pour obtenir toutes les coordonnées où l'on peut placer. Attention à quand même vérifier la règle de la
  * reine abeille au 4ème coup
  */
-std::vector<Coords> Graphe::placableCoords(bool camp) const {
+ std::vector<Coords> Graphe::placableCoords(bool camp) const {
     auto ite=getIterator();
     vector<Coords> resultat;
     if (getNbInhabitedCases()==0) {
@@ -983,12 +981,12 @@ std::vector<Coords> Graphe::placableCoords(bool camp) const {
             }
             ite.nextLigne();
         }
-        ite.nextColonne();
-        ite.firstLigne();
+            ite.nextColonne();
+            ite.firstLigne();
 
     }
     return resultat;
-}
+ }
 
 bool isCaseCoords(int c, int l) { return ( (c%2==0 && l%2==0) || (c%2!=0 && l%2!=0) ); }
 bool isCaseCoords(const Coords& c) { return isCaseCoords(c.getX(), c.getY()); }

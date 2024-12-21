@@ -143,7 +143,7 @@ class Graphe {
                 // renvoie si itérateurs au même endroit
                 bool onSameColonne(const Iterator& ite) const { return colonne==ite.colonne; }
                 bool onSameLigne(const Iterator& ite) const { return ligne==ite.ligne; }
-
+                
                 // début/fin, avant/arrière, et vers colonne précise (selon coordonnées "réelles" dans la ruche)
                 void firstColonne() { colonne=0; }
                 void endColonne() { colonne = vect.size(); }
@@ -243,7 +243,7 @@ class Graphe {
         // renvoie case non modifiable
         const Case& getCase(double c, double l) const;
         const Case& getCase(const Coords& c) const { return getCase(c.getX(), c.getY()); } ;
-
+        
         Coords coordsNorth(const Coords& c) const { return Coords(c.getX(), c.getY()-2); }
         Coords coordsNorthEast(const Coords& c) const { return Coords(c.getX()+1, c.getY()-1); }
         Coords coordsSouthEast(const Coords& c) const { return Coords(c.getX()+1, c.getY()+1); }
