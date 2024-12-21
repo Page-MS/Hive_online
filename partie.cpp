@@ -246,7 +246,9 @@ void Partie::jouerTour(){
 
     //Si il n'y a plus de piece en reserve, ni de coups possible : on passe le tour
     vector <const Piece*> reserve = historique_etats[0].reserveJoueur(historique_etats[0].joueur_courant);
-    vector<Mouvement> liste_coups = historique_etats[0].coupsPossibles(historique_etats[0].joueur_courant);
+    //TODO FIx ça de manière plus clean que d'aller chercher l'autre joueur
+    vector<Mouvement> liste_coups = historique_etats[0].coupsPossibles( (historique_etats[0].getAutreJoueur()));
+
     if(reserve.size() == 0 && liste_coups.size() == 0){
         cout<<"Vous n'avez pas de possibilite de jouer ce tour !"<<endl;
         return;
@@ -258,7 +260,7 @@ void Partie::jouerTour(){
         srand((unsigned int)time(0));
         if (reserve.empty()) { //Si il ne reste plus de piece en reserve, on en deplace une aleatoirement
             int coups = rand()%liste_coups.size() +1;//Choix aleatoire d'un deplacement de piece a effectuer
-            //TODO N'a jamais l'air de s'executer
+            //TODO s'execute pas bien
             historique_etats[0].joueur_courant->jouerCoupDeplacer(liste_coups[coups].getPiece(), liste_coups[coups].getPosFinal(), historique_etats[0].plateau);
         }
         else { //Si il reste des pieces en reserve, on en ajoute une aleatoirement
