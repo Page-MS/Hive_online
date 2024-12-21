@@ -20,7 +20,7 @@ class EtatDuJeu;
 class Joueur {
 protected:
     string nom;
-    vector<Piece*> pieces; // pieces du joueur
+    vector<const Piece*> pieces; // pieces du joueur
     bool isIA;
     bool camp;
 
@@ -28,26 +28,26 @@ public:
     Joueur(const std::string& nom_joueur, bool camp_joueur, bool IA=false);
     Joueur(){}
     Joueur(const Joueur& autre) : nom(autre.nom) {
-        for (Piece* piece : autre.pieces) {
+        for (const Piece* piece : autre.pieces) {
             pieces.push_back(new Piece(*piece)); // copie chaque pièce
         }
     }
     Joueur& operator=(const Joueur& autre);
     virtual ~Joueur() {
-        for (Piece* piece : pieces) {
+        for (const Piece* piece : pieces) {
             delete piece; // libère chaque pièce
         }
     }
 
-    bool jouerCoupCreer(Piece* pieceChoisie, const Coords& destination, Plateau& plateau);
+    bool jouerCoupCreer(const Piece* pieceChoisie, const Coords& destination, Plateau& plateau);
 
-    bool jouerCoupDeplacer(Piece* pieceChoisie, const Coords& destination, Plateau& plateau);
+    bool jouerCoupDeplacer(const Piece* pieceChoisie, const Coords& destination, Plateau& plateau);
 
-    vector<Piece*> getPieces(){ return pieces; }
+    vector<const Piece*> getPieces(){ return pieces; }
 
     string getNom() const { return nom; }
 
-    void ajouterPiece(Piece* piece) { pieces.push_back(piece); } // ajoute une piece
+    void ajouterPiece(const Piece* piece) { pieces.push_back(piece); } // ajoute une piece
 
     bool getIsIA() { return isIA; }
 
@@ -59,16 +59,16 @@ public:
 
 class Mouvement {
 private:
-    Piece* piece;       // piece qui bouge
+    const Piece* piece;       // piece qui bouge
     Coords posInitial;  // position de départ
     Coords posFinal;    // position d'arrivée
 
 public:
-    Mouvement(Piece* p, const Coords& initial, const Coords& final):piece(p), posInitial(initial), posFinal(final) {}
+    Mouvement(const Piece* p, const Coords& initial, const Coords& final):piece(p), posInitial(initial), posFinal(final) {}
 
     Coords getPosInitial() const { return posInitial; }
     Coords getPosFinal() const { return posFinal; }
-    Piece* getPiece() const { return piece; }
+    const Piece* getPiece() const { return piece; }
 
     void ExecuterMvt();  // exécute le déplacement
     void AnnulerMvt();   // annule le déplacement

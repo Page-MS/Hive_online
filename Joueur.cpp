@@ -25,27 +25,29 @@ Joueur::Joueur(const std::string& nom_joueur, bool camp_joueur, bool IA) : nom(n
 }
 
 Joueur& Joueur::operator=(const Joueur& autre) {
-    if (this != &autre) { // évite la copie de soi-même
+    if (this != &autre) { // evite la copie de soi-même
         nom = autre.nom;
         camp = autre.camp;
         isIA = autre.isIA;
         // libere les pieces
-        for (Piece* piece : pieces) {delete piece;}
+        for (const Piece* piece : pieces) {delete piece;}
         pieces.clear();
 
-        // copie les nouvelles pièces
-        for (Piece* piece : autre.pieces) {pieces.push_back(new Piece(*piece));}
+        // copie les nouvelles pieces
+        for (const Piece* piece : autre.pieces) {pieces.push_back(new Piece(*piece));}
     }
     return *this;
 }
-bool Joueur::jouerCoupCreer(Piece* pieceChoisie, const Coords& destination, Plateau& plateau) {
+bool Joueur::jouerCoupCreer(const Piece* pieceChoisie, const Coords& destination, Plateau& plateau) {
+    if (pieceChoisie->getCamp()!=camp) throw runtime_error("ERROR Joueur::jouerCoupCreer : la piece appartient au joueur adverse.");
+
     if (!plateau.inReserve(*pieceChoisie)) {
-        cout<<"La pièce choisie n'est pas dans la réserve.\n";
+        cout<<"La piece choisie n'est pas dans la reserve.\n";
         return false;
     }
 
     if (!plateau.canPlace(*pieceChoisie, destination)) {
-        cout<<"La position cible est invalide ou occupée.\n";
+        cout<<"La position cible est invalide ou occupee.\n";
         return false;
     }
 
@@ -53,24 +55,26 @@ bool Joueur::jouerCoupCreer(Piece* pieceChoisie, const Coords& destination, Plat
     return true;
 }
 
-bool Joueur::jouerCoupDeplacer(Piece* pieceChoisie, const Coords& destination, Plateau& plateau){
+bool Joueur::jouerCoupDeplacer(const Piece* pieceChoisie, const Coords& destination, Plateau& plateau){
+    if (pieceChoisie->getCamp()!=camp) throw runtime_error("ERROR Joueur::jouerCoupDeplacer : la piece appartient au joueur adverse.");
+
     if (plateau.inReserve(*pieceChoisie)) {
-        cout<<"La pièce choisie n'est pas dans la réserve.\n";
+        cout<<"La piece choisie n'est pas dans la reserve.\n";
         return false;
     }
 
     if (plateau.isPieceStuck(*pieceChoisie)){
-        cout<<"La pièce choisie est bloqué sous une autre pièce.\n";
+        cout<<"La piece choisie est bloque sous une autre piece.\n";
         return false;
     }
 
     if (!plateau.canPlace(*pieceChoisie, destination)) {
-        cout<<"La position cible est invalide ou occupée.\n";
+        cout<<"La position cible est invalide ou occupee.\n";
         return false;
     }
 
     if (plateau.getGraphe().getNbInhabitedCases()>0) {
-        // Obtenir les mouvements légaux de la pièce
+        // Obtenir les mouvements legaux de la piece
         LegalMoveContext& moveContext = LegalMoveContext::getInstance();
         moveContext.changeStrategy(pieceChoisie->getType());
         Graphe copygraphe = plateau.getGraphe();
@@ -79,7 +83,7 @@ bool Joueur::jouerCoupDeplacer(Piece* pieceChoisie, const Coords& destination, P
         //parcours les legalmoves pour verifier que destination en fait bien partie
         auto it = std::find(legalMoves.begin(), legalMoves.end(), destination);
         if (it == legalMoves.end()) {
-            cout<<"La destination n'est pas un mouvement légal pour cette pièce.\n";
+            cout<<"La destination n'est pas un mouvement legal pour cette piece.\n";
             return false;
         }
     }
@@ -95,10 +99,10 @@ void Joueur::save(const std::string& fichier, Plateau& plateau) const {
         throw std::runtime_error("Unable to open file");
     }
 
-    // Écrire le camp du joueur
+    // ecrire le camp du joueur
     file << "Camp: " << camp << "\n";
 
-    // Compter et écrire le nombre de pièces de chaque type sur le plateau
+    // Compter et ecrire le nombre de pieces de chaque type sur le plateau
     std::map<TYPE_PIECE, int> piecesCount;
     for (auto piece : pieces) {
         if (!plateau.inReserve(*piece)) {

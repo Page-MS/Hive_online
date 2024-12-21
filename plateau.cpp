@@ -177,6 +177,35 @@ void Plateau::afficher(const Piece& p) const {
 	std::cout<<std::endl;
 }
 
+// Affiche le plateau avec les noms des joueurs en haut et en bas
+void Plateau::afficher(bool joueur_courant, const string& joueur1, const string& joueur2) const {
+	Graphe g;
+	const Coords c(0, 0);
+
+	std::cout<<"--------------------------------"<<std::endl;
+	auto pieces_adversaire = piecesReserve(!joueur_courant);
+
+	for (size_t i=0; i<pieces_adversaire.size(); i++) {
+		g.addPiece(*pieces_adversaire.at(i), c);
+		std::cout<<"<"<<g.getCase(c)<<">";
+		g.supprPiece(c);
+	}
+	std::cout<<std::endl<<"------------- "<<joueur2<<" -------------"<<std::endl;
+
+	std::cout<<getGraphe()<<std::endl;
+
+	std::cout<<"------------- "<<joueur1<<" -------------"<<std::endl;
+	auto pieces_vous = piecesReserve(joueur_courant);
+
+	for (size_t i=0; i<pieces_vous.size(); i++) {
+		g.addPiece(*pieces_vous.at(i), c);
+		std::cout<<"<"<<g.getCase(c)<<">";
+		g.supprPiece(c);
+	}
+	std::cout<<std::endl<<"--------------------------------"<<std::endl;
+
+	std::cout<<std::endl;
+}
 
 /*! \brief Pour savoir si la pièce est dans la réserve.
 */
@@ -201,7 +230,7 @@ std::vector<const Piece*> Plateau::piecesReserve(bool joueur) const {
 
 /*! \brief Remplit la réserve du plateau avec les pièces données.
 */
-void Plateau::fillReserve(const std::vector<Piece*>& pieces) {
+void Plateau::fillReserve(const std::vector<const Piece*>& pieces) {
 	for (auto piece:pieces) {
 		addPieceReserve(*piece);
 	}
@@ -259,7 +288,7 @@ bool Plateau::isPieceStuck(const Piece& p) const {
 
 /*! \brief Échange les adresses des anciennes pièces avec des nouvelles
 */
-void Plateau::piecesCoherence(const std::vector<Piece*>& pieces) {
+void Plateau::piecesCoherence(const std::vector<const Piece*>& pieces) {
 
 	std::vector<size_t> updated;
 	ReminderPiece* rem;
@@ -300,8 +329,8 @@ void Plateau::piecesCoherence(const std::vector<Piece*>& pieces) {
 	}
 }
 
-void Plateau::piecesCoherence(const std::vector<Piece*>& pieces1, const std::vector<Piece*>& pieces2) {
-	std::vector<Piece*> pieces = pieces1;
+void Plateau::piecesCoherence(const std::vector<const Piece*>& pieces1, const std::vector<const Piece*>& pieces2) {
+	auto pieces = pieces1;
 	pieces.insert(pieces.end(), pieces2.begin(), pieces2.end());
 	piecesCoherence(pieces);
 }

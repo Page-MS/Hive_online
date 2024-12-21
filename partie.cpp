@@ -59,10 +59,15 @@ EtatDuJeu& EtatDuJeu::operator=(const EtatDuJeu& jeu){
     return *this;
 }
 
+Joueur* EtatDuJeu::getAutreJoueur() {
+    if (joueurs[0]==joueur_courant) return joueurs[1];
+    return joueurs[0];
+}
+
 const vector<Mouvement> EtatDuJeu::coupsPossibles(Joueur* j) const {
     vector<Mouvement> mvt;
-    vector<Piece*> pj = j->getPieces();
-    for (Piece* piece : pj) {
+    vector<const Piece*> pj = j->getPieces();
+    for (const Piece* piece : pj) {
         if (!plateau.isPieceStuck(*piece)) {
             const Coords* c = plateau.coordsPiece(*piece);
             if (c != nullptr) {
@@ -156,7 +161,7 @@ void Partie::commencerPartie(){
     cout << "Debut de la partie" << endl;
 }
 
-const vector<Piece*> EtatDuJeu::reserveJoueur(Joueur* j) const{
+/*const vector<Piece*> EtatDuJeu::reserveJoueur(Joueur* j) const{
     vector<Piece*> pieces = j->getPieces();
     vector<Piece*> reserve;
     for (const auto piece : pieces) {
@@ -165,6 +170,10 @@ const vector<Piece*> EtatDuJeu::reserveJoueur(Joueur* j) const{
         }
     }
     return reserve;
+}*/
+
+const vector<const Piece*> EtatDuJeu::reserveJoueur(Joueur* j) const{
+    return plateau.piecesReserve(j->getCamp());
 }
 
 void Partie::annulerDernierMouvement(){ //On remonte au tour précédent de chacun des joueurs
@@ -174,7 +183,7 @@ void Partie::annulerDernierMouvement(){ //On remonte au tour précédent de chac
 }
 
 void Partie::jouerTour(){
-    historique_etats[0].plateau.afficher(historique_etats[0].joueur_courant->getCamp());
+    historique_etats[0].plateau.afficher(historique_etats[0].joueur_courant->getCamp(), historique_etats[0].joueur_courant->getNom(), historique_etats[0].getAutreJoueur()->getNom());
 
     bool tour_fini = false;
     historique_etats[3] = historique_etats[2];
@@ -184,12 +193,12 @@ void Partie::jouerTour(){
     cout << "Tour " << historique_etats[0].numero_tour << endl;
     if (historique_etats[0].numero_tour > 1) {
         cout <<"Etat actuel du plateau : " << endl;
-        historique_etats[0].plateau.afficher(historique_etats[0].joueur_courant);
+        historique_etats[0].plateau.afficher(historique_etats[0].joueur_courant->getCamp(), historique_etats[0].joueur_courant->getNom(), historique_etats[0].getAutreJoueur()->getNom());
     }
     cout << "C'est au joueur " << historique_etats[0].joueur_courant->getNom() << " de jouer." << endl;
 
     //Si il n'y a plus de piece en reserve, ni de coups possible : on passe le tour
-    vector <Piece*> reserve = historique_etats[0].reserveJoueur(historique_etats[0].joueur_courant);
+    vector <const Piece*> reserve = historique_etats[0].reserveJoueur(historique_etats[0].joueur_courant);
     vector<Mouvement> liste_coups = historique_etats[0].coupsPossibles(historique_etats[0].joueur_courant);
     if(reserve.size() == 0 && liste_coups.size() == 0){
         cout<<"Vous n'avez pas de possibilite de jouer ce tour !"<<endl;
@@ -292,7 +301,7 @@ void Partie::jouerTour(){
                     if(nb_retour_arriere > 0){
                         annulerDernierMouvement();
                         cout<<"Voici le nouvel etat du plateau : \n";
-                        historique_etats[0].plateau.afficher(historique_etats[0].joueur_courant);
+                        historique_etats[0].plateau.afficher(historique_etats[0].joueur_courant->getCamp(), historique_etats[0].joueur_courant->getNom(), historique_etats[0].getAutreJoueur()->getNom());
                     }
                     else {
                         cout<<"Il n'y a pas ou plus de retour en arriere possible pour cette partie ! \n";

@@ -632,18 +632,15 @@ bool Graphe::canPlace(const Coords& c, bool camp) const {
     if (!hasCase(c) || !getCase(c).empty()) return false;
     if (getNbInhabitedCases()<=1) return true;
 
-    bool amie=false;
     Case* adjacent;
     for (auto i=0; i<6; i++) {
         adjacent = getMutableCase(coordsAdjacent(c, i));
 
         if (adjacent!=nullptr && !adjacent->empty()) {
             if (adjacent->getUpperPiece().getCamp()!=camp) return false;
-            else amie=true;
         }
     }
-
-    return amie;
+    return true;
 }
 
 // modification graphe

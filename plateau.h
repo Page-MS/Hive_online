@@ -32,12 +32,12 @@ class Plateau {
         Plateau()=default;
         ~Plateau()=default;
         Plateau(const Plateau& p);
-        Plateau(const std::vector<Piece*>& pieces) { fillReserve(pieces); }
-        Plateau(const std::vector<Piece*>& pieces1, const std::vector<Piece*>& pieces2) { fillReserve(pieces1);  fillReserve(pieces2);}
+        Plateau(const std::vector<const Piece*>& pieces) { fillReserve(pieces); }
+        Plateau(const std::vector<const Piece*>& pieces1, const std::vector<const Piece*>& pieces2) { fillReserve(pieces1);  fillReserve(pieces2);}
         Plateau& operator=(const Plateau& p);
 
-        void piecesCoherence(const std::vector<Piece*>& pieces);
-        void piecesCoherence(const std::vector<Piece*>& pieces1, const std::vector<Piece*>& pieces2);
+        void piecesCoherence(const std::vector<const Piece*>& pieces);
+        void piecesCoherence(const std::vector<const Piece*>& pieces1, const std::vector<const Piece*>& pieces2);
 
         const Graphe& getGraphe() const { return graphe; }
 
@@ -45,7 +45,7 @@ class Plateau {
         bool inReserve(const Piece* p) const;
         bool inReserve(const Piece& p) const { return inReserve(&p); }
 
-        void fillReserve(const std::vector<Piece*>& pieces);
+        void fillReserve(const std::vector<const Piece*>& pieces);
         void addPieceReserve(const Piece& p);
         void supprPieceReserve(const Piece& p);
         void movePiece(const Piece& p, const Coords& c);
@@ -55,6 +55,7 @@ class Plateau {
         bool isPieceStuck(const Piece& p) const;
         bool canPlace(const Piece& p, const Coords& c) const { return getGraphe().canPlace(c, p.getCamp());}
 
+        void afficher(bool joueur_courant, const string& joueur1, const string& joueur2) const;
         void afficher(bool joueur_courant) const;
         void afficher(bool joueur_courant, const Coords& selected) const;
         void afficher(bool joueur_courant, const Coords& selected1, const Coords& selected2) const;

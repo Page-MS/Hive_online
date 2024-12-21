@@ -3,7 +3,6 @@
 
 #include <iostream>
 #include "Joueur.h"
-#include "Joueur.cpp"
 
 using namespace std;
 class Joueur;
@@ -28,9 +27,10 @@ class EtatDuJeu {
         Plateau getPlateau() {return plateau;} // accès au plateau
         Joueur** getJoueurs() {return joueurs;}
         Joueur* getJoueurCourant() {return joueur_courant;}
+        Joueur* getAutreJoueur();
         const int getNumTour() const {return numero_tour;}
         vector<Mouvement>& getHistorique() {return historique;}
-        const vector<Piece*> reserveJoueur(Joueur* j) const;//Retourne les pieces de la reserve d'un joueur
+        const vector<const Piece*> reserveJoueur(Joueur* j) const;//Retourne les pieces de la reserve d'un joueur
 };
 
 class Partie{
