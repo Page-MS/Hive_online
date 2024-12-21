@@ -38,7 +38,6 @@ Joueur& Joueur::operator=(const Joueur& autre) {
     }
     return *this;
 }
-
 bool Joueur::jouerCoupCreer(Piece* pieceChoisie, const Coords& destination, Plateau& plateau) {
     if (!plateau.inReserve(*pieceChoisie)) {
         cout<<"La pièce choisie n'est pas dans la réserve.\n";

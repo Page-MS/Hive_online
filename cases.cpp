@@ -1,6 +1,7 @@
 #include "cases.h"
 #include <algorithm>
 #include <string>
+#include <cmath>
 
 // AFFICHAGE
 std::ostream& operator<<(std::ostream& flux, const Case& c) { // Affichage d'une case, peut être ajouté au cout<<
@@ -51,8 +52,8 @@ std::string caseBorderVoid() {
 bool onStraightLine(const Coords& c1, const Coords& c2) {
     return (c1.getX()==c2.getX() ||
                 (
-                    abs(c1.getX()-c2.getX()) &&
-                    abs(c1.getY()-c2.getY())
+                    std::abs(c1.getX()-c2.getX()) &&
+                    std::abs(c1.getY()-c2.getY())
                 )
             );
 }

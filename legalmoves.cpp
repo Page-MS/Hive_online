@@ -58,8 +58,8 @@ vector<Coords> LegalMoveAbeille::searchMoves(Coords coord,Graphe* graph, bool ca
     }
     vector<Coords> voisins=graphe_a_manipuler->coordsExistentAdjacents(coord);
     int cote_voisin=0;
-    for (auto i:voisins) {
-        if (graphe_a_manipuler->getCase(i).empty() && graphe_a_manipuler->canSlide(coord, cote_voisin)) {
+    for(auto i:voisins){
+        if (graphe_a_manipuler->getCase(i).empty() && graphe_a_manipuler->canSlide(coord,cote_voisin)){
             resultat.push_back(i);
             cout<<"\n On ajoute :"<<i.getX()<<":"<<i.getY();
             cote_voisin++;
@@ -262,13 +262,13 @@ vector<Coords> LegalMoveMoustique::searchMoves(Coords coord,Graphe* graph, bool 
             types_pieces_voisines.push_back(type_voisin);
         }
     }
-    LegalMoveContext* legalmove=&LegalMoveContext::getInstance();
+    LegalMoveContext* legalmove = &LegalMoveContext::getInstance();
     for (auto type:types_pieces_voisines){
         //graphe_a_manipuler.getCase(coord)
         if (type!=5){
             legalmove->changeStrategy(type);
             vector<Coords> results_with_neighbour_type=legalmove->searchNeighbourMosquito(coord,graph,camp);
-            for(auto potential_result:voisins){
+            for (auto potential_result:voisins){
                 if (find(resultat.begin(), resultat.end(), potential_result) == resultat.end()) {
                     resultat.push_back(potential_result);
                 }
