@@ -20,6 +20,7 @@ EtatDuJeu::EtatDuJeu(int num_tour, Plateau p,  Joueur* j1, Joueur* j2, Joueur* j
 
 EtatDuJeu::~EtatDuJeu() {
     //Destruction des joueurs
+    //TODO resoudre le segmentation fault causé ici, peut être que les pointeurs ont déjà été supprimés par la suppression d'un autre été du jeu
     for (const auto joueur : joueurs) {
         if(joueur) {
             delete joueur;
@@ -214,6 +215,7 @@ void Partie::jouerTour(){
         srand((unsigned int)time(0));
         if (reserve.empty()) { //Si il ne reste plus de piece en reserve, on en deplace une aleatoirement
             int coups = rand()%liste_coups.size() +1;//Choix aleatoire d'un deplacement de piece a effectuer
+            //TODO N'a jamais l'air de s'executer
             historique_etats[0].joueur_courant->jouerCoupDeplacer(liste_coups[coups].getPiece(), liste_coups[coups].getPosFinal(), historique_etats[0].plateau);
         }
         else { //Si il reste des pieces en reserve, on en ajoute une aleatoirement
