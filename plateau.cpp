@@ -1,5 +1,6 @@
 #include "plateau.h"
 #include <iostream>
+#include <algorithm>
 
 // METHODES REMINDERPIECE
 ReminderPiece& ReminderPiece::operator=(const ReminderPiece& rem) {

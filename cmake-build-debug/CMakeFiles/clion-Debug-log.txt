@@ -1,4 +1,4 @@
-/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=/opt/homebrew/Cellar/gcc/14.2.0_1/bin/gcc-14 -DCMAKE_CXX_COMPILER=/opt/homebrew/Cellar/gcc/14.2.0_1/bin/g++-14 -G "Unix Makefiles" -S /Users/juliette/Desktop/UTC/GI01/LO21/LO21 -B /Users/juliette/Desktop/UTC/GI01/LO21/LO21/cmake-build-debug
--- Configuring done (0.1s)
--- Generating done (0.0s)
--- Build files have been written to: /Users/juliette/Desktop/UTC/GI01/LO21/LO21/cmake-build-debug
+C:\Users\page\AppData\Local\Programs\CLion\bin\cmake\win\x64\bin\cmake.exe -DCMAKE_BUILD_TYPE=Debug -G "MinGW Makefiles" -S C:\Users\page\Documents\UTC\A24\LO21\Projet\LO21 -B C:\Users\page\Documents\UTC\A24\LO21\Projet\LO21\cmake-build-debug
+-- Configuring done (0.3s)
+-- Generating done (0.1s)
+-- Build files have been written to: C:/Users/page/Documents/UTC/A24/LO21/Projet/LO21/cmake-build-debug

@@ -61,7 +61,6 @@ vector<Coords> LegalMoveAbeille::searchMoves(Coords coord,Graphe* graph, bool ca
     for(auto i:voisins){
         if (graphe_a_manipuler->getCase(i).empty() && graphe_a_manipuler->canSlide(coord,cote_voisin)){
             resultat.push_back(i);
-            cout<<"\n On ajoute :"<<i.getX()<<":"<<i.getY();
             cote_voisin++;
         }
     }
@@ -82,7 +81,6 @@ vector<Coords> LegalMoveScarabee::searchMoves(Coords coord,Graphe* graph, bool c
         vector<Coords> voisins=graphe_a_manipuler->coordsExistentAdjacents(coord);
         for(auto i:voisins){
                 resultat.push_back(i);
-                cout<<"\n On ajoute :"<<i.getX()<<":"<<i.getY();
         }
         return resultat;
 

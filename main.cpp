@@ -1,5 +1,4 @@
 #include "plateau.h"
-#include "legalmoves.h"
 #include "partie.hpp"
 
 
