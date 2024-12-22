@@ -502,6 +502,9 @@ void Partie::lancerPartie() {
         }
     }
 
+    cout<< "Plateau en fin de partie : "<<endl;
+    historique_etats[0].plateau.afficher(historique_etats[0].getJoueurCourant()->getCamp(), historique_etats[0].getJoueurCourant()->getNom(), historique_etats[0].getAutreJoueur()->getNom());
+
     cout << "Fin de la partie : " << endl; //On est sorti de la boucle while : une condition d'arret est verifiee
 
     //On cherche a determiner quelle condition d'arret de la partie a ete remplie

@@ -190,8 +190,8 @@ Graphe& Graphe::operator=(const Graphe& g) {
     return *this;
 }
 
-std::string Graphe::toStr() const {
-    /* Affichage du graphe, peut être ajouté au cout<< */
+/*std::string Graphe::toStr() const {
+    // Affichage du graphe, peut être ajouté au cout<<
     std::string str_graphe("");
     if (empty()) return str_graphe;
 
@@ -255,7 +255,7 @@ std::string Graphe::toStr() const {
         str_graphe += str.at(i_vect) + "\n";
 
     return str_graphe;
-}
+}*/
 
 std::string Graphe::toStr(const Coords& selected) const {
     /* Affichage du graphe, peut être ajouté au cout<< */
@@ -397,6 +397,77 @@ std::string Graphe::toStr(const Coords& selected1, const Coords& selected2) cons
     return str_graphe;
 }
 
+std::string Graphe::toStr() const {
+    /* Affichage du graphe, peut être ajouté au cout<< */
+    std::string str_graphe("");
+    if (empty()) return str_graphe;
+
+    str_graphe += "\n";
+
+    // variables
+    std::vector<std::string> str (getMaxY() - getMinY() + 1, "");
+    Coords coords (getMinX(), getMinY());
+    int i_vect = 0;
+
+    //itérateurs
+    auto ite = getIterator();
+    auto end_ligne_ite = getIterator();
+    end_ligne_ite.endLigne();
+    auto end_colonne_ite = getIterator();
+    end_colonne_ite.endColonne();
+
+    while (coords.getX()<=getMaxX()) {
+        while(coords.getY()<=getMaxY()) {
+            // si on est sur une case existante, on l'affiche, puis on déplace l'itérateur à la prochaine case
+            if (coords == ite.getCurrent().getCoords() ) {
+
+                if (!ite.getCurrent().empty()) {
+                    str.at(i_vect) += setColor(ite.getCurrent().getUpperPiece().getCamp(), ite.getCurrent().getUpperPiece().getType()) + "<" + ite.getCurrent().strCase() + ">" + resetColor();
+
+                } else str.at(i_vect) += "<" + ite.getCurrent().strCase() + ">";
+
+
+                // déplacement de l'itérateur, retour au début si fin atteinte
+                ite.nextLigne();
+                if (ite.atEndLigne()) {
+
+                    ite.nextColonne();
+                    ite.firstLigne();
+                    if (ite.atEndColonne()) {
+                        ite.firstColonne();
+                    }
+                }
+            }
+            // si on est sur une case non existante, on affiche un vide
+            else if (isCaseCoords(coords)) {
+                str.at(i_vect) += caseVoid();
+            }
+
+            // si on est sur une bordure de case
+            else {
+                // si la case juste à gauche n'existe pas, on affiche des frontières latérales vides
+                if (!hasCase(coords + Coords(-1,0)))
+                    str.at(i_vect) += " ";
+                // si une case juste en haut ou en bas existe, on affiche ses frontières
+                if ( hasCase(coords + Coords(0,-1)) || hasCase(coords + Coords(0,1)) )
+                    str.at(i_vect) += caseBorder();
+                else str.at(i_vect) += caseBorderVoid();
+            }
+            
+            coords.addY(1);
+            i_vect++;
+        }
+
+        coords.addX(1);
+        coords.setY(getMinY());
+        i_vect=0;
+    }
+    
+    for (i_vect=0; i_vect<str.size(); i_vect++)
+        str_graphe += str.at(i_vect) + "\n";
+
+    return str_graphe;
+}
 
 // getters case
 /*! \brief [PRIVÉ] Pour récupérer une case modifiable en fonction de ses coordonnées.
@@ -987,3 +1058,29 @@ void Graphe::Iterator::goToCoords(const Coords& c) {
 
 bool isCaseCoords(int c, int l) { return ( (c%2==0 && l%2==0) || (c%2!=0 && l%2!=0) ); }
 bool isCaseCoords(const Coords& c) { return isCaseCoords(c.getX(), c.getY()); }
+
+std::string resetColor() {
+    return "\033[0m";
+}
+std::string redColor() {
+    return "\033[31m";
+}
+std::string blueColor() {
+    return "\033[34m";
+}
+std::string queenRedColor() {
+    return "\033[1;31m";
+}
+std::string queenBlueColor() {
+    return "\033[1;34m";
+}
+std::string setColor(bool camp, TYPE_PIECE piece) {
+    if (camp && piece == TYPE_PIECE::Abeille)
+        return queenRedColor();
+    else if (camp)
+        return redColor();
+    else if (!camp && piece == TYPE_PIECE::Abeille)
+        return queenBlueColor();
+    else
+        return blueColor();
+}
