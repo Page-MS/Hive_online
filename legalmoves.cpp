@@ -239,15 +239,20 @@ vector<Coords> LegalMoveCoccinelle::rechercheDansVoisins(Coords coord, Graphe* g
     unsigned int cote_voisin=0;
     if (profondeur<3){
         for(auto i:voisins) {
-            if ( !graphe_a_manipuler->getCase(i).empty() && !graphe_a_manipuler->coordsInhabitedAdjacents(i).empty() ) {
+            bool a_autre_voisin_que_piece_de_base=0;
+            for (auto voisins_i : graphe_a_manipuler->coordsInhabitedAdjacents(i)) {
+                if (voisins_i != coord) {
+                    a_autre_voisin_que_piece_de_base = true;
+                }
+            }
+
+            if ( !graphe_a_manipuler->getCase(i).empty() && a_autre_voisin_que_piece_de_base ) {
                 vector<Coords> resultat_voisin = rechercheDansVoisins(i, graph, camp, profondeur);
                 for(auto resultat_potentiel:resultat_voisin){
                     if (find(resultat.begin(), resultat.end(), resultat_potentiel) == resultat.end()) {
                         resultat.push_back(resultat_potentiel);
                     }
                 }
-
-
             }
             cote_voisin++;
         }
@@ -280,7 +285,8 @@ vector<Coords> LegalMoveSauterelle::searchMoves(Coords coord,Graphe* graph, bool
                 case_voisine= graphe_a_manipuler->coordsAdjacent(case_voisine,cote_voisin);
                 voisin_is_not_empty=(!graphe_a_manipuler->getCase(case_voisine).empty());
             }
-            resultat.push_back(case_voisine);
+            if (voisin_is_not_empty)
+                resultat.push_back(case_voisine);
             cote_voisin++;
 
         }
