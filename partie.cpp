@@ -240,7 +240,14 @@ void Partie::jouerTour(){
     }else{
         liste_coups = historique_etats[0].coupsPossibles( (historique_etats[0].getJoueurCourant()));
     }
-    
+    for (auto it = liste_coups.begin(); it != liste_coups.end(); ) {
+        if (historique_etats[0].plateau.getGraphe().wouldHiveBreak(it->getPosInitial())) {
+            it = liste_coups.erase(it);
+        } else {
+            ++it;
+        }
+    }
+
 
     if(reserve.size() == 0 && liste_coups.size() == 0){
         cout<<"Vous n'avez pas de possibilite de jouer ce tour !"<<endl;
@@ -262,6 +269,38 @@ void Partie::jouerTour(){
             historique_etats[0].joueur_courant->jouerCoupCreer(reserve[piece-1], liste_pos[pos-1], historique_etats[0].plateau);
         }
         return;
+    }
+
+    //Si l'abeille n'a toujours pas été posée au 4eme tour du joueur
+    if (historique_etats[0].numero_tour == 7 || historique_etats[0].numero_tour == 8) {
+        for (const auto *piece : historique_etats[0].reserveJoueur(historique_etats[0].joueur_courant)) {
+            if (piece->getType() == Abeille) {
+                cout << "Vous devez poser l'Abeille dans ce tour : aucune autre action permise."<<endl;
+                cout << "Voici vos placements possibles : \n";
+                int j = 0;
+                for (const auto &pos : liste_pos){
+                    cout << j << ". (" << pos.getX() << "," << pos.getY()<< ")";
+                    j++;
+                }
+                cout<<endl;
+                int choix = -1;
+                while (choix <0 || choix>liste_pos.size()) {
+                    cout << "Ou souhaitez vous placer votre piece ? \n";
+                    cin>>choix;
+                    if (cin.fail()) { // Gestion input invalide
+                        cin.clear();
+                        cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Retire input invalide du buffer
+                        cout << "\nValeur invalide, reessayez\n";
+                        continue; // Re effectue la boucle
+                    }
+                }
+                tour_fini = historique_etats[0].joueur_courant->jouerCoupCreer(piece, liste_pos[choix], historique_etats[0].plateau);
+                break;
+            }
+        }
+        if (liste_pos.empty()) {
+            cout << "Erreur : Impossible de poser l'Abeille.\n";
+        }
     }
 
     //Menu d'actions possible pour que le joueur humain joue le prochain tour
@@ -343,7 +382,7 @@ void Partie::jouerTour(){
                 cout << "Voici vos coups possibles : \n";
                 int j = 0;
                 for (const auto &coup : liste_coups){
-                    cout << j << ". " << coup.getPiece()->getType() << " - à (" << coup.getPosInitial().getX() << " , " << coup.getPosInitial().getY() << ") vers (" << coup.getPosFinal().getX() << " , " << coup.getPosFinal().getY() << ") \n";
+                    cout << j << ". " << coup.getPiece()->getType() << " - a (" << coup.getPosInitial().getX() << " , " << coup.getPosInitial().getY() << ") vers (" << coup.getPosFinal().getX() << " , " << coup.getPosFinal().getY() << ") \n";
                     j++;
                 }
                 int choix = -1;
@@ -385,6 +424,7 @@ void Partie::jouerTour(){
             case 4: {
                 //appel à sauvegarder partie
                 cout<<"Votre partie a ete sauvegardee, au revoir ! \n";
+                exit(0);
                 return;
             }
             default:
