@@ -180,6 +180,7 @@ void Plateau::afficher(const Piece& p) const {
 
 // Affiche le plateau avec les noms des joueurs en haut et en bas
 void Plateau::afficher(bool joueur_courant, const string& joueur1, const string& joueur2) const {
+	
 	Graphe g;
 	const Coords c(0, 0);
 
@@ -289,7 +290,8 @@ const Coords* Plateau::coordsPiece(const Piece* p) const {
 /*! \brief Renvoie si la pièce peut effectuer une action (sortir de la réserve ou se déplacer sur le graphe.
 */
 bool Plateau::isPieceStuck(const Piece& p) const {
-	return (!inReserve(p) && getGraphe().isPieceStuck(p));
+	if (inReserve(p)) return false;
+	return getGraphe().isPieceStuck(p);
 }
 
 /*! \brief Échange les adresses des anciennes pièces avec des nouvelles
@@ -304,7 +306,6 @@ void Plateau::piecesCoherence(const std::vector<const Piece*>& pieces) {
 
 	// parcours de la liste des nouvelles pièces
 	for (auto piece:pieces) {
-		
 		i=0;
 		// récupération d'une ancienne pièce compatible
 		for (size_t i=0; i<memoire.size(); i++) {
@@ -329,6 +330,7 @@ void Plateau::piecesCoherence(const std::vector<const Piece*>& pieces) {
 					}
 					rem->setAdresse(piece);
 					updated.push_back(i);
+					break;
 				}
 			}
 		}

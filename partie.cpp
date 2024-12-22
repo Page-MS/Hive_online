@@ -4,18 +4,27 @@
 #include <ctime>
 #include <limits>
 
+GameManager* GameManager::instance = nullptr;
+
+GameManager& GameManager::getInstance() {
+    if (instance==nullptr) {
+        instance = new GameManager;
+    }
+    return *instance;
+}
+
+
+
 EtatDuJeu::EtatDuJeu(int num_tour, Plateau p,  Joueur* j1, Joueur* j2, Joueur* jc){
     numero_tour = num_tour;
     plateau = p;
-    joueurs[0] = j1;
-    joueurs[1] = j2;
+    joueurs.at(0) = j1;
+    joueurs.at(1) = j2;
     joueur_courant = nullptr;
     if(jc == j1) {
-        joueur_courant = joueurs[0];
+        joueur_courant = joueurs.at(0);
     }else if(jc == j2) {
-        joueur_courant = joueurs[1];
-    }else{
-        joueur_courant = nullptr; // Au cas où `joueurCourant` est nul dans `partie`
+        joueur_courant = joueurs.at(1);
     }
 }
 
@@ -33,19 +42,25 @@ EtatDuJeu::~EtatDuJeu() {
 EtatDuJeu::EtatDuJeu(){
     numero_tour = 0;
     plateau = Plateau();
-    joueurs[0] = new Joueur;
-    joueurs[1] = new Joueur;
+    joueurs.push_back(nullptr);
+    joueurs.push_back(nullptr);
     joueur_courant = nullptr;
 }
 
 EtatDuJeu::EtatDuJeu(const EtatDuJeu& other){
     numero_tour = other.numero_tour;
     plateau = other.plateau;
-    joueurs[0] = other.joueurs[0];
-    joueurs[1] = other.joueurs[1];
-    if(other.joueur_courant == other.joueurs[0]) joueur_courant = joueurs[0];
-    else if(other.joueur_courant == other.joueurs[1]) joueur_courant = joueurs[1];
-    else joueur_courant = nullptr; // Au cas où `joueurCourant` est nul dans le jeu que l'on recopie
+
+    for (auto joueur:other.joueurs) {
+        joueurs.push_back(new Joueur(*joueur));
+    }
+
+    if(other.joueur_courant == other.joueurs.at(0))
+        joueur_courant = joueurs.at(0);
+    else if(other.joueur_courant == other.joueurs.at(1))
+        joueur_courant = joueurs.at(1);
+    else joueur_courant = nullptr;
+
 }
 
 
@@ -53,23 +68,36 @@ EtatDuJeu& EtatDuJeu::operator=(const EtatDuJeu& jeu){
     if(this != &jeu){
         numero_tour = jeu.numero_tour;
         plateau = jeu.plateau;
-        joueurs[0] = jeu.joueurs[0];
-        joueurs[1] = jeu.joueurs[1];
+
+
+        for (auto joueur:joueurs) {
+            delete joueur;
+        }
+        for (auto joueur:jeu.joueurs) {
+        joueurs.push_back(new Joueur(*joueur));
+        }
+
+        if(jeu.joueur_courant == jeu.joueurs.at(0))
+            joueur_courant = joueurs.at(0);
+        else if(jeu.joueur_courant == jeu.joueurs.at(1))
+            joueur_courant = joueurs.at(1);
+        else joueur_courant = nullptr;
+
         historique = jeu.historique;
-        plateau.piecesCoherence(joueurs[0]->getPieces(), joueurs[1]->getPieces());
-        if(jeu.joueur_courant == jeu.joueurs[0]) joueur_courant = joueurs[0];
-        else if(jeu.joueur_courant == jeu.joueurs[1]) joueur_courant = joueurs[1];
-        else joueur_courant = nullptr; // Au cas où joueur_courant est nul dans le jeu que l'on recopie
+        joueur_courant = jeu.joueur_courant;
+        plateau.piecesCoherence(joueurs.at(0)->getPieces(), joueurs.at(1)->getPieces());
     }
     return *this;
 }
 
-Joueur* EtatDuJeu::getAutreJoueur() {
-    if (joueurs[0]==joueur_courant) return joueurs[1];
-    return joueurs[0];
+Joueur* EtatDuJeu::getAutreJoueur() const {
+    if (joueurs.at(0)==joueur_courant) return joueurs.at(1);
+    return joueurs.at(0);
 }
 
 const vector<Mouvement> EtatDuJeu::coupsPossibles(Joueur* j) const {
+    if (j!=joueurs.at(0) && j!=joueurs.at(1)) throw runtime_error("ERROR EtatDuJeu::coupsPossibles : Joueur pas dans etat du jeu.");
+
     vector<Mouvement> mvt;
     vector<const Piece*> pj = j->getPieces();
 
@@ -88,19 +116,25 @@ const vector<Mouvement> EtatDuJeu::coupsPossibles(Joueur* j) const {
     return mvt;
 }
 
+
+Partie::Partie() : start_joueur_id(0) {
+    EtatDuJeu* etat = new EtatDuJeu();
+    historique.push_back(etat);
+}
+
+Partie::~Partie() {
+    for (auto i:historique)
+        delete i;
+}
+
 //Méthode qui détermine qui commence la partie
 void Partie::setStartJoueurId(){
     srand(static_cast<int>(time(0)));
-    if (historique_etats[0].joueurs[0]->getIsIA() && !(historique_etats[0].joueurs[1]->getIsIA())){
-        start_joueur_id = 1; //l'humain commence toujours
-    }else if(historique_etats[0].joueurs[1]->getIsIA() && !(historique_etats[0].joueurs[0]->getIsIA())){
-        start_joueur_id = 0;
-    }else{ //s'il y a 2 joueurs humains ou 2 IA dans la partie
-        start_joueur_id = rand() % 2; //on choisit aléatoirement le joueur qui commence
-    }
+   start_joueur_id = rand() % 2;
 }
 
 void Partie::commencerPartie() {
+
     string pseudo1, pseudo2;
     cout << "Entrez le pseudo du premier joueur :" << endl;
     cin >> pseudo1;
@@ -140,57 +174,38 @@ void Partie::commencerPartie() {
         }
     }
     ia2 = (choix == 0) ? false : true;
-    if (ia1 && ia2) { // 2 joueurs IA
-        historique_etats[0].joueurs[0] = new IAJoueur(pseudo1, true);
-        historique_etats[0].joueurs[1] = new IAJoueur(pseudo2, false);
-    } else if (ia1) { // Une IA et un humain
-        historique_etats[0].joueurs[0] = new IAJoueur(pseudo1, true);
-        historique_etats[0].joueurs[1] = new Joueur(pseudo2, false);
-    } else if (ia2) { // Une IA et un humain
-        historique_etats[0].joueurs[0] = new Joueur(pseudo1, true);
-        historique_etats[0].joueurs[1] = new IAJoueur(pseudo2, false);
-    } else { // 2 joueurs huamins
-        historique_etats[0].joueurs[0] = new Joueur(pseudo1, true);
-        historique_etats[0].joueurs[1] = new Joueur(pseudo2, false);
+
+    Joueur* j1;
+    Joueur* j2;
+
+    // création des joueurs selon si IA ou non
+    if (ia1) {
+        j1 = new IAJoueur(pseudo1, true);
+    }
+    else  {
+        j1 = new Joueur(pseudo1, true);
+    }
+    if (ia2) {
+        j2 = new IAJoueur(pseudo2, false);
+    }
+    else  {
+        j2 = new Joueur(pseudo2, false);
     }
 
-    historique_etats[0].plateau = Plateau();
-    historique_etats[0].numero_tour = 0;
+    getEtatActuel().joueurs.at(0)=j1;
+    getEtatActuel().joueurs.at(1)=j2;
+
+    getEtatActuel().numero_tour = 0;
 
     //On determine qui commence la partie
     setStartJoueurId();
-    historique_etats[0].joueur_courant = (start_joueur_id == 0) ? historique_etats[0].joueurs[0]
-                                                                : historique_etats[0].joueurs[1];
+    getEtatActuel().joueur_courant = getEtatActuel().joueurs.at(start_joueur_id);
 
-    for (Joueur *joueur: historique_etats[0].joueurs) {
-        historique_etats[0].plateau.fillReserve(joueur->getPieces());
+    for (Joueur *joueur: getEtatActuel().joueurs) {
+        getEtatActuel().plateau.fillReserve(joueur->getPieces());
     }
 
-    for (int i = 1; i < 4; i++) {
-        historique_etats[i] = historique_etats[0]; //convention : on initialise les 3 autres états avec le même état initial
-    }
-    do {
-
-        nb_retour_arriere = 4;
-        while (true) {
-            cout << "Entrez le nombre de retours en arriere possibles : (Entre 0 et 3)" << endl;
-            cin >> nb_retour_arriere;
-            if (cin.fail()) { // Gestion input invalide
-                cin.clear();
-                cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Retire input invalide du buffer
-                cout << "\nValeur invalide, reessayez\n";
-                continue; // Re effectue la boucle
-            }
-            if (nb_retour_arriere <= 3 && nb_retour_arriere >= 0) {
-                // Valid choice
-                break;
-            }
-        }
-
-    } while (nb_retour_arriere < 0 || nb_retour_arriere > 3);
-    {
-        cout << "Debut de la partie" << endl;
-    }
+    cout << "Debut de la partie" << endl;
 }
 
 const vector<const Piece*> EtatDuJeu::reserveJoueur(Joueur* j) const{
@@ -198,35 +213,47 @@ const vector<const Piece*> EtatDuJeu::reserveJoueur(Joueur* j) const{
 }
 
 void Partie::annulerDernierMouvement(){ //On remonte au tour précédent de chacun des joueurs
-    historique_etats[0] = historique_etats[2]; //tour précédent du joueur courant
-    historique_etats[1] = historique_etats[3]; //tour précédent de l'autre joueur
-    nb_retour_arriere --;
+    if (historique.size()<4) throw runtime_error("ERROR EtatDuJeu::reserveJoueur : Pas assez d'etats sauvegardes.");
+
+    // suppression du tour actuel
+    delete historique.at(historique.size()-1);
+    historique.pop_back();
+    // suppression du tour du joueur adverse
+    delete historique.at(historique.size()-1);
+    historique.pop_back();
+    // suppression du dernier tour du joueur courant
+    delete historique.at(historique.size()-1);
+    historique.pop_back();
+
+    getEtatActuel().afficher();
+
 }
 
 void Partie::jouerTour(){
+
     //Initialisation du tour
     bool tour_fini = false;
-    historique_etats[3] = historique_etats[2];
-    historique_etats[2] = historique_etats[1];
-    historique_etats[1] = historique_etats[0]; //on sauvegarde l'etat actuel avant de lancer le tour suivant
-    historique_etats[0].numero_tour++;
+    EtatDuJeu* etat = new EtatDuJeu(getEtatActuel());
+    etat->plateau.piecesCoherence(etat->joueurs.at(0)->getPieces(), etat->joueurs.at(1)->getPieces());
+    etat->numero_tour++;
+
+    historique.push_back(etat);
 
     //Affichage du jeu
-    cout << "Tour " << historique_etats[0].numero_tour << endl;
-    if (historique_etats[0].numero_tour > 1) {
-        cout <<"Etat actuel du plateau : " << endl;
-        historique_etats[0].plateau.afficher(historique_etats[0].joueur_courant->getCamp(), historique_etats[0].joueur_courant->getNom(), historique_etats[0].getAutreJoueur()->getNom());
-    }
-    cout << "C'est au joueur " << historique_etats[0].joueur_courant->getNom() << " de jouer." << endl;
+    cout << "Tour " << getEtatActuel().numero_tour << endl;
+
+    cout <<"Etat actuel du plateau : " << endl;
+    getEtatActuel().afficher();
+
+    cout << "C'est au joueur " << getEtatActuel().joueur_courant->getNom() << " de jouer." << endl;
 
     //Si il n'y a plus de piece en reserve, ni de coups possible : on passe le tour
-    vector <const Piece*> reserve = historique_etats[0].reserveJoueur(historique_etats[0].joueur_courant);
+    vector <const Piece*> reserve = getEtatActuel().reserveJoueur(getEtatActuel().joueur_courant);
 
-    //TODO FIx ça de manière plus clean que d'aller chercher l'autre joueur
-    vector<Mouvement> liste_coups = historique_etats[0].coupsPossibles( (historique_etats[0].getJoueurCourant()));
+    vector<Mouvement> liste_coups = getEtatActuel().coupsPossibles( (getEtatActuel().getJoueurCourant()));
 
     for (auto it = liste_coups.begin(); it != liste_coups.end(); ) {
-        if (historique_etats[0].plateau.getGraphe().wouldHiveBreak(it->getPosInitial())) {
+        if (getEtatActuel().plateau.getGraphe().wouldHiveBreak(it->getPosInitial())) {
             it = liste_coups.erase(it);
         } else {
             ++it;
@@ -237,17 +264,17 @@ void Partie::jouerTour(){
         cout<<"Vous n'avez pas de possibilite de jouer ce tour !"<<endl;
         return;
     }
-    vector<Coords> liste_pos = historique_etats[0].plateau.getGraphe().placableCoords(historique_etats[0].joueur_courant->getCamp());
+    vector<Coords> liste_pos = getEtatActuel().plateau.getGraphe().placableCoords(getEtatActuel().joueur_courant->getCamp());
 
     //Actions si une IA joue le prochain tour
-    if (historique_etats[0].joueur_courant->getIsIA()) {
+    if (getEtatActuel().joueur_courant->getIsIA()) {
         if (reserve.empty()) { //Si il ne reste plus de piece en reserve, on en deplace une aleatoirement
             const int coups = rand()%liste_coups.size() +1;//Choix aleatoire d'un deplacement de piece a effectuer
-            historique_etats[0].joueur_courant->jouerCoupDeplacer(liste_coups[coups].getPiece(), liste_coups[coups].getPosFinal(), historique_etats[0].plateau);
+            getEtatActuel().joueur_courant->jouerCoupDeplacer(liste_coups.at(coups).getPiece(), liste_coups.at(coups).getPosFinal(), getEtatActuel().plateau);
         }
         else { //Si il reste des pieces en reserve, on en ajoute une aleatoirement
             srand(static_cast<int>(time(0)));
-            if (historique_etats[0].numero_tour == 7 || historique_etats[0].numero_tour == 8) { //Si l'abeille n'a pas ete posee au 4eme tour de l'IA
+            if (getEtatActuel().numero_tour == 7 || getEtatActuel().numero_tour == 8) { //Si l'abeille n'a pas ete posee au 4eme tour de l'IA
                 for (const auto* piece : reserve) {
                     if (piece->getType() == Abeille) {
                         if (liste_pos.empty()) {
@@ -255,22 +282,22 @@ void Partie::jouerTour(){
                             return;
                         }
                         const int pos = rand()%liste_pos.size(); //Choix aleatoire d'une position pour l'abeille
-                        historique_etats[0].joueur_courant->jouerCoupCreer(piece, liste_pos[pos], historique_etats[0].plateau);
+                        getEtatActuel().joueur_courant->jouerCoupCreer(piece, liste_pos.at(pos), getEtatActuel().plateau);
                     }
                 }
             }
             else {
                 const int piece = rand()%reserve.size(); //Choix aleatoire d'une piece de la reserve a ajouter
                 const int pos = rand()%liste_pos.size();//Choix aleatoire d'une position pour la piece
-                historique_etats[0].joueur_courant->jouerCoupCreer(reserve[piece], liste_pos[pos], historique_etats[0].plateau);
+                getEtatActuel().joueur_courant->jouerCoupCreer(reserve.at(piece), liste_pos.at(pos), getEtatActuel().plateau);
             }
         }
         return;
     }
 
     //Si l'abeille n'a pas ete posee au 4eme tour du joueur
-    if (historique_etats[0].numero_tour == 7 || historique_etats[0].numero_tour == 8) {
-        for (const auto *piece : historique_etats[0].reserveJoueur(historique_etats[0].joueur_courant)) {
+    if (getEtatActuel().numero_tour == 7 || getEtatActuel().numero_tour == 8) {
+        for (const auto *piece : getEtatActuel().reserveJoueur(getEtatActuel().joueur_courant)) {
             if (piece->getType() == Abeille) {
                 cout << "Vous devez poser l'Abeille dans ce tour : aucune autre action permise."<<endl;
                 if (liste_pos.empty()) {
@@ -280,7 +307,7 @@ void Partie::jouerTour(){
                 cout << "Voici vos placements possibles : \n";
                 int j = 0;
                 for (const auto &pos : liste_pos){
-                    cout << j << ". (" << pos.getX() << "," << pos.getY()<< ")";
+                    cout << j << ". "<<pos<<endl;
                     j++;
                 }
                 cout<<endl;
@@ -295,21 +322,21 @@ void Partie::jouerTour(){
                         continue; // Re effectue la boucle
                     }
                 }
-                tour_fini = historique_etats[0].joueur_courant->jouerCoupCreer(piece, liste_pos[choix], historique_etats[0].plateau);
+                tour_fini = getEtatActuel().joueur_courant->jouerCoupCreer(piece, liste_pos.at(choix), getEtatActuel().plateau);
                 return;
             }
         }
     }
 
     //Si l'abeille n'a toujours pas été posée au 4eme tour du joueur
-    if (historique_etats[0].numero_tour == 7 || historique_etats[0].numero_tour == 8) {
-        for (const auto *piece : historique_etats[0].reserveJoueur(historique_etats[0].joueur_courant)) {
+    if (getEtatActuel().numero_tour == 7 || getEtatActuel().numero_tour == 8) {
+        for (const auto *piece : getEtatActuel().reserveJoueur(getEtatActuel().joueur_courant)) {
             if (piece->getType() == Abeille) {
                 cout << "Vous devez poser l'Abeille dans ce tour : aucune autre action permise."<<endl;
                 cout << "Voici vos placements possibles : \n";
                 int j = 0;
                 for (const auto &pos : liste_pos){
-                    cout << j << ". (" << pos.getX() << "," << pos.getY()<< ")";
+                    cout << j << ". "<<pos<<endl;
                     j++;
                 }
                 cout<<endl;
@@ -324,7 +351,7 @@ void Partie::jouerTour(){
                         continue; // Re effectue la boucle
                     }
                 }
-                tour_fini = historique_etats[0].joueur_courant->jouerCoupCreer(piece, liste_pos[choix], historique_etats[0].plateau);
+                tour_fini = getEtatActuel().joueur_courant->jouerCoupCreer(piece, liste_pos.at(choix), getEtatActuel().plateau);
                 break;
             }
         }
@@ -339,7 +366,7 @@ void Partie::jouerTour(){
     while ((!tour_fini) || (menu<1) || (menu>3)) {
         cout<< "1 - Ajouter une piece " << endl;
         cout<< "2 - Deplacer une piece " << endl;
-        cout<< "3 - Annuler le coup precedant " << endl;
+        cout<< "3 - Annuler le coup precedent " << endl;
         cin >> menu;
         if (cin.fail()) { // Gestion input invalide
             cin.clear();
@@ -393,11 +420,11 @@ void Partie::jouerTour(){
                         continue; // Re effectue la boucle
                     }
                 }
-                tour_fini = historique_etats[0].joueur_courant->jouerCoupCreer(reserve[choix1], liste_pos[choix2], historique_etats[0].plateau);
+                tour_fini = getEtatActuel().joueur_courant->jouerCoupCreer(reserve.at(choix1), liste_pos.at(choix2), getEtatActuel().plateau);
                 break;
-            }
+                }
             case 2: { //Deplacement d'une piece du plateau
-                if ((historique_etats[0].getNumTour() == 1 || historique_etats[0].getNumTour() == 2)) {
+                if ((getEtatActuel().getNumTour() == 1 || getEtatActuel().getNumTour() == 2)) {
                     cout<<"Vous ne pouvez pas faire cette action durant votre premier tour !"<<endl;
                     break;
                 }
@@ -408,7 +435,7 @@ void Partie::jouerTour(){
                 cout << "Voici vos coups possibles : \n";
                 int j = 0;
                 for (const auto &coup : liste_coups){
-                    cout << j << ". " << coup.getPiece()->strPiece() << " - a (" << coup.getPosInitial().getX() << " , " << coup.getPosInitial().getY() << ") vers (" << coup.getPosFinal().getX() << " , " << coup.getPosFinal().getY() << ") \n";
+                    cout << j << ". " << coup.getPiece()->strPiece() << " - de (" << coup.getPosInitial().getX() << " , " << coup.getPosInitial().getY() << ") vers (" << coup.getPosFinal().getX() << " , " << coup.getPosFinal().getY() << ") \n";
                     j++;
                 }
                 int choix = -1;
@@ -418,31 +445,27 @@ void Partie::jouerTour(){
                 }
                 Mouvement coupChoisi = liste_coups.at(choix);
                 if (coupChoisi.getPiece() != nullptr) {
-                    tour_fini = historique_etats[0].joueur_courant->jouerCoupDeplacer(coupChoisi.getPiece(), coupChoisi.getPosFinal(), historique_etats[0].plateau);
+                    tour_fini = getEtatActuel().joueur_courant->jouerCoupDeplacer(coupChoisi.getPiece(), coupChoisi.getPosFinal(), getEtatActuel().plateau);
                 } else {
                     cout << "Erreur: La pièce sélectionnée est vide." << endl;
                 }
                 break;
-            }
+                }
             case 3: {
-                if ((historique_etats[0].getNumTour() == 1 || historique_etats[0].getNumTour() == 2)) {
-                    cout<<"Vous ne pouvez pas faire cette action durant votre premier tour !"<<endl;
-                    break;
-                }
                 //vérifier si le tour actuel est supérieur à 2 (chaque joueur a déjà joué au moins une fois)
-                if(historique_etats[0].numero_tour > 2){
-                    //vérifier si il reste des retours en arriere pour cette partie
-                    if(nb_retour_arriere > 0){
-                        annulerDernierMouvement();
-                        cout<<"Voici le nouvel etat du plateau : \n";
-                        historique_etats[0].plateau.afficher(historique_etats[0].joueur_courant->getCamp(), historique_etats[0].joueur_courant->getNom(), historique_etats[0].getAutreJoueur()->getNom());
-                    }
-                    else {
-                        cout<<"Il n'y a pas ou plus de retour en arriere possible pour cette partie ! \n";
-                    }
+                if ((getEtatActuel().getNumTour() <= 2)) {
+                    cout<<"Vous ne pouvez pas faire cette action durant votre premier tour !"<<endl;
                 }
-                else{
-                    cout<<"Il faut qu'au moins chaque joueur ait joue un tour pour revenir en arriere ! \n";
+                //annuler si suffisamment d'états sauvegardés en réserve
+                else if(historique.size() >= 4){
+                    annulerDernierMouvement();
+                    cout<<"Voici le nouvel etat du plateau : \n";
+                    getEtatActuel().afficher();
+                    tour_fini = true;
+
+                }
+                else {
+                    cout<<"Il n'y a pas ou plus de retour en arriere possible pour cette partie ! \n";
                 }
                 break;
             }
@@ -452,14 +475,15 @@ void Partie::jouerTour(){
     }
 }
 
-bool Partie::finPartie()const{
+bool Partie::finPartie() {
     //Si l'abeille est entouree
-    for(const auto joueur : historique_etats[0].joueurs){
+
+    for(const auto joueur : getEtatActuel().joueurs){
         for(const auto piece : joueur->getPieces()){
-            if(piece->getType() == 1 && !historique_etats[0].plateau.inReserve(piece)){
-                const Coords* c = historique_etats[0].plateau.coordsPiece(*piece);
+            if(piece->getType() == 1 && !getEtatActuel().plateau.inReserve(piece)){
+                const Coords* c = getEtatActuel().plateau.coordsPiece(*piece);
                 if (c != nullptr) {
-                    if(historique_etats[0].plateau.getGraphe().isSurrounded(*c)) {
+                    if(getEtatActuel().plateau.getGraphe().isSurrounded(*c)) {
                         return true;
                     }
                 }
@@ -467,10 +491,11 @@ bool Partie::finPartie()const{
         }
     }
     //Si les deux joueurs n'ont plus de coups possibles et de pièce en réserve
-    if(historique_etats[0].reserveJoueur(historique_etats[0].joueurs[0]).empty() && historique_etats[0].reserveJoueur(historique_etats[0].joueurs[0]).empty()) {
-        if(historique_etats[0].coupsPossibles(historique_etats[0].joueurs[0]).empty() && historique_etats[0].coupsPossibles(historique_etats[0].joueurs[0]).empty()) {
-            return true;
-        }
+    if(getEtatActuel().reserveJoueur(getEtatActuel().joueurs.at(0)).empty()
+        && getEtatActuel().reserveJoueur(getEtatActuel().joueurs.at(0)).empty()
+        && getEtatActuel().coupsPossibles(getEtatActuel().joueurs.at(1)).empty()
+        && getEtatActuel().coupsPossibles(getEtatActuel().joueurs.at(1)).empty()) {
+        return true;
     }
     return false;
 }
@@ -482,37 +507,37 @@ void Partie::lancerPartie() {
     while(!finPartie()){
         jouerTour();
         cout<<"Fin du tour"<<endl<<endl;
-        if(historique_etats[0].joueur_courant == historique_etats[0].joueurs[0]){
-            historique_etats[0].joueur_courant = historique_etats[0].joueurs[1];
+        if(getEtatActuel().joueur_courant == getEtatActuel().joueurs.at(0)){
+            getEtatActuel().joueur_courant = getEtatActuel().joueurs.at(1);
         }else{
-            historique_etats[0].joueur_courant = historique_etats[0].joueurs[0];
+            getEtatActuel().joueur_courant = getEtatActuel().joueurs.at(0);
         }
     }
 
-    cout<< "Plateau en fin de partie : "<<endl;
-    historique_etats[0].plateau.afficher(historique_etats[0].getJoueurCourant()->getCamp(), historique_etats[0].getJoueurCourant()->getNom(), historique_etats[0].getAutreJoueur()->getNom());
+    cout<< "Plateau en fin de partie :"<<endl;
+    getEtatActuel().afficher();
 
-    cout << "Fin de la partie : " << endl; //On est sorti de la boucle while : une condition d'arret est verifiee
+    cout << "Fin de la partie :" << endl; //On est sorti de la boucle while : une condition d'arret est verifiee
 
     //On cherche a determiner quelle condition d'arret de la partie a ete remplie
     //Cas 1 : les joueurs n'ont plus de coup possible et plus de piece en reserve : egalite
-    if(historique_etats[0].coupsPossibles(historique_etats[0].joueurs[0]).empty() && historique_etats[0].coupsPossibles(historique_etats[0].joueurs[0]).empty()) {
-        if(historique_etats[0].reserveJoueur(historique_etats[0].joueurs[0]).empty() && historique_etats[0].reserveJoueur(historique_etats[0].joueurs[0]).empty()){
+    if(getEtatActuel().coupsPossibles(getEtatActuel().joueurs.at(0)).empty() && getEtatActuel().coupsPossibles(getEtatActuel().joueurs.at(0)).empty()) {
+        if(getEtatActuel().reserveJoueur(getEtatActuel().joueurs.at(0)).empty() && getEtatActuel().reserveJoueur(getEtatActuel().joueurs.at(0)).empty()){
             cout<<"Egalite !"<<endl;
         }
     }
     //Cas 2 : une abeille est entouree
-    for(const auto joueur : historique_etats[0].joueurs){
+    for(const auto joueur : getEtatActuel().joueurs){
         for(const auto piece : joueur->getPieces()){
             if(piece->getType() == 1){
-                const Coords* c = historique_etats[0].plateau.coordsPiece(*piece);
+                const Coords* c = getEtatActuel().plateau.coordsPiece(*piece);
                 if (c != nullptr) {
-                    if(historique_etats[0].plateau.getGraphe().isSurrounded(*c)){
-                        if(joueur == historique_etats[0].joueurs[0]){
-                            cout<<"Le joueur "<<historique_etats[0].joueurs[1]->getNom()<<" a gagne !"<<endl;
+                    if(getEtatActuel().plateau.getGraphe().isSurrounded(*c)){
+                        if(joueur == getEtatActuel().joueurs.at(0)){
+                            cout<<"Le joueur "<<getEtatActuel().joueurs.at(1)->getNom()<<" a gagne !"<<endl;
                         }
-                        if(joueur == historique_etats[0].joueurs[1]){
-                            cout<<"Le joueur "<<historique_etats[0].joueurs[0]->getNom()<<" a gagne !"<<endl;
+                        if(joueur == getEtatActuel().joueurs.at(1)){
+                            cout<<"Le joueur "<<getEtatActuel().joueurs.at(0)->getNom()<<" a gagne !"<<endl;
                         }
                     }
                 }
