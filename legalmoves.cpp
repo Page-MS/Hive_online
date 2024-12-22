@@ -67,9 +67,13 @@ vector<Coords> LegalMoveAbeille::searchMoves(Coords coord,Graphe* graph, bool ca
             bool a_autre_voisin_que_piece_de_base=0;
             for (auto voisins_i :graphe_a_manipuler->coordsInhabitedAdjacents(i)){
                 if (voisins_i != coord){
-                    resultat.push_back(i);
+                    a_autre_voisin_que_piece_de_base=1;
+
 
                 }
+            }
+            if(a_autre_voisin_que_piece_de_base){
+                resultat.push_back(i);
             }
 
         }
@@ -90,7 +94,19 @@ vector<Coords> LegalMoveScarabee::searchMoves(Coords coord,Graphe* graph, bool c
         }
         vector<Coords> voisins=graphe_a_manipuler->coordsExistentAdjacents(coord);
         for(auto i:voisins){
-                resultat.push_back(i);
+                bool a_autre_voisin_que_piece_de_base=0;
+                for (auto voisins_i :graphe_a_manipuler->coordsInhabitedAdjacents(i)){
+                    if (voisins_i != coord){
+                        a_autre_voisin_que_piece_de_base=1;
+
+
+                    }
+                }
+                if(a_autre_voisin_que_piece_de_base || (!graphe_a_manipuler->getCase(i).empty())){
+                    resultat.push_back(i);
+                }
+
+
         }
         return resultat;
 
