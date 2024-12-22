@@ -577,8 +577,8 @@ bool Graphe::isSurrounded(const Coords& c) const {
 */
 bool Graphe::wouldHiveBreak(const Coords& c) const {
     const Case* ca = getMutableCase(c);
-    if (ca==nullptr) throw std::runtime_error("ERROR Graphe::wouldHiveBreak : Case inexistante.");
-    if (ca->empty()) throw std::runtime_error("ERROR Graphe::wouldHiveBreak : Case vide.");
+    if (ca==nullptr){return false;} //throw std::runtime_error("ERROR Graphe::wouldHiveBreak : Case inexistante.");
+    if (ca->empty()){return false;} //throw std::runtime_error("ERROR Graphe::wouldHiveBreak : Case vide.");
 
     // ruche intacte si case contient plus d'une pièce
     if (ca->getNbPieces()>1) return false;
@@ -886,9 +886,9 @@ void Graphe::movePiece(const Piece& p, const Coords& c) {
 
     Case* ca_to = getMutableCase(c);
     if (ca_to==nullptr) throw runtime_error("ERROR Graphe::movePiece : Case de destination inexistante.");
-
-    supprPiece(ca_from);
     addPiece(p, *ca_to);
+    supprPiece(ca_from);
+
 }
 
 /*! \brief Vide entièrement le graphe
