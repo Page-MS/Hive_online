@@ -294,6 +294,7 @@ std::ostream& operator<<(std::ostream& flux, const Case& c);
 std::ostream& operator<<(std::ostream& flux, const Graphe& g);
 
 // couleurs ANSI
+std::string setColor(bool camp, bool highlight=false);
 std::string setColor(bool camp, TYPE_PIECE piece);
 std::string resetColor();
 std::string redColor();

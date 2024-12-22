@@ -26,8 +26,8 @@ class Piece {
     friend class Case;
     friend class GameManager;
 public:
-    //Si les pièces sont crées avant d'être mises sur le plateau, elles sont alors toutes placées à un emplacement abérant
     Piece(TYPE_PIECE type,bool c): camp(c), type_piece(type){}
+    Piece(const Piece& p): camp(p.camp), type_piece(p.type_piece){}
     ~Piece()=default;
     vector<Coords> coupsPossibles(Graphe* graph, Coords coord) const;
     TYPE_PIECE getType() const {return type_piece;}

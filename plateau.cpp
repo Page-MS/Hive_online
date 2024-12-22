@@ -183,31 +183,32 @@ void Plateau::afficher(bool joueur_courant, const string& joueur1, const string&
 	Graphe g;
 	const Coords c(0, 0);
 
-	std::cout<<"--------------------------------"<<std::endl;
+	// Réserve de l'adversaire
+	std::cout<<setColor(!joueur_courant)<<"--------------------------------"<<std::endl;
 	auto pieces_adversaire = piecesReserve(!joueur_courant);
 
 	for (auto piece:pieces_adversaire) {
 		g.addPiece(*piece, c);
-
-		
-
-		std::cout<<setColor(piece->getCamp(), piece->getType())<<"<"<<g.getCase(c)<<">"<<resetColor();
+		std::cout<<setColor(piece->getCamp(), piece->getType())<<"<"<<g.getCase(c)<<">";
 		g.supprPiece(c);
 	}
-	std::cout<<std::endl<<"------------- "<<joueur2<<" -------------"<<std::endl;
 
+	std::cout<<std::endl<<setColor(!joueur_courant)<<"------------- "<<setColor(!joueur_courant, true)<<joueur2<<" -------------"<<resetColor()<<std::endl;
+
+	// Plateau
 	std::cout<<getGraphe().toStr()<<std::endl;
 
-	std::cout<<"------------- "<<joueur1<<" -------------"<<std::endl;
+	// Réserve du joueur courant
+	std::cout<<setColor(joueur_courant)<<"------------- "<<setColor(joueur_courant, true)<<joueur1<<" -------------"<<std::endl;
 	auto pieces_vous = piecesReserve(joueur_courant);
 
 	for (auto piece:pieces_vous) {
 		g.addPiece(*piece, c);
 
-		std::cout<<setColor(piece->getCamp(), piece->getType())<<"<"<<g.getCase(c)<<">"<<resetColor();
+		std::cout<<setColor(piece->getCamp(), piece->getType())<<"<"<<g.getCase(c)<<">";
 		g.supprPiece(c);
 	}
-	std::cout<<std::endl<<"--------------------------------"<<std::endl;
+	std::cout<<std::endl<<setColor(joueur_courant)<<"--------------------------------"<<resetColor()<<std::endl;
 
 	std::cout<<std::endl;
 }

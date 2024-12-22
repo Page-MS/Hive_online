@@ -27,7 +27,10 @@ protected:
 public:
     Joueur(const std::string& nom_joueur, bool camp_joueur, bool IA=false);
     Joueur(){}
-    Joueur(const Joueur& autre) : nom(autre.nom) {
+    Joueur(const Joueur& autre) : nom(autre.nom), camp(autre.camp), isIA(autre.isIA) {
+        for (const Piece* piece : pieces) {
+            delete piece; // libère chaque pièce
+        }
         for (const Piece* piece : autre.pieces) {
             pieces.push_back(new Piece(*piece)); // copie chaque pièce
         }
@@ -67,7 +70,7 @@ public:
 
     Coords getPosInitial() const { return posInitial; }
     Coords getPosFinal() const { return posFinal; }
-    const Piece* getPiece() const { return piece; }
+    const Piece* getPiece() const {return piece; }
 
     void ExecuterMvt();  // exécute le déplacement
     void AnnulerMvt();   // annule le déplacement

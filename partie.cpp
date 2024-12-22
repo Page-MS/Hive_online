@@ -73,6 +73,7 @@ Joueur* EtatDuJeu::getAutreJoueur() {
 const vector<Mouvement> EtatDuJeu::coupsPossibles(Joueur* j) const {
     vector<Mouvement> mvt;
     vector<const Piece*> pj = j->getPieces();
+
     for (const Piece* piece : pj) {
         if (!plateau.isPieceStuck(*piece)) {
             const Coords* c = plateau.coordsPiece(*piece);
@@ -96,15 +97,6 @@ void Partie::setStartJoueurId(){
         start_joueur_id = 0;
     }else{ //s'il y a 2 joueurs humains ou 2 IA dans la partie
         start_joueur_id = rand() % 2; //on choisit aléatoirement le joueur qui commence
-    }
-    //Initialisation du camp du joueur : par convention le joueur qui commence la partie est dans le camp true
-    if (start_joueur_id == 1) {
-        historique_etats[0].joueurs[0]->setCamp(false);
-        historique_etats[0].joueurs[1]->setCamp(true);
-    }
-    else {
-        historique_etats[0].joueurs[0]->setCamp(true);
-        historique_etats[0].joueurs[1]->setCamp(false);
     }
 }
 
@@ -163,15 +155,15 @@ void Partie::commencerPartie() {
     }
 
     setStartJoueurId();
+
     historique_etats[0].plateau = Plateau();
     historique_etats[0].joueur_courant = (start_joueur_id == 0) ? historique_etats[0].joueurs[0]
                                                                 : historique_etats[0].joueurs[1]; //On determine qui commence la partie
     historique_etats[0].numero_tour = 0;
 
+
     for (Joueur *joueur: historique_etats[0].joueurs) {
-        for (auto *piece: joueur->getPieces()) {
-            historique_etats[0].plateau.addPieceReserve(*piece);
-        }
+        historique_etats[0].plateau.fillReserve(joueur->getPieces());
     }
 
     for (int i = 1; i < 4; i++) {
@@ -229,13 +221,15 @@ void Partie::jouerTour(){
 
     //Si il n'y a plus de piece en reserve, ni de coups possible : on passe le tour
     vector <const Piece*> reserve = historique_etats[0].reserveJoueur(historique_etats[0].joueur_courant);
+
     //TODO FIx ça de manière plus clean que d'aller chercher l'autre joueur
-    vector<Mouvement> liste_coups = historique_etats[0].coupsPossibles(historique_etats[0].getAutreJoueur());
-    if(historique_etats[0].getJoueurCourant()->getIsIA()){
+    vector<Mouvement> liste_coups = historique_etats[0].coupsPossibles( (historique_etats[0].getJoueurCourant()));
+
+    /*if(historique_etats[0].getJoueurCourant()->getIsIA()){
         liste_coups = historique_etats[0].coupsPossibles( (historique_etats[0].getAutreJoueur()));
     }else{
         liste_coups = historique_etats[0].coupsPossibles( (historique_etats[0].getJoueurCourant()));
-    }
+    }*/
     for (auto it = liste_coups.begin(); it != liste_coups.end(); ) {
         if (historique_etats[0].plateau.getGraphe().wouldHiveBreak(it->getPosInitial())) {
             it = liste_coups.erase(it);

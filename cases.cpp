@@ -1060,13 +1060,13 @@ bool isCaseCoords(int c, int l) { return ( (c%2==0 && l%2==0) || (c%2!=0 && l%2!
 bool isCaseCoords(const Coords& c) { return isCaseCoords(c.getX(), c.getY()); }
 
 std::string resetColor() {
-    return "\033[0m";
+    return "\033[0;0m";
 }
 std::string redColor() {
-    return "\033[31m";
+    return "\033[0;31m";
 }
 std::string blueColor() {
-    return "\033[34m";
+    return "\033[0;34m";
 }
 std::string queenRedColor() {
     return "\033[1;31m";
@@ -1074,13 +1074,21 @@ std::string queenRedColor() {
 std::string queenBlueColor() {
     return "\033[1;34m";
 }
-std::string setColor(bool camp, TYPE_PIECE piece) {
-    if (camp && piece == TYPE_PIECE::Abeille)
+
+
+std::string setColor(bool camp, bool highlight) {
+    if (camp && highlight == TYPE_PIECE::Abeille)
         return queenRedColor();
     else if (camp)
         return redColor();
-    else if (!camp && piece == TYPE_PIECE::Abeille)
+    else if (!camp && highlight == TYPE_PIECE::Abeille)
         return queenBlueColor();
     else
         return blueColor();
+}
+
+std::string setColor(bool camp, TYPE_PIECE piece) {
+    if (piece == TYPE_PIECE::Abeille)
+        return setColor(camp, true);
+    else return setColor(camp, false);
 }
