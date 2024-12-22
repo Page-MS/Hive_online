@@ -53,7 +53,6 @@ public:
 
     void setCamp(bool newCamp) { camp = newCamp; }
     bool getCamp() { return camp; }
-    void save(const std::string& fichier, Plateau& plateau) const;
 };
 
 

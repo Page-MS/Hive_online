@@ -56,6 +56,7 @@ bool Joueur::jouerCoupCreer(const Piece* pieceChoisie, const Coords& destination
 }
 
 bool Joueur::jouerCoupDeplacer(const Piece* pieceChoisie, const Coords& destination, Plateau& plateau){
+    cout<< camp<<endl;
     if (pieceChoisie->getCamp()!=camp) throw runtime_error("ERROR Joueur::jouerCoupDeplacer : la piece appartient au joueur adverse.");
 
     if (plateau.inReserve(*pieceChoisie)) {
@@ -89,34 +90,6 @@ bool Joueur::jouerCoupDeplacer(const Piece* pieceChoisie, const Coords& destinat
     }
     plateau.movePiece(*pieceChoisie, destination);
     return true;
-}
-
-
-
-void Joueur::save(const std::string& fichier, Plateau& plateau) const {
-    std::ofstream file(fichier);
-    if (!file.is_open()) {
-        throw std::runtime_error("Unable to open file");
-    }
-
-    // ecrire le camp du joueur
-    file << "Camp: " << camp << "\n";
-
-    // Compter et ecrire le nombre de pieces de chaque type sur le plateau
-    std::map<TYPE_PIECE, int> piecesCount;
-    for (auto piece : pieces) {
-        if (!plateau.inReserve(*piece)) {
-            piecesCount[piece->getType()]++;
-        }
-    }
-
-    for (const auto& entry : piecesCount) {
-        file << "Type: " << entry.first << ", Nombre: " << entry.second << "\n";
-    }
-
-    file << "FIN_JOUEUR\n";
-
-    file.close();
 }
 
 void Mouvement::ExecuterMvt(){

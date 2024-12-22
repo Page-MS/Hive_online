@@ -41,7 +41,7 @@ EtatDuJeu::EtatDuJeu(){
 
 EtatDuJeu::EtatDuJeu(const EtatDuJeu& other){
     numero_tour = other.numero_tour;
-    plateau = other.plateau; //nécessite un constructeur de recopie de Plateau
+    plateau = other.plateau;
     joueurs[0] = other.joueurs[0];
     joueurs[1] = other.joueurs[1];
     if(other.joueur_courant == other.joueurs[0]) joueur_courant = joueurs[0];
@@ -120,12 +120,11 @@ void Partie::commencerPartie() {
     while (true) {
         cout << "Le joueur 1 est il une IA ? (1 : oui, 0 : non)" << endl;
         cin >> choix;
-        if (cin.fail()) {
-            cin.clear(); // Clear the error state of cin
-            cin.ignore(std::numeric_limits<std::streamsize>::max(),
-                       '\n'); // Remove invalid input from buffer
+        if (cin.fail()) { // Gestion input invalide
+            cin.clear();
+            cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Retire input invalide du buffer
             cout << "\nValeur invalide, reessayez\n";
-            continue; // Restart the loop
+            continue; // Re effectue la boucle
         }
         if (choix == 0 || choix == 1) {
             // Valid choice
@@ -137,12 +136,11 @@ void Partie::commencerPartie() {
     while (true) {
         cout << "Le joueur 2 est il une IA ? (1 : oui, 0 : non)" << endl;
         cin >> choix;
-        if (cin.fail()) {
-            cin.clear(); // Clear the error state of cin
-            cin.ignore(std::numeric_limits<std::streamsize>::max(),
-                       '\n'); // Remove invalid input from buffer
+        if (cin.fail()) { // Gestion input invalide
+            cin.clear();
+            cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Retire input invalide du buffer
             cout << "\nValeur invalide, reessayez\n";
-            continue; // Restart the loop
+            continue; // Re effectue la boucle
         }
         if (choix == 0 || choix == 1) {
             // Valid choice
@@ -170,13 +168,9 @@ void Partie::commencerPartie() {
                                                                 : historique_etats[0].joueurs[1]; //On determine qui commence la partie
     historique_etats[0].numero_tour = 0;
 
-    //Debug commenté
     for (Joueur *joueur: historique_etats[0].joueurs) {
-        //cout<<"aaaaaaaaa";
         for (auto *piece: joueur->getPieces()) {
-            //cout<<"B";
             historique_etats[0].plateau.addPieceReserve(*piece);
-            //cout<<historique_etats[0].reserveJoueur(joueur).size()<<endl;
         }
     }
 
@@ -189,12 +183,11 @@ void Partie::commencerPartie() {
         while (true) {
             cout << "Entrez le nombre de retours en arriere possibles : (Entre 0 et 3)" << endl;
             cin >> nb_retour_arriere;
-            if (cin.fail()) {
-                cin.clear(); // Clear the error state of cin
-                cin.ignore(std::numeric_limits<std::streamsize>::max(),
-                           '\n'); // Remove invalid input from buffer
+            if (cin.fail()) { // Gestion input invalide
+                cin.clear();
+                cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Retire input invalide du buffer
                 cout << "\nValeur invalide, reessayez\n";
-                continue; // Restart the loop
+                continue; // Re effectue la boucle
             }
             if (nb_retour_arriere <= 3 && nb_retour_arriere >= 0) {
                 // Valid choice
@@ -219,13 +212,14 @@ void Partie::annulerDernierMouvement(){ //On remonte au tour précédent de chac
 }
 
 void Partie::jouerTour(){
-    historique_etats[0].plateau.afficher(historique_etats[0].joueur_courant->getCamp(), historique_etats[0].joueur_courant->getNom(), historique_etats[0].getAutreJoueur()->getNom());
-
+    //Initialisation du tour
     bool tour_fini = false;
     historique_etats[3] = historique_etats[2];
     historique_etats[2] = historique_etats[1];
     historique_etats[1] = historique_etats[0]; //on sauvegarde l'etat actuel avant de lancer le tour suivant
     historique_etats[0].numero_tour++;
+
+    //Affichage du jeu
     cout << "Tour " << historique_etats[0].numero_tour << endl;
     if (historique_etats[0].numero_tour > 1) {
         cout <<"Etat actuel du plateau : " << endl;
@@ -236,8 +230,7 @@ void Partie::jouerTour(){
     //Si il n'y a plus de piece en reserve, ni de coups possible : on passe le tour
     vector <const Piece*> reserve = historique_etats[0].reserveJoueur(historique_etats[0].joueur_courant);
     //TODO FIx ça de manière plus clean que d'aller chercher l'autre joueur
-    vector<Mouvement> liste_coups = historique_etats[0].coupsPossibles( (historique_etats[0].getAutreJoueur()));
-
+    vector<Mouvement> liste_coups = historique_etats[0].coupsPossibles(historique_etats[0].getAutreJoueur());
     if(reserve.size() == 0 && liste_coups.size() == 0){
         cout<<"Vous n'avez pas de possibilite de jouer ce tour !"<<endl;
         return;
@@ -246,16 +239,63 @@ void Partie::jouerTour(){
 
     //Actions si une IA joue le prochain tour
     if (historique_etats[0].joueur_courant->getIsIA()) {
-        srand((unsigned int)time(0));
         if (reserve.empty()) { //Si il ne reste plus de piece en reserve, on en deplace une aleatoirement
-            int coups = rand()%liste_coups.size() +1;//Choix aleatoire d'un deplacement de piece a effectuer
-            //TODO s'execute pas bien
+            const int coups = rand()%liste_coups.size() +1;//Choix aleatoire d'un deplacement de piece a effectuer
             historique_etats[0].joueur_courant->jouerCoupDeplacer(liste_coups[coups].getPiece(), liste_coups[coups].getPosFinal(), historique_etats[0].plateau);
         }
         else { //Si il reste des pieces en reserve, on en ajoute une aleatoirement
-            int piece = rand()%reserve.size() +1; //Choix aleatoire d'une piece de la reserve a ajouter
-            int pos = rand()%liste_pos.size() +1;//Choix aleatoire d'une position pour la piece
-            historique_etats[0].joueur_courant->jouerCoupCreer(reserve[piece-1], liste_pos[pos-1], historique_etats[0].plateau);
+            srand(static_cast<int>(time(0)));
+            if (historique_etats[0].numero_tour == 7 || historique_etats[0].numero_tour == 8) { //Si l'abeille n'a pas ete posee au 4eme tour de l'IA
+                for (const auto* piece : reserve) {
+                    if (piece->getType() == Abeille) {
+                        if (liste_pos.empty()) {
+                            cout << "Erreur : L'IA ne peut pas poser l'Abeille, mais cela est obligatoire.\n";
+                            return;
+                        }
+                        const int pos = rand()%liste_pos.size(); //Choix aleatoire d'une position pour l'abeille
+                        historique_etats[0].joueur_courant->jouerCoupCreer(piece, liste_pos[pos], historique_etats[0].plateau);
+                    }
+                }
+            }
+            else {
+                const int piece = rand()%reserve.size(); //Choix aleatoire d'une piece de la reserve a ajouter
+                const int pos = rand()%liste_pos.size();//Choix aleatoire d'une position pour la piece
+                historique_etats[0].joueur_courant->jouerCoupCreer(reserve[piece], liste_pos[pos], historique_etats[0].plateau);
+            }
+        }
+        return;
+    }
+
+    //Si l'abeille n'a pas ete posee au 4eme tour du joueur
+    if (historique_etats[0].numero_tour == 7 || historique_etats[0].numero_tour == 8) {
+        for (const auto *piece : historique_etats[0].reserveJoueur(historique_etats[0].joueur_courant)) {
+            if (piece->getType() == Abeille) {
+                cout << "Vous devez poser l'Abeille dans ce tour : aucune autre action permise."<<endl;
+                if (liste_pos.empty()) {
+                    cout << "Erreur : Impossible de poser l'Abeille, mais cela est obligatoire.\n";
+                    return;
+                }
+                cout << "Voici vos placements possibles : \n";
+                int j = 0;
+                for (const auto &pos : liste_pos){
+                    cout << j << ". (" << pos.getX() << "," << pos.getY()<< ")";
+                    j++;
+                }
+                cout<<endl;
+                int choix = -1;
+                while (choix <0 || choix>liste_pos.size()) {
+                    cout << "Ou souhaitez vous placer votre piece ? \n";
+                    cin>>choix;
+                    if (cin.fail()) { // Gestion input invalide
+                        cin.clear();
+                        cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Retire input invalide du buffer
+                        cout << "\nValeur invalide, reessayez\n";
+                        continue; // Re effectue la boucle
+                    }
+                }
+                tour_fini = historique_etats[0].joueur_courant->jouerCoupCreer(piece, liste_pos[choix], historique_etats[0].plateau);
+                break;
+            }
         }
         return;
     }
@@ -263,18 +303,16 @@ void Partie::jouerTour(){
     //Menu d'actions possible pour que le joueur humain joue le prochain tour
     cout << "Que souhaitez-vous faire ? \n";
     int menu = 0;
-    while ((!tour_fini) || (menu<1) || (menu>4)) {
+    while ((!tour_fini) || (menu<1) || (menu>3)) {
         cout<< "1 - Ajouter une piece " << endl;
         cout<< "2 - Deplacer une piece " << endl;
         cout<< "3 - Annuler le coup precedant " << endl;
-        cout<< "4 - Sauvegarder et arreter la partie " << endl;
         cin >> menu;
-        if (cin.fail()) {
-            cin.clear(); // Clear the error state of cin
-            cin.ignore(std::numeric_limits<std::streamsize>::max(),
-                       '\n'); // Remove invalid input from buffer
+        if (cin.fail()) { // Gestion input invalide
+            cin.clear();
+            cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Retire input invalide du buffer
             cout << "\nValeur invalide, reessayez\n";
-            continue; // Restart the loop
+            continue; // Re effectue la boucle
         }
 
         switch (menu) {
@@ -297,12 +335,11 @@ void Partie::jouerTour(){
                 while (choix1 <0 || choix1>reserve.size()) {
                     cout << "Quelle piece voulez vous placer ? (Entrez son indice) \n";
                     cin>>choix1;
-                    if (cin.fail()) {
-                        cin.clear(); // Clear the error state of cin
-                        cin.ignore(std::numeric_limits<std::streamsize>::max(),
-                                   '\n'); // Remove invalid input from buffer
+                    if (cin.fail()) { // Gestion input invalide
+                        cin.clear();
+                        cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Retire input invalide du buffer
                         cout << "\nValeur invalide, reessayez\n";
-                        continue; // Restart the loop
+                        continue; // Re effectue la boucle
                     }
                 }
                 cout << "Voici vos placements possibles : \n";
@@ -316,12 +353,11 @@ void Partie::jouerTour(){
                 while (choix2 <0 || choix2>liste_pos.size()) {
                     cout << "Ou souhaitez vous placer votre piece ? \n";
                     cin>>choix2;
-                    if (cin.fail()) {
-                        cin.clear(); // Clear the error state of cin
-                        cin.ignore(std::numeric_limits<std::streamsize>::max(),
-                                   '\n'); // Remove invalid input from buffer
+                    if (cin.fail()) { // Gestion input invalide
+                        cin.clear();
+                        cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Retire input invalide du buffer
                         cout << "\nValeur invalide, reessayez\n";
-                        continue; // Restart the loop
+                        continue; // Re effectue la boucle
                     }
                 }
                 tour_fini = historique_etats[0].joueur_courant->jouerCoupCreer(reserve[choix1], liste_pos[choix2], historique_etats[0].plateau);
@@ -345,7 +381,7 @@ void Partie::jouerTour(){
                 int choix = -1;
                 while (choix <0 || choix>liste_coups.size()) {
                     cout << "Quelle possibilite souhaitez-vous jouer ? \n";
-                    cin>>choix;
+                    cin >> choix;
                 }
                 Mouvement coupChoisi = liste_coups.at(choix);
                 tour_fini = historique_etats[0].joueur_courant->jouerCoupDeplacer(coupChoisi.getPiece(), coupChoisi.getPosFinal(), historique_etats[0].plateau);
@@ -374,11 +410,6 @@ void Partie::jouerTour(){
                     break;
                 }
             }
-            case 4: {
-                //appel à sauvegarder partie
-                cout<<"Votre partie a ete sauvegardee, au revoir ! \n";
-                return;
-            }
             default:
                 cout<<"Valeur invalide, reessayez\n";
         }
@@ -387,14 +418,6 @@ void Partie::jouerTour(){
 
 bool Partie::finPartie()const{
     //Si l'abeille est entouree
-    /*
-    //DEBUG
-    cout<<"premier coucou";
-    vector<Piece*> pieces = historique_etats[0].reserveJoueur(historique_etats[0].joueurs[0]);
-    for (const Piece* piece : pieces) {
-        cout<<piece->getType()<<endl;
-    }
-    */
     for(const auto joueur : historique_etats[0].joueurs){
         for(const auto piece : joueur->getPieces()){
             if(piece->getType() == 1 && !(historique_etats[0].plateau.inReserve(piece))){
@@ -422,7 +445,7 @@ void Partie::lancerPartie() {
     // Si aucune condition d'arret de partie n'est verifiee, on joue le tour et passe au joueur suivant
     while(!finPartie()){
         jouerTour();
-        cout<<"Fin du tour"<<endl;
+        cout<<"Fin du tour"<<endl<<endl;
         if(historique_etats[0].joueur_courant == historique_etats[0].joueurs[0]){
             historique_etats[0].joueur_courant = historique_etats[0].joueurs[1];
         }else{
@@ -464,21 +487,20 @@ void GameManager::afficher_menu() {
     //Est appelée en début d'execution pour lancer la boucle de gameplay
     //sert à gérer le switch
     int choice =0;
-    while (choice != 3) {
+    while (choice != 2) {
 
         cout<<"\n\n ----------------------------------\n\n"<<"Bienvenue dans Hive, le jeu iconique, enfin sous forme virtuelle !\n"
                                                              "Que souhaitez vous faire ?\n"
                                                              "1. Lancer une nouvelle partie\n "
-                                                             "2. Restaurer la partie sauvegardee\n"
-                                                             "3. Quitter le jeu\n "
+                                                             "2. Quitter le jeu\n "
                                                              "Votre choix :";
         cin >> choice;
-        // Handle invalid input
+        // Gestion input invalide
         if (cin.fail()) {
-            cin.clear(); // Clear the error state of cin
-            cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Remove invalid input from buffer
+            cin.clear();
+            cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Retire input invalide du buffer
             cout << "\nValeur invalide, reessayez\n";
-            continue; // Restart the loop
+            continue; // Re effectue la boucle
         }
         switch (choice) {
             case 1:
@@ -486,10 +508,6 @@ void GameManager::afficher_menu() {
                 partie_active.lancerPartie();
                 break;
             case 2:
-                cout << "\n Vous avez repris votre partie\n";
-                //chargerPartie()
-            break;
-            case 3:
                 cout << "\n Au revoir ! \n";
                 break;
             default:
