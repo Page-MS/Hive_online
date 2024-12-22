@@ -67,7 +67,6 @@ class GameManager{
     public:
         static GameManager& getInstance();
         void afficher_menu();
-        //void chargerJeu(); //Appelee pour charger une partie a partir d'un fichier
 };
 
 #endif
