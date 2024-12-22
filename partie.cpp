@@ -219,10 +219,7 @@ void Partie::jouerTour(){
     }
     cout << "C'est au joueur " << historique_etats[0].joueur_courant->getNom() << " de jouer." << endl;
 
-    //Si il n'y a plus de piece en reserve, ni de coups possible : on passe le tour
     vector <const Piece*> reserve = historique_etats[0].reserveJoueur(historique_etats[0].joueur_courant);
-
-    //TODO FIx ça de manière plus clean que d'aller chercher l'autre joueur
     vector<Mouvement> liste_coups = historique_etats[0].coupsPossibles( (historique_etats[0].getJoueurCourant()));
 
     for (auto it = liste_coups.begin(); it != liste_coups.end(); ) {
@@ -242,7 +239,7 @@ void Partie::jouerTour(){
     //Actions si une IA joue le prochain tour
     if (historique_etats[0].joueur_courant->getIsIA()) {
         if (reserve.empty()) { //Si il ne reste plus de piece en reserve, on en deplace une aleatoirement
-            const int coups = rand()%liste_coups.size() +1;//Choix aleatoire d'un deplacement de piece a effectuer
+            const int coups = rand()%liste_coups.size();//Choix aleatoire d'un deplacement de piece a effectuer
             historique_etats[0].joueur_courant->jouerCoupDeplacer(liste_coups[coups].getPiece(), liste_coups[coups].getPosFinal(), historique_etats[0].plateau);
         }
         else { //Si il reste des pieces en reserve, on en ajoute une aleatoirement
