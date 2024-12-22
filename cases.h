@@ -293,4 +293,12 @@ bool isCaseCoords(const Coords& c);
 std::ostream& operator<<(std::ostream& flux, const Case& c);
 std::ostream& operator<<(std::ostream& flux, const Graphe& g);
 
+// couleurs ANSI
+std::string setColor(bool camp, TYPE_PIECE piece);
+std::string resetColor();
+std::string redColor();
+std::string blueColor();
+std::string queenRedColor();
+std::string queenBlueColor();
+
 #endif
