@@ -231,7 +231,6 @@ void Partie::jouerTour(){
     vector <const Piece*> reserve = historique_etats[0].reserveJoueur(historique_etats[0].joueur_courant);
     //TODO FIx ça de manière plus clean que d'aller chercher l'autre joueur
     vector<Mouvement> liste_coups = historique_etats[0].coupsPossibles(historique_etats[0].getAutreJoueur());
-    vector<Mouvement> liste_coups;
     if(historique_etats[0].getJoueurCourant()->getIsIA()){
         liste_coups = historique_etats[0].coupsPossibles( (historique_etats[0].getAutreJoueur()));
     }else{
@@ -244,7 +243,6 @@ void Partie::jouerTour(){
             ++it;
         }
     }
-
 
     if(reserve.size() == 0 && liste_coups.size() == 0){
         cout<<"Vous n'avez pas de possibilite de jouer ce tour !"<<endl;
@@ -497,8 +495,6 @@ void Partie::lancerPartie() {
     while(!finPartie()){
         jouerTour();
         cout<<"Fin du tour"<<endl<<endl;
-        cout<<"Fin du tour"<<endl;
-        historique_etats[0].plateau.afficher(historique_etats[0].joueur_courant->getCamp(), historique_etats[0].joueur_courant->getNom(), historique_etats[0].getAutreJoueur()->getNom());
         if(historique_etats[0].joueur_courant == historique_etats[0].joueurs[0]){
             historique_etats[0].joueur_courant = historique_etats[0].joueurs[1];
         }else{
