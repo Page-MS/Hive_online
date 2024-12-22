@@ -91,6 +91,7 @@ const vector<Mouvement> EtatDuJeu::coupsPossibles(Joueur* j) const {
 
 //Méthode qui détermine qui commence la partie
 void Partie::setStartJoueurId(){
+    srand(static_cast<int>(time(0)));
     if (historique_etats[0].joueurs[0]->getIsIA() && !(historique_etats[0].joueurs[1]->getIsIA())){
         start_joueur_id = 1; //l'humain commence toujours
     }else if(historique_etats[0].joueurs[1]->getIsIA() && !(historique_etats[0].joueurs[0]->getIsIA())){
@@ -154,13 +155,13 @@ void Partie::commencerPartie() {
         historique_etats[0].joueurs[1] = new Joueur(pseudo2, false);
     }
 
-    setStartJoueurId();
-
     historique_etats[0].plateau = Plateau();
-    historique_etats[0].joueur_courant = (start_joueur_id == 0) ? historique_etats[0].joueurs[0]
-                                                                : historique_etats[0].joueurs[1]; //On determine qui commence la partie
     historique_etats[0].numero_tour = 0;
 
+    //On determine qui commence la partie
+    setStartJoueurId();
+    historique_etats[0].joueur_courant = (start_joueur_id == 0) ? historique_etats[0].joueurs[0]
+                                                                : historique_etats[0].joueurs[1];
 
     for (Joueur *joueur: historique_etats[0].joueurs) {
         historique_etats[0].plateau.fillReserve(joueur->getPieces());
@@ -440,13 +441,12 @@ void Partie::jouerTour(){
                     }
                     else {
                         cout<<"Il n'y a pas ou plus de retour en arriere possible pour cette partie ! \n";
-                        break;
                     }
                 }
                 else{
                     cout<<"Il faut qu'au moins chaque joueur ait joue un tour pour revenir en arriere ! \n";
-                    break;
                 }
+                break;
             }
             default:
                 cout<<"Valeur invalide, reessayez\n";
@@ -532,7 +532,7 @@ void GameManager::afficher_menu() {
 
         cout<<"\n\n ----------------------------------\n\n"<<"Bienvenue dans Hive, le jeu iconique, enfin sous forme virtuelle !\n"
                                                              "Que souhaitez vous faire ?\n"
-                                                             "1. Lancer une nouvelle partie\n "
+                                                             " 1. Lancer une nouvelle partie\n "
                                                              "2. Quitter le jeu\n "
                                                              "Votre choix :";
         cin >> choice;
@@ -555,5 +555,4 @@ void GameManager::afficher_menu() {
                 cout<<"\nValeur invalide, reessayez\n";
         }
         }
-
 }

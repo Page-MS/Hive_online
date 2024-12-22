@@ -53,8 +53,6 @@ class Partie{
         void jouerTour(); //Gere le deroulement d'un tour
         void lancerPartie(); //Gere le deroulement de la partie
         bool finPartie()const; //Verifie si des conditions d'arret de la partie sont remplies
-        //void sauvegarderPartie(ofstream& outFile) const;
-        //void restaurerPartie(ifstream& inFile);
 };
 
 class GameManager{
