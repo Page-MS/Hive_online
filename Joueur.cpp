@@ -60,7 +60,6 @@ bool Joueur::jouerCoupCreer(const Piece* pieceChoisie, const Coords& destination
 }
 
 bool Joueur::jouerCoupDeplacer(const Piece* pieceChoisie, const Coords& destination, Plateau& plateau){
-    cout<< camp<<endl;
     if (pieceChoisie->getCamp()!=camp) throw runtime_error("ERROR Joueur::jouerCoupDeplacer : la piece appartient au joueur adverse.");
 
     if (plateau.inReserve(*pieceChoisie)) {

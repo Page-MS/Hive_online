@@ -21,14 +21,13 @@ EtatDuJeu::EtatDuJeu(int num_tour, Plateau p,  Joueur* j1, Joueur* j2, Joueur* j
 
 EtatDuJeu::~EtatDuJeu() {
     //Destruction des joueurs
-    //TODO resoudre le segmentation fault causé ici, peut être que les pointeurs ont déjà été supprimés par la suppression d'un autre été du jeu
-    /*for (auto joueur : joueurs) {
+    for (auto joueur : joueurs) {
         if(joueur) {
             delete joueur;
             joueur= nullptr;
         }
     }
-    joueur_courant = nullptr;*/
+    joueur_courant = nullptr;
 }
 
 EtatDuJeu::EtatDuJeu(){
@@ -297,10 +296,9 @@ void Partie::jouerTour(){
                     }
                 }
                 tour_fini = historique_etats[0].joueur_courant->jouerCoupCreer(piece, liste_pos[choix], historique_etats[0].plateau);
-                break;
+                return;
             }
         }
-        return;
     }
 
     //Si l'abeille n'a toujours pas été posée au 4eme tour du joueur
@@ -410,7 +408,7 @@ void Partie::jouerTour(){
                 cout << "Voici vos coups possibles : \n";
                 int j = 0;
                 for (const auto &coup : liste_coups){
-                    cout << j << ". " << coup.getPiece()->getType() << " - a (" << coup.getPosInitial().getX() << " , " << coup.getPosInitial().getY() << ") vers (" << coup.getPosFinal().getX() << " , " << coup.getPosFinal().getY() << ") \n";
+                    cout << j << ". " << coup.getPiece()->strPiece() << " - a (" << coup.getPosInitial().getX() << " , " << coup.getPosInitial().getY() << ") vers (" << coup.getPosFinal().getX() << " , " << coup.getPosFinal().getY() << ") \n";
                     j++;
                 }
                 int choix = -1;
