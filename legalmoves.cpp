@@ -119,14 +119,14 @@ vector<Coords> LegalMoveAraignee::searchMoves(Coords coord,Graphe* graph, bool c
     if(graphe_a_manipuler->wouldHiveBreak(coord)){
         return resultat;
     }
-    resultat= rechercheDansVoisins(coord,graph,camp,0);
+    resultat= rechercheDansVoisins(coord,coord,graph,camp,0);
 
     return resultat;
 
 }
 
 
-vector<Coords> LegalMoveAraignee::rechercheDansVoisins(Coords coord, Graphe* graph, bool camp,unsigned int profondeur) const {
+vector<Coords> LegalMoveAraignee::rechercheDansVoisins(Coords initial_coords,Coords coord, Graphe* graph, bool camp,unsigned int profondeur) const {
     vector<Coords> resultat;
     vector<Coords> voisins=graphe_a_manipuler->coordsExistentAdjacents(coord);
     profondeur++;
@@ -134,7 +134,7 @@ vector<Coords> LegalMoveAraignee::rechercheDansVoisins(Coords coord, Graphe* gra
     if (profondeur<3) {
         for(auto i:voisins) {
             if (graphe_a_manipuler->getCase(i).empty() && graphe_a_manipuler->canSlide(coord, cote_voisin) && !graphe_a_manipuler->coordsInhabitedAdjacents(i).empty()) {
-                vector<Coords> resultat_voisin = rechercheDansVoisins(i, graph, camp, profondeur);
+                vector<Coords> resultat_voisin = rechercheDansVoisins(initial_coords,i, graph, camp, profondeur);
                 for(auto resultat_potentiel:resultat_voisin){
                     if (find(resultat.begin(), resultat.end(), resultat_potentiel) == resultat.end()) {
                         resultat.push_back(resultat_potentiel);
@@ -148,7 +148,18 @@ vector<Coords> LegalMoveAraignee::rechercheDansVoisins(Coords coord, Graphe* gra
     } else if (profondeur==3) {
         for(auto j:voisins)
             if (graphe_a_manipuler->getCase(j).empty() && graphe_a_manipuler->canSlide(coord, cote_voisin) && !graphe_a_manipuler->coordsInhabitedAdjacents(j).empty())  {
-                resultat.push_back(j);
+                bool a_autre_voisin_que_piece_de_base=0;
+                for (auto voisins_i :graphe_a_manipuler->coordsInhabitedAdjacents(j)){
+                    if (voisins_i != initial_coords){
+                        a_autre_voisin_que_piece_de_base=1;
+
+
+                    }
+                }
+                if(a_autre_voisin_que_piece_de_base){
+                    resultat.push_back(j);
+                }
+
 
             }
         cote_voisin++;

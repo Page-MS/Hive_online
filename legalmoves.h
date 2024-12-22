@@ -64,10 +64,10 @@ class LegalMoveSauterelle : public LegalMoveInterface{
     vector<Coords> searchMoves(Coords coord,Graphe* graph, bool camp) override;
 };
 
-// TODO pièce se déplace loin de la ruche
+
 class LegalMoveAraignee : public LegalMoveInterface{
     vector<Coords> searchMoves(Coords coord,Graphe* graph, bool camp) override;
-    vector<Coords> rechercheDansVoisins(Coords coord,Graphe* graph, bool camp,unsigned int profondeur) const;
+    vector<Coords> rechercheDansVoisins(Coords initial_coords, Coords coord,Graphe* graph, bool camp,unsigned int profondeur) const;
 };
 
 
