@@ -225,11 +225,6 @@ void Partie::jouerTour(){
     //TODO FIx ça de manière plus clean que d'aller chercher l'autre joueur
     vector<Mouvement> liste_coups = historique_etats[0].coupsPossibles( (historique_etats[0].getJoueurCourant()));
 
-    /*if(historique_etats[0].getJoueurCourant()->getIsIA()){
-        liste_coups = historique_etats[0].coupsPossibles( (historique_etats[0].getAutreJoueur()));
-    }else{
-        liste_coups = historique_etats[0].coupsPossibles( (historique_etats[0].getJoueurCourant()));
-    }*/
     for (auto it = liste_coups.begin(); it != liste_coups.end(); ) {
         if (historique_etats[0].plateau.getGraphe().wouldHiveBreak(it->getPosInitial())) {
             it = liste_coups.erase(it);

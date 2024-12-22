@@ -73,10 +73,10 @@ bool Joueur::jouerCoupDeplacer(const Piece* pieceChoisie, const Coords& destinat
         return false;
     }
 
-    if (!plateau.canPlace(*pieceChoisie, destination)) {
+    /*if (!plateau.canPlace(*pieceChoisie, destination)) {
         cout<<"La position cible est invalide ou occupee.\n";
         return false;
-    }
+    }*/
 
     if (plateau.getGraphe().getNbInhabitedCases()>0) {
         // Obtenir les mouvements legaux de la piece
