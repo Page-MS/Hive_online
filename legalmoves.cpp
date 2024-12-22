@@ -167,23 +167,41 @@ vector<Coords> LegalMoveFourmi::searchMoves(Coords coord, Graphe* graph, bool ca
     }
     vector<Coords> voisins_traites;
     voisins_traites.push_back(coord);
-    resultat= rechercheDansVoisins(coord,graph,camp,voisins_traites);
+    resultat= rechercheDansVoisins(coord,coord,graph,camp,voisins_traites);
+    //pour enlever les coords de base
+    resultat.erase(std::remove(resultat.begin(), resultat.end(), coord), resultat.end());
 
     return resultat;
 }
 
-vector<Coords> LegalMoveFourmi::rechercheDansVoisins(Coords coord, Graphe* graph, bool camp, vector<Coords>& voisins_traites) const {
+vector<Coords> LegalMoveFourmi::rechercheDansVoisins(const Coords& initial_coord, Coords coord, Graphe* graph, bool camp, vector<Coords>& voisins_traites) const {
     vector<Coords> voisins = graphe_a_manipuler->coordsExistentAdjacents(coord);
     unsigned int cote_voisin = 0;
+    vector <Coords> resultat;
     for (auto i: voisins) {
         if (graphe_a_manipuler->getCase(i).empty() && graphe_a_manipuler->canSlide(coord, cote_voisin) &&
-            !graphe_a_manipuler->coordsInhabitedAdjacents(i).empty() && (find(voisins_traites.begin(), voisins_traites.end(), i) == voisins_traites.end())) {
-            voisins_traites.push_back(i);
-            vector<Coords> resultat_voisin = rechercheDansVoisins(i, graph, camp, voisins_traites);
-            for (auto resultat_potentiel: resultat_voisin) {
-                if (find(voisins_traites.begin(), voisins_traites.end(), resultat_potentiel) == voisins_traites.end()) {
-                    voisins_traites.push_back(resultat_potentiel);
+            !graphe_a_manipuler->coordsInhabitedAdjacents(i).empty() &&
+            (find(voisins_traites.begin(), voisins_traites.end(), i) == voisins_traites.end())) {
+            bool a_autre_voisin_que_piece_de_base = 0;
+            for (auto voisins_i: graphe_a_manipuler->coordsInhabitedAdjacents(i)) {
+                if (voisins_i != initial_coord) {
+                    a_autre_voisin_que_piece_de_base = 1;
+
+
                 }
+            }
+            if (a_autre_voisin_que_piece_de_base) {
+                if (find(voisins_traites.begin(), voisins_traites.end(), i) == voisins_traites.end()) {
+                    voisins_traites.push_back(i);
+                    vector<Coords> resultat_voisin = rechercheDansVoisins(initial_coord, i, graph, camp, voisins_traites);
+                    for (auto resultat_potentiel: resultat_voisin) {
+                        if (find(voisins_traites.begin(), voisins_traites.end(), resultat_potentiel) == voisins_traites.end()) {
+                            voisins_traites.push_back(resultat_potentiel);
+                        }
+
+                    }
+                }
+
             }
 
         }

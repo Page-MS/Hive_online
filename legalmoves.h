@@ -44,10 +44,10 @@ class LegalMoveMoustique : public LegalMoveInterface{
     vector<Coords> searchMoves(Coords coord,Graphe* graph, bool camp) override;
 };
 
-// TODO pièce se déplace loin de la ruche
+
 class LegalMoveFourmi : public LegalMoveInterface{
     vector<Coords> searchMoves(Coords coord,Graphe* graph, bool campvector) override;
-    vector<Coords> rechercheDansVoisins(Coords coord, Graphe* graph, bool camp, vector<Coords>& voisins_traites) const;
+    vector<Coords> rechercheDansVoisins(const Coords& initial_coord, Coords coord, Graphe* graph, bool camp, vector<Coords>& voisins_traites) const;
 };
 
 class LegalMoveScarabee : public LegalMoveInterface{
