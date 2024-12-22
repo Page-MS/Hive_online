@@ -230,11 +230,11 @@ void Partie::jouerTour(){
     //Si il n'y a plus de piece en reserve, ni de coups possible : on passe le tour
     vector <const Piece*> reserve = historique_etats[0].reserveJoueur(historique_etats[0].joueur_courant);
     //TODO FIx ça de manière plus clean que d'aller chercher l'autre joueur
-    vector<Mouvement> liste_coups = historique_etats[0].coupsPossibles(historique_etats[0].getAutreJoueur());
+    vector<Mouvement> liste_coups = historique_etats[0].coupsPossibles(historique_etats[0].joueur_courant);
     if(historique_etats[0].getJoueurCourant()->getIsIA()){
         liste_coups = historique_etats[0].coupsPossibles( (historique_etats[0].getAutreJoueur()));
     }else{
-        liste_coups = historique_etats[0].coupsPossibles( (historique_etats[0].getJoueurCourant()));
+        liste_coups = historique_etats[0].coupsPossibles( (historique_etats[0].getAutreJoueur()));
     }
     for (auto it = liste_coups.begin(); it != liste_coups.end(); ) {
         if (historique_etats[0].plateau.getGraphe().wouldHiveBreak(it->getPosInitial())) {
