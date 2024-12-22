@@ -4,7 +4,7 @@
 #include <QBrush>
 #include <QFont>
 
-ClickablePieceItem::ClickablePieceItem(Piece* piece, QGraphicsItem* parent)
+ClickablePieceItem::ClickablePieceItem(const Piece* piece, QGraphicsItem* parent)
     : QObject(), QGraphicsRectItem(parent), piece(piece) {
 
     // Configurer l'élément graphique
@@ -24,7 +24,7 @@ ClickablePieceItem::ClickablePieceItem(Piece* piece, QGraphicsItem* parent)
     case Coccinelle: symbol = "Co"; break;
     case Abeille: symbol = "Ab"; break;
     }
-    //configuration du texte dans la case
+
     textItem->setPlainText(symbol);
     textItem->setDefaultTextColor(Qt::black);
     textItem->setFont(QFont("Arial", 10, QFont::Bold));
@@ -32,6 +32,6 @@ ClickablePieceItem::ClickablePieceItem(Piece* piece, QGraphicsItem* parent)
 }
 
 void ClickablePieceItem::mousePressEvent(QGraphicsSceneMouseEvent* event) {
-    QGraphicsRectItem::mousePressEvent(event);
-    emit pieceClicked(piece); // Émet un signal lorsque l'objet est cliqué
+    emit pieceClicked(piece);  // Émettre la pièce liée à cet élément
+    QGraphicsRectItem::mousePressEvent(event);  // Appeler le parent
 }

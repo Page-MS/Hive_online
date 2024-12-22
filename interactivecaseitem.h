@@ -3,41 +3,37 @@
 
 #include <QGraphicsObject>
 #include <QPolygonF>
+#include <QBrush>
 #include "coords.h"
-//InteractiveCaseItem se comporte comme un objet graphique
+
 class InteractiveCaseItem : public QGraphicsObject {
-    //macro qui lui permet d'envoyer des signaux
     Q_OBJECT
 
 public:
-    //constructeur pour l'affichage
     explicit InteractiveCaseItem(const Coords& coords, QGraphicsItem* parent = nullptr);
-    //getter
+
     const Coords& getCoords() const { return coords; }
+    void setFillColor(const QColor& color); // Définit la couleur de remplissage
+    void setBrush(const QBrush& brush);     // Définit le pinceau pour la case
 
-    void setFillColor(const QColor& color);
-
-    //fonction qui return la hitbox d'une case
-    QRectF boundingRect() const override;
-    //affiche la case
-    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = nullptr) override;
-    //definit la forme et la hitbox
-    QPainterPath shape() const override;
+    QRectF boundingRect() const override;  // Délimite la zone de dessin
+    QPainterPath shape() const override;   // Définit la forme pour les interactions
+    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
 
 signals:
     void caseClicked(const Coords& coords);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
-    void hoverEnterEvent(QGraphicsSceneHoverEvent* event) override;//pour survoler les cases
+    void hoverEnterEvent(QGraphicsSceneHoverEvent* event) override;
     void hoverLeaveEvent(QGraphicsSceneHoverEvent* event) override;
 
 private:
-    Coords coords;
-    QPolygonF hexagon;
-    QColor fillColor;
-    bool selected;
-
+    Coords coords;             // Coordonnées logiques de la case
+    QPolygonF hexagon;         // Forme de l'hexagone
+    QBrush m_brush;            // Pinceau pour la case
+    QColor fillColor;          // Couleur de remplissage
+    bool selected;             // Indique si la case est sélectionnée
 };
 
 #endif // INTERACTIVECASEITEM_H

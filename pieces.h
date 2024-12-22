@@ -10,8 +10,8 @@
 #include <array>
 #include <cstdlib>
 #include <vector>
-
 #include "coords.h"
+
 class Graphe;
 
 using namespace std;
