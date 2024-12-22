@@ -39,6 +39,10 @@ Joueur& Joueur::operator=(const Joueur& autre) {
     return *this;
 }
 bool Joueur::jouerCoupCreer(const Piece* pieceChoisie, const Coords& destination, Plateau& plateau) {
+    if(pieceChoisie == nullptr) {
+        cout<<"La piece choisie n'existe pas.\n";
+        return false;
+    }
     if (pieceChoisie->getCamp()!=camp) throw runtime_error("ERROR Joueur::jouerCoupCreer : la piece appartient au joueur adverse.");
 
     if (!plateau.inReserve(*pieceChoisie)) {
@@ -78,8 +82,7 @@ bool Joueur::jouerCoupDeplacer(const Piece* pieceChoisie, const Coords& destinat
         LegalMoveContext& moveContext = LegalMoveContext::getInstance();
         moveContext.changeStrategy(pieceChoisie->getType());
         Graphe copygraphe = plateau.getGraphe();
-        vector<Coords> legalMoves = moveContext.searchLegalMoves(destination, &copygraphe, pieceChoisie->getCamp());
-
+        vector<Coords> legalMoves = moveContext.searchLegalMoves(*plateau.coordsPiece(*pieceChoisie), &copygraphe, pieceChoisie->getCamp());
         //parcours les legalmoves pour verifier que destination en fait bien partie
         auto it = std::find(legalMoves.begin(), legalMoves.end(), destination);
         if (it == legalMoves.end()) {

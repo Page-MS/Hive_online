@@ -886,9 +886,9 @@ void Graphe::movePiece(const Piece& p, const Coords& c) {
 
     Case* ca_to = getMutableCase(c);
     if (ca_to==nullptr) throw runtime_error("ERROR Graphe::movePiece : Case de destination inexistante.");
-
-    supprPiece(ca_from);
     addPiece(p, *ca_to);
+    supprPiece(ca_from);
+
 }
 
 /*! \brief Vide entièrement le graphe

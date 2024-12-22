@@ -219,8 +219,6 @@ void Partie::annulerDernierMouvement(){ //On remonte au tour précédent de chac
 }
 
 void Partie::jouerTour(){
-    historique_etats[0].plateau.afficher(historique_etats[0].joueur_courant->getCamp(), historique_etats[0].joueur_courant->getNom(), historique_etats[0].getAutreJoueur()->getNom());
-
     bool tour_fini = false;
     historique_etats[3] = historique_etats[2];
     historique_etats[2] = historique_etats[1];
@@ -236,7 +234,13 @@ void Partie::jouerTour(){
     //Si il n'y a plus de piece en reserve, ni de coups possible : on passe le tour
     vector <const Piece*> reserve = historique_etats[0].reserveJoueur(historique_etats[0].joueur_courant);
     //TODO FIx ça de manière plus clean que d'aller chercher l'autre joueur
-    vector<Mouvement> liste_coups = historique_etats[0].coupsPossibles( (historique_etats[0].getAutreJoueur()));
+    vector<Mouvement> liste_coups;
+    if(historique_etats[0].getJoueurCourant()->getIsIA()){
+        liste_coups = historique_etats[0].coupsPossibles( (historique_etats[0].getAutreJoueur()));
+    }else{
+        liste_coups = historique_etats[0].coupsPossibles( (historique_etats[0].getJoueurCourant()));
+    }
+    
 
     if(reserve.size() == 0 && liste_coups.size() == 0){
         cout<<"Vous n'avez pas de possibilite de jouer ce tour !"<<endl;
@@ -348,7 +352,11 @@ void Partie::jouerTour(){
                     cin>>choix;
                 }
                 Mouvement coupChoisi = liste_coups.at(choix);
-                tour_fini = historique_etats[0].joueur_courant->jouerCoupDeplacer(coupChoisi.getPiece(), coupChoisi.getPosFinal(), historique_etats[0].plateau);
+                if (coupChoisi.getPiece() != nullptr) {
+                    tour_fini = historique_etats[0].joueur_courant->jouerCoupDeplacer(coupChoisi.getPiece(), coupChoisi.getPosFinal(), historique_etats[0].plateau);
+                } else {
+                    cout << "Erreur: La pièce sélectionnée est vide." << endl;
+                }
                 break;
             }
             case 3: {
@@ -397,7 +405,7 @@ bool Partie::finPartie()const{
     */
     for(const auto joueur : historique_etats[0].joueurs){
         for(const auto piece : joueur->getPieces()){
-            if(piece->getType() == 1 && !(historique_etats[0].plateau.inReserve(piece))){
+            if(piece->getType() == 1 && !historique_etats[0].plateau.inReserve(piece)){
                 const Coords* c = historique_etats[0].plateau.coordsPiece(*piece);
                 if (c != nullptr) {
                     if(historique_etats[0].plateau.getGraphe().isSurrounded(*c)) {
@@ -423,6 +431,7 @@ void Partie::lancerPartie() {
     while(!finPartie()){
         jouerTour();
         cout<<"Fin du tour"<<endl;
+        historique_etats[0].plateau.afficher(historique_etats[0].joueur_courant->getCamp(), historique_etats[0].joueur_courant->getNom(), historique_etats[0].getAutreJoueur()->getNom());
         if(historique_etats[0].joueur_courant == historique_etats[0].joueurs[0]){
             historique_etats[0].joueur_courant = historique_etats[0].joueurs[1];
         }else{

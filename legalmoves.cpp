@@ -44,7 +44,6 @@ vector<Coords > LegalMoveContext::searchLegalMoves(Coords coord, Graphe* graph, 
     bool piece_vide=graph->getCase(coord).empty();
     if(!piece_vide) {
         changeStrategy(graph->getCase(coord).getUpperPiece().getType());
-
     }else {
         //TODO comprendre pourquoi on appelle des legalmoves sur une case vide
         cout<<"\n coord : "<<coord.getX()<<":"<<coord.getY()<<" camp : "<<camp<<"\n";
