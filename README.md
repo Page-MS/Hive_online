@@ -1,5 +1,5 @@
 # LO21
-Bienvenue sur cette recréation du jeu HIVE en version numériques. 
+Bienvenue sur cette recréation non-officielle du jeu HIVE en version numériques. 
 Pour jouer, clonez le dépot de code puis executez le .exe
 Les fonctionnalités permettent de : 
 -jouer à deux en local
